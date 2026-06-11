@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pascal Kozlowski — IT Infrastructure & Software Development</title>
+  <meta name="description" content="IT services from a single source: Linux, Proxmox, backup & firewalls for small businesses — plus full-stack development with Angular, NestJS and PostgreSQL. Fixed-price packages, honest work, properly documented." />
+  <link rel="alternate" hreflang="de" href="https://pascal-kozlowski.de/" />
+  <link rel="alternate" hreflang="en" href="https://pascal-kozlowski.de/en/" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <a class="wordmark" href="/en/">pascal<span>—</span>kozlowski<span>.de</span></a>
+      <nav class="main">
+        <a href="#services">Services</a>
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="switches">
+        <a class="lang" href="/" lang="de">DE</a>
+        <button id="theme-toggle" type="button" aria-label="Toggle color scheme">☾</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <img class="portrait" src="/assets/img/cv-photo.jpg" alt="Portrait of Pascal Kozlowski" />
+        <div>
+          <h1>Pascal Kozlowski</h1>
+          <p class="claim"><strong>IT infrastructure</strong> and <strong>software development</strong> — from a single source.</p>
+          <div class="chips">
+            <span class="chip">Linux</span><span class="chip">Proxmox</span><span class="chip">Backup &amp; DR</span><span class="chip">Firewall / VLAN</span><span class="chip">PostgreSQL</span><span class="chip">Angular</span><span class="chip">NestJS</span><span class="chip">Docker</span>
+          </div>
+          <div class="cta-row">
+            <a class="btn dev" href="https://flowgate.pascal-kozlowski.de" target="_blank" rel="noopener">▶ View live demo</a>
+            <a class="btn primary" href="#services">Services</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="wrap">
+        <h2>Two fields, one standard</h2>
+        <p class="lead">Many small businesses need both: a stable, secure IT foundation — and the occasional piece of software that fits their workflow exactly. I offer both, so you don't have to coordinate two providers.</p>
+        <div class="fields">
+          <article class="field">
+            <p class="eyebrow infra">Field 1</p>
+            <h3>Infrastructure &amp; System Care</h3>
+            <p class="for">For small businesses without their own IT department — practices, law firms, trades, offices.</p>
+            <ul>
+              <li><strong>Backup &amp; disaster recovery</strong> — encrypted, off-site, with a documented restore test</li>
+              <li><strong>Linux server hardening</strong> — firewall, automatic updates, documentation</li>
+              <li><strong>Proxmox virtualization</strong> — setup, storage, VMs/containers</li>
+              <li><strong>Firewall &amp; networking</strong> — segmentation (VLAN), secure remote work (VPN)</li>
+              <li><strong>VMware migration</strong> — escape the license costs, move to Proxmox</li>
+              <li><strong>Monthly maintenance</strong> — monitoring, updates, backup checks</li>
+            </ul>
+            <p class="note">📦 <strong>Fixed-price packages</strong> instead of counting hours — you know the cost up front.</p>
+          </article>
+          <article class="field dev">
+            <p class="eyebrow dev">Field 2</p>
+            <h3>Software Development</h3>
+            <p class="for">For workflows no off-the-shelf product covers — forms, approvals, internal tools.</p>
+            <ul>
+              <li><strong>Web applications</strong> — Angular, modern and accessible</li>
+              <li><strong>APIs &amp; backends</strong> — NestJS, PostgreSQL, cleanly structured</li>
+              <li><strong>Workflow &amp; approval systems</strong> — requests, review processes, audit trail</li>
+              <li><strong>Real-time features</strong> — live updates without reloading (WebSocket)</li>
+              <li><strong>Deployment</strong> — Docker, HTTPS, on your server or hosted</li>
+            </ul>
+            <p class="note">▶ Don't take my word for it — <a href="https://flowgate.pascal-kozlowski.de" target="_blank" rel="noopener">try the live demo</a>; login credentials are on the page.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="wrap">
+        <h2>Projects &amp; Reference Builds</h2>
+        <p class="lead">Honestly labelled: self-built reference projects, engineered and documented as if for clients — including architecture diagrams and case studies.</p>
+        <div class="projects">
+          <article class="project">
+            <img src="/assets/img/flowgate-board.jpg" alt="FlowGate — kanban board with status columns" loading="lazy" />
+            <div class="body">
+              <span class="tag live">Live demo</span>
+              <h3>FlowGate — Request &amp; Approval Workflow</h3>
+              <p>Multi-step approval workflow with roles, a server-enforced state machine, audit trail and a real-time board. Angular · NestJS · PostgreSQL · WebSocket.</p>
+              <div class="links">
+                <a class="devlink" href="https://flowgate.pascal-kozlowski.de" target="_blank" rel="noopener">Try it live</a>
+                <a class="devlink" href="https://github.com/flokflok1/flowgate" target="_blank" rel="noopener">Source code (GitHub)</a>
+              </div>
+            </div>
+          </article>
+          <article class="project">
+            <img src="/assets/img/pve-architektur-en.jpg" alt="Proxmox cluster architecture diagram" loading="lazy" />
+            <div class="body">
+              <span class="tag infra">Case study</span>
+              <h3>Virtualization Platform on Proxmox</h3>
+              <p>Self-hosted server platform: VMs &amp; containers, storage design, encrypted off-site backups with tested restores.</p>
+              <div class="links">
+                <a href="/assets/docs/case-study-compute-proxmox-en.pdf" target="_blank">Case study (PDF)</a>
+              </div>
+            </div>
+          </article>
+          <article class="project">
+            <img src="/assets/img/netzplan-en.jpg" alt="Network plan with VLAN segmentation" loading="lazy" />
+            <div class="body">
+              <span class="tag infra">Case study</span>
+              <h3>Network Segmentation &amp; Firewall</h3>
+              <p>Multi-tier segmented network (VLANs), firewall rule set and VPN access — planned, implemented, documented.</p>
+              <div class="links">
+                <a href="/assets/docs/case-study-netzwerk-firewall-en.pdf" target="_blank">Case study (PDF)</a>
+              </div>
+            </div>
+          </article>
+          <article class="project">
+            <img src="/assets/img/saas-architektur-en.jpg" alt="SaaS backend architecture diagram" loading="lazy" />
+            <div class="body">
+              <span class="tag live">Architecture</span>
+              <h3>SaaS Backend Architecture</h3>
+              <p>Multi-tenant backend with row-level security, domain-driven design and an event architecture — anonymized architecture study.</p>
+              <div class="links">
+                <a class="devlink" href="/assets/docs/saas-architektur-en.pdf" target="_blank">Architecture study (PDF)</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <div class="wrap">
+        <div class="text">
+          <h2>About me</h2>
+          <p>I'm a career changer by conviction: IT was a passion first, then a profession. Instead of just collecting courses, I built my own "data center in miniature" — a Proxmox cluster, segmented network, encrypted backups, all documented like a production environment. What I offer, I run myself, every day.</p>
+          <ul class="facts">
+            <li><strong>IT specialist for system integration (IHK)</strong> — graduating July 2026</li>
+            <li>Hands-on experience from internships at IT service providers</li>
+            <li>My own infrastructure as a living reference (see case studies)</li>
+            <li>How I work: fixed prices, clean documentation, no jargon</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="wrap">
+        <h2>Let's talk</h2>
+        <p class="lead">Free initial consultation (30 minutes) — no strings attached.</p>
+        <div class="cta-row" style="justify-content: center">
+          <a class="btn primary" href="mailto:kozlowski_pascal@web.de">✉ Send an email</a>
+          <a class="btn" href="https://github.com/flokflok1" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Pascal Kozlowski</span>
+      <span class="spacer"></span>
+      <a href="/impressum.html">Legal notice (German)</a>
+      <a href="/datenschutz.html">Privacy (German)</a>
+      <span>· Hand-built — no cookies, no trackers.</span>
+    </div>
+  </footer>
+</body>
+</html>
