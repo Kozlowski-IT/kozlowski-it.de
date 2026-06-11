@@ -3,22 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pascal Kozlowski — IT Infrastructure & Software Development</title>
-  <meta name="description" content="IT services from a single source: Linux, Proxmox, backup & firewalls for small businesses — plus full-stack development with Angular, NestJS and PostgreSQL. Fixed-price packages, honest work, properly documented." />
+  <title>Kozlowski IT — IT Care & Software Development</title>
+  <meta name="description" content="Kozlowski IT: I keep your IT running — backups, servers, networks — and build software that fits your workflow. Fixed prices, plain language, properly documented. Free initial consultation." />
+  <meta property="og:title" content="Kozlowski IT — IT Care & Software Development" />
+  <meta property="og:description" content="IT that just works — and software that fits your workflow. Fixed prices, free initial consultation." />
+  <meta property="og:image" content="https://pascal-kozlowski.de/assets/img/og.jpg" />
+  <meta property="og:url" content="https://pascal-kozlowski.de/en/" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg" />
   <link rel="alternate" hreflang="de" href="https://pascal-kozlowski.de/" />
   <link rel="alternate" hreflang="en" href="https://pascal-kozlowski.de/en/" />
   <link rel="stylesheet" href="/assets/css/style.css" />
   <script src="/assets/js/theme.js"></script>
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
   <header class="site">
     <div class="wrap">
-      <a class="wordmark" href="/en/">pascal<span>—</span>kozlowski<span>.de</span></a>
-      <nav class="main">
+      <a class="wordmark" href="/en/"><img src="/assets/img/logo.svg" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
+      <nav class="main" aria-label="Main navigation">
         <a href="#services">Services</a>
+        <a href="#process">How it works</a>
         <a href="#projects">Projects</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
+        <a class="nav-contact" href="#contact">Contact</a>
       </nav>
       <div class="switches">
         <a class="lang" href="/" lang="de">DE</a>
@@ -27,19 +34,21 @@
     </div>
   </header>
 
-  <main>
+  <main id="main">
     <section class="hero">
       <div class="wrap">
-        <img class="portrait" src="/assets/img/cv-photo.jpg" alt="Portrait of Pascal Kozlowski" />
+        <span class="avatar-wrapper">
+          <img class="portrait" src="/assets/img/cv-photo.jpg" alt="Portrait of Pascal Kozlowski" />
+        </span>
         <div>
-          <h1>Pascal Kozlowski</h1>
-          <p class="claim"><strong>IT infrastructure</strong> and <strong>software development</strong> — from a single source.</p>
+          <h1>IT that just works — and software that fits your workflow.</h1>
+          <p class="claim">Pascal Kozlowski · IT service provider &amp; developer for small businesses — <strong>available for new projects</strong>.</p>
           <div class="chips">
-            <span class="chip">Linux</span><span class="chip">Proxmox</span><span class="chip">Backup &amp; DR</span><span class="chip">Firewall / VLAN</span><span class="chip">PostgreSQL</span><span class="chip">Angular</span><span class="chip">NestJS</span><span class="chip">Docker</span>
+            <span class="chip">Backups</span><span class="chip">Servers &amp; Virtualization</span><span class="chip">Network &amp; Firewall</span><span class="chip">Web Applications</span>
           </div>
           <div class="cta-row">
-            <a class="btn dev" href="https://flowgate.pascal-kozlowski.de" target="_blank" rel="noopener">▶ View live demo</a>
-            <a class="btn primary" href="#services">Services</a>
+            <a class="btn primary big" href="#contact">Free initial consultation</a>
+            <a class="btn ghosted" href="https://flowgate.pascal-kozlowski.de" target="_blank" rel="noopener"><span aria-hidden="true">▶</span> View live demo</a>
           </div>
         </div>
       </div>
@@ -47,37 +56,71 @@
 
     <section id="services">
       <div class="wrap">
-        <h2>Two fields, one standard</h2>
-        <p class="lead">Many small businesses need both: a stable, secure IT foundation — and the occasional piece of software that fits their workflow exactly. I offer both, so you don't have to coordinate two providers.</p>
+        <h2>What I do for you</h2>
+        <p class="lead">Many small businesses need both: a stable, secure IT foundation — and the occasional piece of software that fits their workflow exactly. With me you get both, without coordinating two providers.</p>
         <div class="fields">
           <article class="field">
-            <p class="eyebrow infra">Field 1</p>
-            <h3>Infrastructure &amp; System Care</h3>
-            <p class="for">For small businesses without their own IT department — practices, law firms, trades, offices.</p>
+            <p class="eyebrow infra">IT Care &amp; Infrastructure</p>
+            <h3>So your IT just runs</h3>
+            <p class="for">For practices, law firms, trades and offices without their own IT department.</p>
             <ul>
-              <li><strong>Backup &amp; disaster recovery</strong> — encrypted, off-site, with a documented restore test</li>
-              <li><strong>Linux server hardening</strong> — firewall, automatic updates, documentation</li>
-              <li><strong>Proxmox virtualization</strong> — setup, storage, VMs/containers</li>
-              <li><strong>Firewall &amp; networking</strong> — segmentation (VLAN), secure remote work (VPN)</li>
+              <li><strong>Backups that actually work</strong> — stored off-site, restore-tested regularly</li>
+              <li><strong>Server hardening</strong> — protection against attacks, automatic updates, documented</li>
+              <li><strong>Several servers on one machine</strong> — saves hardware, power and risk (Proxmox virtualization)</li>
+              <li><strong>Secure networks</strong> — devices cleanly separated, safe remote access</li>
               <li><strong>VMware migration</strong> — escape the license costs, move to Proxmox</li>
-              <li><strong>Monthly maintenance</strong> — monitoring, updates, backup checks</li>
+              <li><strong>Monthly care at a fixed price</strong> — I monitor, update and verify; you just notice everything works</li>
             </ul>
-            <p class="note">📦 <strong>Fixed-price packages</strong> instead of counting hours — you know the cost up front.</p>
+            <p class="note"><span aria-hidden="true">📦</span> <strong>Fixed-price packages</strong> instead of counting hours.</p>
+            <p class="card-cta"><a class="btn primary" href="#contact">Free initial consultation</a></p>
           </article>
           <article class="field dev">
-            <p class="eyebrow dev">Field 2</p>
-            <h3>Software Development</h3>
-            <p class="for">For workflows no off-the-shelf product covers — forms, approvals, internal tools.</p>
+            <p class="eyebrow dev">Software Development</p>
+            <h3>When no off-the-shelf product fits</h3>
+            <p class="for">Forms, approvals, internal tools — software for your specific workflow.</p>
             <ul>
-              <li><strong>Web applications</strong> — Angular, modern and accessible</li>
-              <li><strong>APIs &amp; backends</strong> — NestJS, PostgreSQL, cleanly structured</li>
-              <li><strong>Workflow &amp; approval systems</strong> — requests, review processes, audit trail</li>
-              <li><strong>Real-time features</strong> — live updates without reloading (WebSocket)</li>
-              <li><strong>Deployment</strong> — Docker, HTTPS, on your server or hosted</li>
+              <li><strong>Web applications</strong> — modern, fast, accessible (Angular)</li>
+              <li><strong>APIs &amp; backends</strong> — cleanly structured (NestJS, PostgreSQL)</li>
+              <li><strong>Workflow &amp; approval systems</strong> — requests, reviews, complete history</li>
+              <li><strong>Real-time features</strong> — changes appear instantly, no reloading</li>
+              <li><strong>Operations included</strong> — Docker, HTTPS, on your server or hosted</li>
             </ul>
-            <p class="note">▶ Don't take my word for it — <a href="https://flowgate.pascal-kozlowski.de" target="_blank" rel="noopener">try the live demo</a>; login credentials are on the page.</p>
+            <p class="note"><span aria-hidden="true">▶</span> Don't take my word for it — <a href="https://flowgate.pascal-kozlowski.de" target="_blank" rel="noopener">try the live demo</a>; credentials are on the page.</p>
+            <p class="card-cta"><a class="btn dev" href="https://flowgate.pascal-kozlowski.de" target="_blank" rel="noopener">Open demo</a></p>
           </article>
         </div>
+      </div>
+    </section>
+
+    <section id="process" class="process">
+      <div class="wrap">
+        <h2>How it works</h2>
+        <div class="steps-grid">
+          <div class="step"><span class="num">1</span><h3>Free initial consultation</h3><p>30 minutes, no strings attached — you tell me what's not working. I listen and tell you honestly whether and how I can help.</p></div>
+          <div class="step"><span class="num">2</span><h3>Fixed-price offer</h3><p>One page, in plain language: what gets done, what it costs, when it's ready. No hidden hours.</p></div>
+          <div class="step"><span class="num">3</span><h3>Delivery &amp; handover</h3><p>Clean work, documented for handover — you stay independent. Optional: monthly care afterwards.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>Frequent questions</h2>
+        <details><summary>What does it cost?</summary><p>Fixed package prices instead of open-ended hourly billing — you know the price before I start. The initial consultation gives you an honest assessment, free of charge.</p></details>
+        <details><summary>Am I locked into a contract?</summary><p>No. Projects are one-off fixed-price engagements. Monthly care can be cancelled — I'd rather convince through work than through contract terms.</p></details>
+        <details><summary>What happens in an emergency or data loss?</summary><p>That's exactly what tested backups are for: we verify restores <em>before</em> the emergency — and document how they work.</p></details>
+        <details><summary>Will I understand what you're doing?</summary><p>Yes — that's part of the job. No jargon, everything documented in writing and explained so you can pass it on to your team.</p></details>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="wrap">
+        <h2>Let's talk</h2>
+        <p class="lead">Free initial consultation (30 minutes), no strings attached. <strong>Reply within one business day.</strong></p>
+        <div class="cta-row center">
+          <a class="btn primary big" href="mailto:kozlowski_pascal@web.de"><span aria-hidden="true">✉</span> Send an email</a>
+        </div>
+        <p class="plain-mail">or directly: <strong>kozlowski_pascal@web.de</strong></p>
       </div>
     </section>
 
@@ -139,7 +182,7 @@
       <div class="wrap">
         <div class="text">
           <h2>About me</h2>
-          <p>I'm a career changer by conviction: IT was a passion first, then a profession. Instead of just collecting courses, I built my own "data center in miniature" — a Proxmox cluster, segmented network, encrypted backups, all documented like a production environment. What I offer, I run myself, every day.</p>
+          <p>I'm a career changer by conviction: IT was a passion first, then a profession. Instead of just collecting courses, I built my own "data center in miniature" — a server cluster, segmented network, encrypted backups, all documented like a production environment. What I offer, I run myself, every day.</p>
           <ul class="facts">
             <li><strong>IT specialist for system integration (IHK)</strong> — graduating July 2026</li>
             <li>Hands-on experience from internships at IT service providers</li>
@@ -149,23 +192,13 @@
         </div>
       </div>
     </section>
-
-    <section id="contact" class="contact">
-      <div class="wrap">
-        <h2>Let's talk</h2>
-        <p class="lead">Free initial consultation (30 minutes) — no strings attached.</p>
-        <div class="cta-row" style="justify-content: center">
-          <a class="btn primary" href="mailto:kozlowski_pascal@web.de">✉ Send an email</a>
-          <a class="btn" href="https://github.com/flokflok1" target="_blank" rel="noopener">GitHub</a>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>
     <div class="wrap">
-      <span>© 2026 Pascal Kozlowski</span>
+      <span>© 2026 Kozlowski IT · Pascal Kozlowski</span>
       <span class="spacer"></span>
+      <a href="https://github.com/flokflok1" target="_blank" rel="noopener">GitHub</a>
       <a href="/impressum.html">Legal notice (German)</a>
       <a href="/datenschutz.html">Privacy (German)</a>
       <span>· Hand-built — no cookies, no trackers.</span>
