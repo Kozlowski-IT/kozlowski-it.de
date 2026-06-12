@@ -63,11 +63,36 @@
       const label = el.dataset.label || el.name;
       lines.push(label + ': ' + ((el.value || '').toString().trim() || '–'));
     }
+    const text = lines.join('\n');
     const subject = encodeURIComponent(
       'Anfrage über kozlowski-it.de: ' + (chosen?.value || ''),
     );
-    const body = encodeURIComponent(lines.join('\n'));
     window.location.href =
-      'mailto:pk@kozlowski-it.de?subject=' + subject + '&body=' + body;
+      'mailto:pk@kozlowski-it.de?subject=' + subject +
+      '&body=' + encodeURIComponent(text);
+
+    // mailto can fail silently (webmail, unconfigured client) — show a fallback
+    // so a filled-out request never gets lost without the visitor noticing.
+    showFallback(text);
   });
+
+  function showFallback(text) {
+    status.classList.add('is-fallback');
+    status.textContent = '';
+    const msg = document.createElement('span');
+    msg.textContent =
+      form.dataset.fallbackText ||
+      'Ihr E-Mail-Programm sollte sich öffnen. Falls nicht: Text kopieren und an pk@kozlowski-it.de schicken oder 0162 8213267 anrufen.';
+    const copy = document.createElement('button');
+    copy.type = 'button';
+    copy.className = 'copy-btn';
+    copy.textContent = form.dataset.copyLabel || 'Text kopieren';
+    copy.addEventListener('click', () => {
+      navigator.clipboard?.writeText('An: pk@kozlowski-it.de\n\n' + text).then(
+        () => { copy.textContent = form.dataset.copiedLabel || 'Kopiert ✓'; },
+        () => { copy.textContent = 'pk@kozlowski-it.de'; },
+      );
+    });
+    status.append(msg, document.createElement('br'), copy);
+  }
 })();

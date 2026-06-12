@@ -466,6 +466,18 @@ section .lead { color: var(--muted); margin: 0 0 2rem; max-width: 44rem; }
 .contact-form textarea { resize: vertical; }
 .contact-form .form-hint { font-size: 13px; color: var(--muted); margin: 0; font-weight: 400; }
 .contact-form .form-status { color: var(--danger); font-size: 14px; margin: 0; min-height: 1.1em; }
+.contact-form .form-status.is-fallback { color: var(--ink); }
+.contact-form .copy-btn {
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 13px;
+  border: 1px solid var(--infra);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--infra);
+  cursor: pointer;
+}
+.contact-form .copy-btn:hover { background: var(--infra-soft); }
 .contact-form button { justify-self: start; }
 
 @media (max-width: 560px) {
@@ -548,6 +560,18 @@ footer .spacer { flex: 1; }
   transition: transform 150ms ease-out, border-color 150ms ease-out;
 }
 .explore-card:hover { transform: translateY(-2px); border-color: var(--infra); }
+.explore-card.has-thumb { padding-top: 0; overflow: hidden; }
+.explore-thumb {
+  display: block;
+  width: calc(100% + 3rem);
+  margin: 0 -1.5rem 1.1rem;
+  height: 150px;
+  object-fit: cover;
+  object-position: top;
+  border-bottom: 1px solid var(--line);
+}
+.explore-card.has-thumb { padding: 1.5rem; }
+.explore-card.has-thumb .explore-thumb { margin-top: -1.5rem; }
 .explore-tag {
   font: 600 11px/1 'Sora', sans-serif;
   text-transform: uppercase;
