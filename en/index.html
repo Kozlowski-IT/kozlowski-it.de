@@ -15,6 +15,7 @@
   <link rel="alternate" hreflang="en" href="https://kozlowski-it.de/en/" />
   <link rel="stylesheet" href="/assets/css/style.css" />
   <script src="/assets/js/theme.js"></script>
+  <script src="/assets/js/contact.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -165,13 +166,41 @@
 
     <section id="contact" class="contact">
       <div class="wrap">
-        <h2>Let's talk</h2>
+        <h2>How can I help?</h2>
         <p class="lead">Free initial consultation (30 minutes), no strings attached. <strong>Reply within one business day.</strong></p>
-        <div class="cta-row center">
-          <a class="btn primary big" href="tel:+491628213267"><span aria-hidden="true">📞</span> +49 162 8213267</a>
-          <a class="btn big" href="mailto:pk@kozlowski-it.de"><span aria-hidden="true">✉</span> Send an email</a>
-        </div>
-        <p class="plain-mail">Phone: <strong>+49 162 8213267</strong> · Email: <strong>pk@kozlowski-it.de</strong></p>
+        <form class="contact-form" data-contact-error="Please provide an email or phone number so I can reply.">
+          <div class="field-row">
+            <label>Name <span aria-hidden="true">*</span>
+              <input type="text" name="name" required autocomplete="name" />
+            </label>
+            <label>Company (optional)
+              <input type="text" name="firma" autocomplete="organization" />
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Email
+              <input type="email" name="email" autocomplete="email" />
+            </label>
+            <label>Phone
+              <input type="tel" name="telefon" autocomplete="tel" />
+            </label>
+          </div>
+          <label>What's it about?
+            <select name="thema">
+              <option>IT care &amp; infrastructure</option>
+              <option>Software development</option>
+              <option>Emergency / urgent</option>
+              <option>Something else</option>
+            </select>
+          </label>
+          <label>Briefly describe <span aria-hidden="true">*</span>
+            <textarea name="nachricht" rows="4" required placeholder="What's it about? A few sentences are enough."></textarea>
+          </label>
+          <p class="form-hint">Provide at least an email or phone number. Your details go straight to me, with no intermediary services.</p>
+          <p class="form-status" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn primary big">Send request</button>
+        </form>
+        <p class="plain-mail">Prefer direct? Phone <a href="tel:+491628213267"><strong>+49 162 8213267</strong></a> · Email <a href="mailto:pk@kozlowski-it.de"><strong>pk@kozlowski-it.de</strong></a></p>
       </div>
     </section>
   </main>

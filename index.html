@@ -15,6 +15,7 @@
   <link rel="alternate" hreflang="de" href="https://kozlowski-it.de/" />
   <link rel="stylesheet" href="/assets/css/style.css" />
   <script src="/assets/js/theme.js"></script>
+  <script src="/assets/js/contact.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Zum Inhalt springen</a>
@@ -167,11 +168,39 @@
       <div class="wrap">
         <h2>Wie kann ich helfen?</h2>
         <p class="lead">Kostenloses Erstgespräch (30 Minuten), unverbindlich. <strong>Antwort innerhalb eines Werktags.</strong></p>
-        <div class="cta-row center">
-          <a class="btn primary big" href="tel:+491628213267"><span aria-hidden="true">📞</span> 0162 8213267</a>
-          <a class="btn big" href="mailto:pk@kozlowski-it.de"><span aria-hidden="true">✉</span> E-Mail schreiben</a>
-        </div>
-        <p class="plain-mail">Telefon: <strong>0162 8213267</strong> · E-Mail: <strong>pk@kozlowski-it.de</strong></p>
+        <form class="contact-form" data-contact-error="Bitte E-Mail oder Telefon angeben, damit ich antworten kann.">
+          <div class="field-row">
+            <label>Name <span aria-hidden="true">*</span>
+              <input type="text" name="name" required autocomplete="name" />
+            </label>
+            <label>Firma (optional)
+              <input type="text" name="firma" autocomplete="organization" />
+            </label>
+          </div>
+          <div class="field-row">
+            <label>E-Mail
+              <input type="email" name="email" autocomplete="email" />
+            </label>
+            <label>Telefon
+              <input type="tel" name="telefon" autocomplete="tel" />
+            </label>
+          </div>
+          <label>Worum geht's?
+            <select name="thema">
+              <option>IT-Betreuung &amp; Infrastruktur</option>
+              <option>Software-Entwicklung</option>
+              <option>Notfall / dringend</option>
+              <option>Sonstiges</option>
+            </select>
+          </label>
+          <label>Kurz beschreiben <span aria-hidden="true">*</span>
+            <textarea name="nachricht" rows="4" required placeholder="Worum geht es? Ein paar Sätze reichen."></textarea>
+          </label>
+          <p class="form-hint">Mindestens E-Mail oder Telefon angeben. Ihre Angaben gehen direkt an mich, ohne Zwischendienste.</p>
+          <p class="form-status" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn primary big">Anfrage senden</button>
+        </form>
+        <p class="plain-mail">Lieber direkt? Telefon <a href="tel:+491628213267"><strong>0162 8213267</strong></a> · E-Mail <a href="mailto:pk@kozlowski-it.de"><strong>pk@kozlowski-it.de</strong></a></p>
       </div>
     </section>
   </main>

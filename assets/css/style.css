@@ -26,6 +26,8 @@
   --ink: #1c2227;
   --muted: #5a6066;
   --line: #e4e1d8;
+  --line-strong: #8a867d;
+  --danger: #963328;
   --infra: #0e5a6d;   /* petrol — infrastructure */
   --dev: #1d5c45;     /* pine — development */
   --infra-soft: #e3eef1;
@@ -40,6 +42,8 @@
   --ink: #e9e7e0;
   --muted: #9aa3a8;
   --line: #2c363d;
+  --line-strong: #54606a;
+  --danger: #e6877f;
   --infra: #4cc3dc;
   --dev: #5fc99a;
   --infra-soft: #14313a;
@@ -346,8 +350,57 @@ section .lead { color: var(--muted); margin: 0 0 2rem; max-width: 44rem; }
 }
 #faq details p { margin: 0.6rem 0 0; color: var(--muted); font-size: 15px; }
 
-.plain-mail { text-align: center; color: var(--muted); font-size: 14.5px; margin-top: 0.9rem; }
+.plain-mail { text-align: center; color: var(--muted); font-size: 14.5px; margin-top: 1.1rem; }
 .plain-mail strong { color: var(--ink); user-select: all; }
+.plain-mail a { color: inherit; }
+
+/* contact form (interim: builds a pre-filled mail; backend later) */
+.contact-form {
+  max-width: 38rem;
+  margin: 1.75rem auto 0;
+  text-align: left;
+  display: grid;
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+}
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.contact-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font: 500 13px/1.4 var(--font-body, 'IBM Plex Sans', sans-serif);
+  color: var(--ink);
+}
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  font: 400 15px/1.5 'IBM Plex Sans', sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line-strong, #8a867d);
+  border-radius: 6px;
+}
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--infra);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--infra) 20%, transparent);
+}
+.contact-form textarea { resize: vertical; }
+.contact-form .form-hint { font-size: 13px; color: var(--muted); margin: 0; font-weight: 400; }
+.contact-form .form-status { color: var(--danger); font-size: 14px; margin: 0; min-height: 1.1em; }
+.contact-form button { justify-self: start; }
+
+@media (max-width: 560px) {
+  .field-row { grid-template-columns: 1fr; }
+  .contact-form button { justify-self: stretch; text-align: center; }
+}
 
 /* about */
 .about .wrap { display: flex; gap: 2.5rem; align-items: flex-start; }
