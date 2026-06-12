@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projects &amp; Reference Builds · Kozlowski IT</title>
+  <meta name="description" content="Self-built reference setups by Kozlowski IT, documented as if for clients: Proxmox virtualization, network segmentation with firewall, and a SaaS backend architecture. With case studies and architecture diagrams." />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg" />
+  <link rel="alternate" hreflang="de" href="https://kozlowski-it.de/projekte.html" />
+  <link rel="alternate" hreflang="en" href="https://kozlowski-it.de/en/projects.html" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site">
+    <div class="wrap">
+      <a class="wordmark" href="/en/"><img src="/assets/img/logo.svg" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
+      <nav class="main" aria-label="Main navigation">
+        <a href="/en/#services">Services</a>
+        <a href="/en/demos.html">Demos</a>
+        <a class="nav-contact" href="/en/#contact">Contact</a>
+      </nav>
+      <div class="switches">
+        <a class="lang" href="/projekte.html" lang="de">DE</a>
+        <button id="theme-toggle" type="button" aria-label="Toggle color scheme">☾</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="demos-intro">
+      <p class="eyebrow infra">Reference builds</p>
+      <h1>Projects &amp; Case Studies</h1>
+      <p class="lead">No client list yet, but more than words: my own infrastructure, built and documented like a client project. Each study is a PDF to read up on, with an architecture diagram.</p>
+    </section>
+
+    <section class="projects standalone">
+      <article class="project">
+        <img src="/assets/img/pve-architektur-en.jpg" alt="Proxmox cluster architecture diagram" loading="lazy" />
+        <div class="body">
+          <span class="tag infra">Case study · Infrastructure</span>
+          <h3>Virtualization Platform on Proxmox</h3>
+          <p>A self-hosted server platform with 35+ VMs and containers: storage design, resource isolation and encrypted off-site backups with a documented, tested restore. Operated like a production environment.</p>
+          <div class="links">
+            <a class="devlink" href="/assets/docs/case-study-compute-proxmox-en.pdf" target="_blank">Read case study (PDF)</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <img src="/assets/img/netzplan-en.jpg" alt="Network plan with VLAN segmentation" loading="lazy" />
+        <div class="body">
+          <span class="tag infra">Case study · Network</span>
+          <h3>Network Segmentation &amp; Firewall</h3>
+          <p>A multi-tier segmented network (VLANs) with a firewall rule set and VPN access for secure remote work. Zero-trust thinking: devices and services cleanly separated, nothing trusts the other blindly. Planned, implemented, documented.</p>
+          <div class="links">
+            <a class="devlink" href="/assets/docs/case-study-netzwerk-firewall-en.pdf" target="_blank">Read case study (PDF)</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <img src="/assets/img/saas-architektur-en.jpg" alt="SaaS backend architecture diagram" loading="lazy" />
+        <div class="body">
+          <span class="tag dev">Architecture study · Software</span>
+          <h3>SaaS Backend Architecture</h3>
+          <p>A multi-tenant backend with row-level security in PostgreSQL, domain-driven design and an event architecture. Shows how to isolate several clients securely on one platform. Anonymized study.</p>
+          <div class="links">
+            <a class="devlink" href="/assets/docs/saas-architektur-en.pdf" target="_blank">Architecture study (PDF)</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <p class="demos-back"><a href="/en/">‹ Back to home</a> · <a href="/en/demos.html">To the live demos ›</a></p>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Kozlowski IT · Pascal Kozlowski</span>
+      <span class="spacer"></span>
+      <a href="https://github.com/Kozlowski-IT" target="_blank" rel="noopener">GitHub</a>
+      <a href="/impressum.html">Legal notice (German)</a>
+      <a href="/datenschutz.html">Privacy (German)</a>
+    </div>
+  </footer>
+</body>
+</html>

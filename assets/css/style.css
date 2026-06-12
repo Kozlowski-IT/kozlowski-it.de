@@ -378,6 +378,52 @@ footer .wrap {
 footer a { color: var(--muted); }
 footer .spacer { flex: 1; }
 
+/* discovery hub (landing) — two paths: demos + projects */
+.explore {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.explore-card {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  transition: transform 150ms ease-out, border-color 150ms ease-out;
+}
+.explore-card:hover { transform: translateY(-2px); border-color: var(--infra); }
+.explore-tag {
+  font: 600 11px/1 'Sora', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.explore-tag.live { color: var(--dev); }
+.explore-tag.infra { color: var(--infra); }
+.explore-card h3 { margin: 0.5rem 0 0.4rem; font-size: 18px; }
+.explore-card p { margin: 0 0 1rem; color: var(--muted); font-size: 14.5px; }
+.explore-go { font-weight: 600; color: var(--infra); font-size: 14.5px; }
+
+/* standalone project list (projects page): bigger cards, full width */
+.projects.standalone { grid-template-columns: 1fr; gap: 1.5rem; padding-bottom: 1rem; }
+.projects.standalone .project {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: stretch;
+}
+.projects.standalone .project img { height: 100%; min-height: 220px; border-bottom: none; border-right: 1px solid var(--line); }
+.projects.standalone .project .body { padding: 1.75rem; }
+.projects.standalone .project h3 { font-size: 20px; }
+@media (max-width: 760px) {
+  .explore { grid-template-columns: 1fr; }
+  .projects.standalone .project { grid-template-columns: 1fr; }
+  .projects.standalone .project img { min-height: 180px; border-right: none; border-bottom: 1px solid var(--line); }
+}
+
 /* demos overview page */
 .demos-intro { padding: 3rem 0 1rem; max-width: 44rem; }
 .demos-intro h1 { font-size: clamp(26px, 4vw, 34px); margin: 0.4rem 0 0.6rem; }
