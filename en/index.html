@@ -169,33 +169,107 @@
         <h2>How can I help?</h2>
         <p class="lead">Free initial consultation (30 minutes), no strings attached. <strong>Reply within one business day.</strong></p>
         <form class="contact-form" data-contact-error="Please provide an email or phone number so I can reply.">
-          <div class="field-row">
-            <label>Name <span aria-hidden="true">*</span>
-              <input type="text" name="name" required autocomplete="name" />
+          <fieldset class="type-choice">
+            <legend>What's it about?</legend>
+            <label class="type-card">
+              <input type="radio" name="art" value="IT care &amp; infrastructure" data-label="Request type" checked />
+              <span class="type-card-inner">
+                <strong>IT care &amp; infrastructure</strong>
+                <span>Backup, servers, network, maintenance or an outage</span>
+              </span>
             </label>
-            <label>Company (optional)
-              <input type="text" name="firma" autocomplete="organization" />
+            <label class="type-card">
+              <input type="radio" name="art" value="Software &amp; project" data-label="Request type" />
+              <span class="type-card-inner">
+                <strong>Software &amp; project</strong>
+                <span>Web app, workflow tool, integration or an idea</span>
+              </span>
+            </label>
+          </fieldset>
+
+          <div class="field-row">
+            <label>First name <span aria-hidden="true">*</span>
+              <input type="text" name="vorname" data-label="First name" required autocomplete="given-name" />
+            </label>
+            <label>Last name <span aria-hidden="true">*</span>
+              <input type="text" name="nachname" data-label="Last name" required autocomplete="family-name" />
             </label>
           </div>
           <div class="field-row">
             <label>Email
-              <input type="email" name="email" autocomplete="email" />
+              <input type="email" name="email" data-label="Email" autocomplete="email" />
             </label>
             <label>Phone
-              <input type="tel" name="telefon" autocomplete="tel" />
+              <input type="tel" name="telefon" data-label="Phone" autocomplete="tel" />
             </label>
           </div>
-          <label>What's it about?
-            <select name="thema">
-              <option>IT care &amp; infrastructure</option>
-              <option>Software development</option>
-              <option>Emergency / urgent</option>
-              <option>Something else</option>
-            </select>
+          <label>Company (optional)
+            <input type="text" name="firma" data-label="Company" autocomplete="organization" />
           </label>
-          <label>Briefly describe <span aria-hidden="true">*</span>
-            <textarea name="nachricht" rows="4" required placeholder="What's it about? A few sentences are enough."></textarea>
-          </label>
+
+          <fieldset class="branch" data-branch="IT care &amp; infrastructure">
+            <div class="field-row">
+              <label>Topic
+                <select name="infra_anliegen" data-label="Topic">
+                  <option>Backup / data protection</option>
+                  <option>Servers &amp; virtualization</option>
+                  <option>Network &amp; firewall</option>
+                  <option>Maintenance &amp; care</option>
+                  <option>Outage / emergency</option>
+                  <option>Other / not sure yet</option>
+                </select>
+              </label>
+              <label>How urgent?
+                <select name="dringlichkeit" data-label="Urgency">
+                  <option>Just an enquiry</option>
+                  <option>Within the next weeks</option>
+                  <option>This week</option>
+                  <option>Emergency – today / now</option>
+                </select>
+              </label>
+            </div>
+            <label>Number of devices / servers (approx., optional)
+              <input type="text" name="umfang" data-label="Scope" placeholder="e.g. 1 server, 8 workstations" />
+            </label>
+            <label>What's not working, or what would you like? <span aria-hidden="true">*</span>
+              <textarea name="beschreibung_infra" data-label="Description" rows="4" required placeholder="Briefly describe your situation: what's not working, or what would you like to improve?"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset class="branch" data-branch="Software &amp; project" disabled hidden>
+            <div class="field-row">
+              <label>Type of project
+                <select name="projekt_art" data-label="Type of project">
+                  <option>New web application</option>
+                  <option>Extend existing software</option>
+                  <option>Workflow / approval system</option>
+                  <option>Integration / API / automation</option>
+                  <option>Consulting / not sure yet</option>
+                </select>
+              </label>
+              <label>Timeframe (optional)
+                <select name="zeitrahmen" data-label="Timeframe">
+                  <option>Open</option>
+                  <option>As soon as possible</option>
+                  <option>In 1–3 months</option>
+                  <option>This year</option>
+                </select>
+              </label>
+            </div>
+            <label>Budget range (optional)
+              <select name="budget" data-label="Budget range">
+                <option>Open</option>
+                <option>up to €2,000</option>
+                <option>€2,000–5,000</option>
+                <option>€5,000–15,000</option>
+                <option>over €15,000</option>
+              </select>
+            </label>
+            <label>Your project idea <span aria-hidden="true">*</span>
+              <textarea name="beschreibung_projekt" data-label="Project idea" rows="6" required placeholder="Describe your project like a short brief: what should the software do? Who is it for? What problem does it solve? Is there something similar you know? The more concrete, the better I can assess it."></textarea>
+            </label>
+          </fieldset>
+
           <p class="form-hint">Provide at least an email or phone number. Your details go straight to me, with no intermediary services.</p>
           <p class="form-status" role="alert" aria-live="polite"></p>
           <button type="submit" class="btn primary big">Send request</button>

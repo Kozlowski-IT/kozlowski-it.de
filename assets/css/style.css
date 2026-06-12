@@ -368,6 +368,64 @@ section .lead { color: var(--muted); margin: 0 0 2rem; max-width: 44rem; }
   box-shadow: var(--shadow);
 }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* request-type choice (two cards) */
+.type-choice { border: none; padding: 0; margin: 0; }
+.type-choice legend {
+  font: 500 13px/1.4 'IBM Plex Sans', sans-serif;
+  color: var(--ink);
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+.type-cards-wrap, .type-choice {
+  display: grid;
+}
+.type-choice {
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.type-choice legend { grid-column: 1 / -1; }
+.type-card {
+  position: relative;
+  cursor: pointer;
+}
+.type-card input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.type-card-inner {
+  display: block;
+  height: 100%;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--bg);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.type-card-inner strong { display: block; font-size: 14.5px; color: var(--ink); }
+.type-card-inner span { display: block; font-size: 12.5px; color: var(--muted); margin-top: 0.2rem; }
+.type-card input:checked + .type-card-inner {
+  border-color: var(--infra);
+  background: var(--infra-soft);
+}
+.type-card input:focus-visible + .type-card-inner {
+  outline: 2px solid var(--infra);
+  outline-offset: 2px;
+}
+
+/* branch fieldsets reuse form spacing */
+.branch {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+}
+.branch[hidden] { display: none; }
 .contact-form label {
   display: block;
   font: 500 13px/1.4 'IBM Plex Sans', sans-serif;
