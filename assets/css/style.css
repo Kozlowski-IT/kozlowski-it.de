@@ -363,6 +363,9 @@ section .lead { color: var(--muted); margin: 0 0 2rem; max-width: 44rem; }
   border-bottom: 1px solid var(--line);
 }
 .contact .wrap { text-align: center; padding-top: 1rem; padding-bottom: 1rem; }
+/* centered heading: no left accent bar (it would float at the far edge) */
+.contact h2 { padding-left: 0; }
+.contact h2::before { content: none; }
 .contact .lead { margin-left: auto; margin-right: auto; }
 
 /* footer */
