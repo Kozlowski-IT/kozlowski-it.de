@@ -274,6 +274,13 @@
           <p class="form-status" role="alert" aria-live="polite"></p>
           <button type="submit" class="btn primary big">Anfrage senden</button>
         </form>
+        <!-- Termin-Buchung: aktiviert sich, sobald data-booking-url gesetzt ist
+             (Cal.com self-hosted). Leer = bleibt versteckt, kein toter Button. -->
+        <div class="booking" data-booking-url="" hidden>
+          <span class="booking-or">oder</span>
+          <a class="btn primary big booking-btn" href="#" target="_blank" rel="noopener"><span aria-hidden="true">📅</span> Direkt einen Termin buchen</a>
+          <p class="form-hint">Freien Slot fürs kostenlose Erstgespräch wählen — Sie sehen meine echten freien Zeiten.</p>
+        </div>
         <p class="plain-mail">Lieber direkt? Telefon <a href="tel:+491628213267"><strong>0162 8213267</strong></a> · E-Mail <a href="mailto:pk@kozlowski-it.de"><strong>pk@kozlowski-it.de</strong></a></p>
       </div>
     </section>

@@ -426,6 +426,18 @@ section .lead { color: var(--muted); margin: 0 0 2rem; max-width: 44rem; }
   min-inline-size: 0;
 }
 .branch[hidden] { display: none; }
+
+/* booking section (hidden until a Cal.com url is configured) */
+.booking { text-align: center; margin-top: 1.5rem; }
+.booking[hidden] { display: none; }
+.booking-or {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+.booking .form-hint { text-align: center; margin-top: 0.6rem; }
 .contact-form label {
   display: block;
   font: 500 13px/1.4 'IBM Plex Sans', sans-serif;

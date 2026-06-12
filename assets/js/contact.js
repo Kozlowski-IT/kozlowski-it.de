@@ -3,6 +3,17 @@
 // no third-party service — data goes straight to pk@kozlowski-it.de. Swap the
 // mailto for a POST to a self-hosted endpoint once the backend is in place.
 (function () {
+  // Booking section: reveal + wire the button only when a Cal.com URL is set
+  // (data-booking-url). Until then it stays hidden — no dead button ships.
+  const booking = document.querySelector('.booking');
+  if (booking) {
+    const url = (booking.dataset.bookingUrl || '').trim();
+    if (url) {
+      booking.querySelector('.booking-btn').href = url;
+      booking.hidden = false;
+    }
+  }
+
   const form = document.querySelector('.contact-form');
   if (!form) return;
 
