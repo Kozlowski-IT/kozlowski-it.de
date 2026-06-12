@@ -599,8 +599,50 @@ footer .spacer { flex: 1; }
   .projects.standalone .project img { min-height: 180px; border-right: none; border-bottom: 1px solid var(--line); }
 }
 
+/* subpage section switcher (demos <-> projects) */
+.subnav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 1.75rem;
+}
+.subnav-home {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+}
+.subnav-home:hover { color: var(--ink); }
+.page-tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.page-tabs .tab {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--muted);
+  font: 600 14px 'IBM Plex Sans', sans-serif;
+  white-space: nowrap;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.page-tabs .tab:not(.active):hover { color: var(--ink); }
+.page-tabs .tab.active { background: var(--infra); color: #fff; }
+[data-theme='dark'] .page-tabs .tab.active { color: #0c1316; }
+
+@media (max-width: 560px) {
+  .subnav { gap: 0.6rem; }
+  .page-tabs { margin-left: 0; width: 100%; }
+  .page-tabs .tab { flex: 1; text-align: center; padding-inline: 0.6rem; }
+}
+
 /* demos overview page */
-.demos-intro { padding: 3rem 0 1rem; max-width: 44rem; }
+.demos-intro { padding: 1.5rem 0 1rem; max-width: 44rem; }
 .demos-intro h1 { font-size: clamp(26px, 4vw, 34px); margin: 0.4rem 0 0.6rem; }
 
 .demo-list {
