@@ -369,15 +369,16 @@ section .lead { color: var(--muted); margin: 0 0 2rem; max-width: 44rem; }
 }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .contact-form label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  font: 500 13px/1.4 var(--font-body, 'IBM Plex Sans', sans-serif);
+  display: block;
+  font: 500 13px/1.4 'IBM Plex Sans', sans-serif;
   color: var(--ink);
 }
 .contact-form input,
 .contact-form select,
 .contact-form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
   font: 400 15px/1.5 'IBM Plex Sans', sans-serif;
   color: var(--ink);
   background: var(--bg);
