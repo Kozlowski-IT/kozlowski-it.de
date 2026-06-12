@@ -378,6 +378,30 @@ footer .wrap {
 footer a { color: var(--muted); }
 footer .spacer { flex: 1; }
 
+/* "why hybrid" rebuttal band */
+.why {
+  background: color-mix(in srgb, var(--dev) 5%, var(--paper));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.why em { font-style: italic; color: var(--ink); }
+.why-points {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0 0;
+  display: grid;
+  gap: 0.65rem;
+  max-width: 46rem;
+}
+.why-points li { padding-left: 1.5rem; position: relative; }
+.why-points li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--dev);
+  font-weight: 600;
+}
+
 /* discovery hub (landing) — two paths: demos + projects */
 .explore {
   display: grid;
