@@ -378,6 +378,78 @@ footer .wrap {
 footer a { color: var(--muted); }
 footer .spacer { flex: 1; }
 
+/* demos overview page */
+.demos-intro { padding: 3rem 0 1rem; max-width: 44rem; }
+.demos-intro h1 { font-size: clamp(26px, 4vw, 34px); margin: 0.4rem 0 0.6rem; }
+
+.demo-list {
+  display: grid;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+}
+.demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 1.75rem;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.demo:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+.demo:nth-child(even) .demo-shot { order: 2; }
+.demo-shot {
+  display: block;
+  align-self: stretch;
+}
+.demo-shot img {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  border-right: 1px solid var(--line);
+  transition: transform 250ms ease;
+}
+.demo:nth-child(even) .demo-shot img { border-right: none; border-left: 1px solid var(--line); }
+.demo-shot:hover img { transform: scale(1.02); }
+.demo-body { padding: 1.75rem 1.75rem 1.75rem 0; }
+.demo:nth-child(even) .demo-body { padding: 1.75rem 0 1.75rem 1.75rem; }
+.demo-body h2 { font-size: 22px; margin: 0; }
+.demo-sub {
+  color: var(--dev);
+  font-weight: 600;
+  margin: 0.15rem 0 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.oss-tag {
+  font: 600 10px/1 var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--dev);
+  background: var(--dev-soft);
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+.demo-body p { margin: 0 0 1rem; font-size: 15px; color: var(--ink); }
+.demo-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+.demo-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.demos-back { padding: 1rem 0 3rem; }
+.demos-back a { color: var(--infra); text-decoration: none; }
+
+@media (max-width: 760px) {
+  .demo, .demo:nth-child(even) { grid-template-columns: 1fr; }
+  .demo:nth-child(even) .demo-shot { order: 0; }
+  .demo-shot img { min-height: 180px; border-right: none; border-bottom: 1px solid var(--line); }
+  .demo:nth-child(even) .demo-shot img { border-left: none; border-bottom: 1px solid var(--line); }
+  .demo-body, .demo:nth-child(even) .demo-body { padding: 1.5rem; }
+}
+
 /* legal pages */
 .legal { max-width: 44rem; margin: 0 auto; padding: 3rem 1.5rem; }
 .legal h1 { font-size: 26px; }
