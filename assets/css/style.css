@@ -21,34 +21,36 @@
 }
 
 :root {
-  --bg: #f8f7f3;
-  --surface: #fffefb;
-  --ink: #1c2227;
-  --muted: #5a6066;
-  --line: #e4e1d8;
-  --line-strong: #8a867d;
-  --danger: #963328;
-  --infra: #0e5a6d;   /* petrol — infrastructure */
-  --dev: #1d5c45;     /* pine — development */
-  --infra-soft: #e3eef1;
-  --dev-soft: #e4ede7;
-  --shadow: 0 2px 12px rgba(28, 34, 39, 0.06);
+  /* cool neutrals so the violet/navy brand sits naturally */
+  --bg: #f5f5f9;
+  --surface: #ffffff;
+  --ink: #14141f;
+  --muted: #5c5c6e;
+  --line: #e6e4f0;
+  --line-strong: #8d8aa3;
+  --danger: #b23636;
+  --infra: #7c3aed;   /* cyber purple — primary brand accent (IT/infra) */
+  --dev: #0891b2;     /* cyan — secondary accent (software) */
+  --infra-soft: #f1ebfe;
+  --dev-soft: #e3f3f8;
+  --shadow: 0 2px 12px rgba(20, 20, 31, 0.07);
   color-scheme: light;
 }
 
 [data-theme='dark'] {
-  --bg: #10161a;
-  --surface: #1a2228;
-  --ink: #e9e7e0;
-  --muted: #9aa3a8;
-  --line: #2c363d;
-  --line-strong: #54606a;
-  --danger: #e6877f;
-  --infra: #4cc3dc;
-  --dev: #5fc99a;
-  --infra-soft: #14313a;
-  --dev-soft: #15302a;
-  --shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+  /* dark theme echoes the logo hexagon (navy #1a1a2e → #0d0d1a) */
+  --bg: #0e0e18;
+  --surface: #191926;
+  --ink: #e9e8f2;
+  --muted: #9b9ab0;
+  --line: #2a2a3b;
+  --line-strong: #51506b;
+  --danger: #ef8a82;
+  --infra: #a78bfa;   /* violet-400 — readable on dark */
+  --dev: #22d3ee;     /* cyan-400 */
+  --infra-soft: #241a3d;
+  --dev-soft: #0d2c34;
+  --shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   color-scheme: dark;
 }
 
@@ -146,14 +148,14 @@ nav.main a:hover { color: var(--ink); }
   content: '';
   position: absolute; bottom: 8px; right: 8px;
   width: 16px; height: 16px;
-  background: #2e9e63;
+  background: #7c3aed;
   border-radius: 50%;
   border: 3px solid var(--bg);
   animation: pulse 2.4s infinite;
 }
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 158, 99, 0.45); }
-  50% { box-shadow: 0 0 0 7px rgba(46, 158, 99, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.45); }
+  50% { box-shadow: 0 0 0 7px rgba(124, 58, 237, 0); }
 }
 .hero img.portrait {
   width: 132px; height: 132px;
@@ -519,7 +521,7 @@ footer .spacer { flex: 1; }
 
 /* "why hybrid" rebuttal band */
 .why {
-  background: color-mix(in srgb, var(--dev) 5%, var(--paper));
+  background: color-mix(in srgb, var(--dev) 5%, var(--bg));
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }

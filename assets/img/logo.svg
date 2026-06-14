@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0.5" stop-color="#0e5a6d"/>
-      <stop offset="0.5" stop-color="#1d5c45"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="14" fill="url(#g)"/>
-  <text x="32" y="44" text-anchor="middle" font-family="Sora, system-ui, sans-serif" font-weight="800" font-size="34" fill="#fff">K</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120"><defs><linearGradient id="hexg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1a2e"/><stop offset="1" stop-color="#0d0d1a"/></linearGradient></defs><g transform="translate(60,60) scale(1.05) translate(-68,-168)"><path d="M 56.0 119.5 Q 68 112.6 79.9 119.5 L 113.9 139.1 Q 124.8 145.4 124.8 158.0 L 124.8 178.0 Q 124.8 190.6 113.9 196.9 L 79.9 216.5 Q 68 223.4 56.0 216.5 L 22.1 196.9 Q 11.2 190.6 11.2 178.0 L 11.2 158.0 Q 11.2 145.4 22.1 139.1 Z" fill="url(#hexg)" stroke="#3a3a55" stroke-width="2.4" stroke-linejoin="round"/><g transform="translate(47.28,180) scale(0.05600,-0.05600)" fill="#ffffff"><path transform="translate(0.0,0)" d="M228 160 219 347 554 700H734L432 375L342 279ZM83 0V700H244V0ZM562 0 313 305 419 420 751 0Z"/></g><polyline points="38,199 51,199 57,189 65,209 72,194 78,199 98,199" fill="none" stroke="#7c3aed" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g></svg>
