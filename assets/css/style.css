@@ -129,6 +129,28 @@ nav.main a:hover { color: var(--ink); }
 .switches { display: flex; align-items: center; gap: 0.6rem; }
 .lang { font-size: 13px; color: var(--muted); text-decoration: none; }
 .lang:hover { color: var(--ink); }
+
+/* customer portal button (header, all pages) */
+.portal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 7px;
+  background: var(--infra);
+  border: 1px solid var(--infra);
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 150ms ease-out, transform 150ms ease-out;
+}
+.portal-btn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--infra) 86%, #000);
+}
+[data-theme='dark'] .portal-btn { color: #0c1316; }
 #theme-toggle {
   background: none;
   border: 1px solid var(--line);
@@ -740,6 +762,15 @@ footer .spacer { flex: 1; }
   }
   .project img { height: auto; aspect-ratio: 16 / 10; }
   #theme-toggle { width: 44px; height: 44px; }
+}
+
+@media (max-width: 520px) {
+  /* small phones: the portal button is the header action. collapse the wordmark
+     to its hexagon mark and drop the empty nav (it would still add flex gaps and
+     push the row past the viewport) so nothing overflows */
+  .wordmark { font-size: 0; gap: 0; }
+  nav.main { display: none; }
+  .portal-btn { padding: 0.4rem 0.75rem; font-size: 13px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
