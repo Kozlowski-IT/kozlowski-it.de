@@ -7,7 +7,7 @@
     "items": [
       { "label": "Leistungen", "url": "/#leistungen" },
       { "label": "Projekte", "url": "/projekte/" },
-      { "label": "Über mich", "url": "/#ueber" },
+      { "label": "Über mich", "url": "/ueber-mich/" },
       { "label": "Ablauf", "url": "/#ablauf" }
     ],
     "cta": "Termin buchen"
