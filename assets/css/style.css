@@ -933,3 +933,14 @@ form.rechner legend { font-weight: 700; font-size: 14px; padding: 0 0.4rem; }
 .r-cta { margin-top: 1.1rem; }
 
 .lp-beleg img { width: 100%; border: 1px solid var(--line); border-radius: 12px; margin: 0.8rem 0; }
+
+/* ── Startseite Teil B: Software-Karte volle Breite + Optional-Formularfelder ── */
+.fields.one { grid-template-columns: 1fr; margin-top: 1.5rem; }
+details.more-fields { margin: 0.2rem 0 0.6rem; }
+details.more-fields > summary {
+  cursor: pointer; color: var(--infra); font-weight: 600; font-size: 14px;
+  padding: 0.5rem 0; list-style: none; user-select: none;
+}
+details.more-fields > summary::-webkit-details-marker { display: none; }
+details.more-fields > summary::before { content: "+ "; font-weight: 700; }
+details.more-fields[open] > summary::before { content: "– "; }

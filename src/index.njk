@@ -34,22 +34,33 @@ structuredData: partials/jsonld-home.njk
         <p class="lead">Viele Unternehmen brauchen beides: einen stabilen, sicheren IT-Unterbau und ab und zu ein Stück Software, das genau zu ihrem Ablauf passt. Bei mir bekommen Sie beides, ohne zwei Dienstleister koordinieren zu müssen.</p>
         <div class="fields">
           <article class="field">
-            <p class="eyebrow infra">IT-Betreuung &amp; Infrastruktur</p>
-            <h3>Damit Ihre IT einfach läuft</h3>
-            <p class="for">Für alle ohne eigene IT-Abteilung: vom Einzelbüro über Praxen und Kanzleien bis zum Mittelstand.</p>
+            <p class="eyebrow infra">Kleine Büros, Praxen und Kanzleien</p>
+            <h3>Kein eigener IT-Mensch, aber Daten, bei denen ein Ausfall wehtut</h3>
             <ul>
               <li><strong>Datensicherung, die im Ernstfall funktioniert:</strong> außer Haus gelagert, regelmäßig auf Wiederherstellung getestet</li>
               <li><strong>Server absichern:</strong> Schutz vor Angriffen, automatische Updates, alles dokumentiert</li>
-              <li><strong>Datenbanken, die zuverlässig laufen:</strong> Einrichtung, Absicherung und Pflege Ihrer Datenbanken (PostgreSQL), mit getesteten Backups, Updates und Performance-Tuning</li>
-              <li><strong>Mehrere Server auf einer Maschine:</strong> spart Hardware und Strom, neue Server in Minuten, Snapshots für schnelle Wiederherstellung (Virtualisierung mit Proxmox)</li>
-              <li><strong>Hochverfügbarkeit auf Wunsch:</strong> kritische Systeme laufen redundant, damit ein Hardware-Ausfall den Betrieb nicht stoppt</li>
               <li><strong>Sichere Netzwerke:</strong> Geräte sauber getrennt, sicherer Zugriff aus dem Homeoffice</li>
-              <li><strong>VMware-Migration:</strong> raus aus den Lizenzkosten, rüber zu Proxmox</li>
-              <li><strong>Monatliche Betreuung ab 149 €/Monat</strong> (z. B. 1 Server + bis zu 5 Arbeitsplätze): ich überwache, aktualisiere und prüfe die Backups. Sie merken nur, dass alles läuft. Größere Umgebungen zum Festpreis nach kurzem Check</li>
+              <li><strong>Dokumentensuche statt Ordnerchaos:</strong> Volltextsuche über Ihre Ablage, <a href="/demos/">Quellwerk live ausprobieren</a></li>
+              <li><strong>DSGVO ist eingebaut, nicht Aufpreis:</strong> AVV zum Auftrag, Daten in Deutschland, verschlüsselte Backups</li>
             </ul>
-            <p class="note"><span aria-hidden="true">📦</span> <strong>Festpreis-Pakete</strong> statt Stundenzählen: Sie wissen vorher, was es kostet.</p>
             <p class="card-cta"><a class="btn primary" href="#kontakt">Kostenloses Erstgespräch</a> <a class="btn ghosted" href="/it-betreuung/">Mehr dazu →</a></p>
           </article>
+          <article class="field">
+            <p class="eyebrow infra">Mittelstand mit eigener Serverlandschaft</p>
+            <h3>Sie haben Hosts, VMs und einen Wartungsvertrag. Und seit Broadcom ein Preisproblem.</h3>
+            <ul>
+              <li><strong>VMware-Ausstieg:</strong> raus aus den Lizenzkosten, rüber zu Proxmox. <a href="/vmware-ausstieg/">Kosten in 3 Minuten rechnen</a></li>
+              <li><strong>Virtualisierung mit Proxmox:</strong> spart Hardware und Strom, neue Server in Minuten, Snapshots für schnelle Wiederherstellung</li>
+              <li><strong>Hochverfügbarkeit auf Wunsch:</strong> kritische Systeme laufen redundant, damit ein Hardware-Ausfall den Betrieb nicht stoppt</li>
+              <li><strong>Datenbanken, die zuverlässig laufen:</strong> PostgreSQL einrichten, absichern, pflegen, mit getesteten Backups und Performance-Tuning</li>
+              <li><strong>Betrieb danach:</strong> Migration ist nicht das Ende, sondern der Anfang vom neuen Betrieb</li>
+            </ul>
+            <p class="card-cta"><a class="btn primary" href="/vmware-ausstieg/">VMware-Kosten rechnen →</a> <a class="btn ghosted" href="/it-betreuung/">Mehr dazu →</a></p>
+          </article>
+        </div>
+        <p class="note"><span aria-hidden="true">📦</span> <strong>Festpreis-Pakete</strong> statt Stundenzählen: Sie wissen vorher, was es kostet.</p>
+
+        <div class="fields one">
           <article class="field dev">
             <p class="eyebrow dev">Software-Entwicklung</p>
             <h3>Wenn kein Fertigprodukt passt</h3>
@@ -68,22 +79,10 @@ structuredData: partials/jsonld-home.njk
       </div>
     </section>
 
-    <section id="warum" class="why" data-section-key="warum">
-      <div class="wrap">
-        <h2>Beides? Genau das ist der Vorteil.</h2>
-        <p class="lead">Manche stutzen: Systemintegration <em>und</em> Entwicklung, geht das zusammen? In großen Konzernen sind das zwei Abteilungen. Für ein kleineres Unternehmen ist es das Gegenteil von Verzettelung: ein Ansprechpartner statt zwei Dienstleister, die sich im Ernstfall gegenseitig den Schwarzen Peter zuschieben.</p>
-        <ul class="why-points">
-          <li><strong>Kein Schwarzer-Peter-Spiel:</strong> nicht „das ist der Server" gegen „das ist der Code". Bei mir liegt beides in einer Hand.</li>
-          <li><strong>Software, die zur Umgebung passt:</strong> ich entwickle nicht an Ihrer Infrastruktur vorbei, weil ich sie selbst betreibe.</li>
-          <li><strong>Die Branche nennt es DevOps:</strong> Dass Entwicklung und Betrieb zusammengehören, ist längst Standard. Ich lebe das im Kleinen, von der Anwendung bis zum Server darunter.</li>
-        </ul>
-      </div>
-    </section>
-
     <section id="projekte" data-section-key="projekte">
       <div class="wrap">
-        <h2>Demos &amp; Projekte</h2>
-        <p class="lead">Lieber selbst anschauen als Versprechen lesen: laufende Anwendungen zum Ausprobieren und dokumentierte Referenzaufbauten zum Nachlesen.</p>
+        <h2>Zum Anfassen</h2>
+        <p class="lead">Lieber selbst anschauen als Versprechen lesen: laufende Anwendungen zum Ausprobieren und dokumentierte eigene Aufbauten zum Nachlesen.</p>
         <div class="explore">
           <a class="explore-card has-thumb" href="/demos/">
             <img class="explore-thumb" src="/assets/img/flowgate-board.jpg" alt="Ausschnitt der FlowGate-Anwendung" loading="lazy" />
@@ -94,12 +93,24 @@ structuredData: partials/jsonld-home.njk
           </a>
           <a class="explore-card has-thumb" href="/projekte/">
             <img class="explore-thumb" src="/assets/img/netzplan-de.jpg" alt="Ausschnitt eines Netzwerk-Architekturdiagramms" loading="lazy" />
-            <span class="explore-tag infra">Referenzaufbauten</span>
-            <h3>Projekte &amp; Case Studies</h3>
-            <p>Proxmox-Plattform, Netzwerk-Segmentierung, SaaS-Architektur: gebaut und dokumentiert wie für Kunden.</p>
-            <span class="explore-go" aria-hidden="true">Zu den Projekten →</span>
+            <span class="explore-tag infra">Aus dem eigenen Betrieb</span>
+            <h3>Aus dem eigenen Betrieb</h3>
+            <p>Proxmox-Plattform, Netzwerk-Segmentierung, SaaS-Architektur. Kein Kundenprojekt, sondern meine eigene Infrastruktur: 35+ VMs, Firewall-Kaskade, getestete Backups. Dokumentiert, wie ich es auch bei Ihnen dokumentieren würde. Was ich anbiete, betreibe ich selbst.</p>
+            <span class="explore-go" aria-hidden="true">Ansehen →</span>
           </a>
         </div>
+      </div>
+    </section>
+
+    <section id="warum" class="why" data-section-key="warum">
+      <div class="wrap">
+        <h2>Server und Software aus einer Hand</h2>
+        <p class="lead">In großen Konzernen sind das zwei Abteilungen. Für kleinere Unternehmen heißt das: zwei Dienstleister, zwei Rechnungen, und im Ernstfall zwei Schuldige, die aufeinander zeigen.</p>
+        <ul class="why-points">
+          <li><strong>Kein Schwarzer-Peter-Spiel:</strong> nicht „das ist der Server" gegen „das ist der Code". Bei mir liegt beides in einer Hand.</li>
+          <li><strong>Software, die zur Umgebung passt:</strong> ich entwickle nicht an Ihrer Infrastruktur vorbei, weil ich sie selbst betreibe.</li>
+          <li><strong>Die Branche nennt es DevOps:</strong> Dass Entwicklung und Betrieb zusammengehören, ist längst Standard. Ich lebe das im Kleinen, von der Anwendung bis zum Server darunter.</li>
+        </ul>
       </div>
     </section>
 
@@ -125,6 +136,7 @@ structuredData: partials/jsonld-home.njk
             <li>IHK-Fachinformatiker <strong>Systemintegration</strong>, Abschluss bis Dezember 2026</li>
             <li>Arbeitsweise: Festpreise, saubere Dokumentation, kein Fachchinesisch</li>
           </ul>
+          <p class="card-cta"><a class="btn ghosted" href="/ueber-mich/">Mehr über mich →</a></p>
         </div>
       </div>
     </section>
@@ -132,14 +144,14 @@ structuredData: partials/jsonld-home.njk
     <section id="faq" data-section-key="faq">
       <div class="wrap">
         <h2>Häufige Fragen</h2>
-        <details><summary>Was kostet das?</summary><p>Zwei einfache Modelle, beide ohne Stundenzählen: Die <strong>laufende Betreuung</strong> gibt es als monatliches Paket ab 149 €/Monat (Basispaket z. B. 1 Server + bis zu 5 Arbeitsplätze), ich überwache Ihre Systeme, spiele Updates ein und prüfe die Backups. <strong>Einmalige Einsätze und Projekte</strong> bekommen nach dem kostenlosen Erstgespräch ein Festpreis-Angebot auf einer Seite. So kennen Sie den Preis, bevor ich anfange.</p></details>
-        <details><summary>Bin ich an einen Vertrag gebunden?</summary><p>Nein. Projekte sind einmalige Festpreis-Aufträge. Die monatliche Betreuung ist kündbar. Ich überzeuge lieber durch Arbeit als durch Laufzeiten.</p></details>
-        <details><summary>Was passiert bei einem Notfall oder Datenverlust?</summary><p>Bei akuten Störungen erreichen Sie mich direkt per Telefon, und ich kümmere mich vorrangig darum. Wartungskunden haben dafür eine feste Reaktionszeit: werktags binnen 12 Stunden. Und vorbeugend ist die geprüfte Datensicherung da: Wir testen die Wiederherstellung, <em>bevor</em> der Ernstfall kommt, und dokumentieren, wie sie abläuft.</p></details>
         <details><summary>Sie sind nur eine Person, was, wenn Sie ausfallen?</summary><p>Berechtigte Frage. Mein Ansatz: Ich dokumentiere alles so, dass im Ernstfall jemand anderes übernehmen kann, statt Wissen in meinem Kopf zu horten. Dazu kommen die geprüften, außer Haus gelagerten Backups und eine erreichbare Notfallnummer. So hängt Ihr Betrieb nicht an meiner Anwesenheit, sondern an einer dokumentierten, wiederherstellbaren Lösung.</p></details>
-        <details><summary>Verstehe ich überhaupt, was Sie da tun?</summary><p>Ja, das ist Teil der Arbeit. Kein Fachchinesisch, alles schriftlich dokumentiert und so erklärt, dass Sie es Ihrem Team weitergeben können.</p></details>
+        <details><summary>Was kostet das?</summary><p>Zwei einfache Modelle, beide ohne Stundenzählen: Die <strong>laufende Betreuung</strong> gibt es als monatliches Paket ab 149 €/Monat (Basispaket z. B. 1 Server + bis zu 5 Arbeitsplätze), ich überwache Ihre Systeme, spiele Updates ein und prüfe die Backups. <strong>Einmalige Einsätze und Projekte</strong> bekommen nach dem kostenlosen Erstgespräch ein Festpreis-Angebot auf einer Seite. So kennen Sie den Preis, bevor ich anfange.</p></details>
+        <details><summary>Was passiert bei einem Notfall oder Datenverlust?</summary><p>Bei akuten Störungen erreichen Sie mich direkt per Telefon, und ich kümmere mich vorrangig darum. Wartungskunden haben dafür eine feste Reaktionszeit: werktags binnen 12 Stunden. Und vorbeugend ist die geprüfte Datensicherung da: Wir testen die Wiederherstellung, <em>bevor</em> der Ernstfall kommt, und dokumentieren, wie sie abläuft.</p></details>
         <details><summary>Wie halten Sie es mit dem Datenschutz (DSGVO)?</summary><p>Gerade für Praxen und Kanzleien zentral: Auftragsverarbeitungsvertrag (<a href="/avv/">AVV, Muster ansehen</a>) gehört bei mir zum Auftrag, Daten bleiben auf Systemen in Deutschland, Backups sind verschlüsselt, und ich arbeite BSI-IT-Grundschutz-orientiert. Datenschutz ist kein Zusatzposten, sondern Standard.</p></details>
-        <details><summary>Nutzen Sie KI bei der Entwicklung?</summary><p>Ja, als Werkzeug, so wie ein Tischler eine Maschine statt eines Handhobels nimmt. KI nimmt mir Routine ab und macht mich schneller. Die Entscheidungen aber (wie etwas aufgebaut wird, was sicher ist, was zu Ihrem Ablauf passt) und die Verantwortung dafür bleiben bei mir. <strong>Ihre Daten landen dabei nicht in irgendeiner KI</strong>; das Werkzeug hilft mir beim Code, nicht mit Ihren Inhalten. Und KI ist kein Knopf, der fertige Software ausspuckt: Anspruchsvolle Projekte brauchen weiter echte Zeit und Sorgfalt. Wer etwas anderes verspricht, hat es nicht selbst gebaut.</p></details>
+        <details><summary>Bin ich an einen Vertrag gebunden?</summary><p>Nein. Projekte sind einmalige Festpreis-Aufträge. Die monatliche Betreuung ist kündbar. Ich überzeuge lieber durch Arbeit als durch Laufzeiten.</p></details>
+        <details><summary>Verstehe ich überhaupt, was Sie da tun?</summary><p>Ja, das ist Teil der Arbeit. Kein Fachchinesisch, alles schriftlich dokumentiert und so erklärt, dass Sie es Ihrem Team weitergeben können.</p></details>
         <details><summary>Sehen Sie bei der Betreuung unsere Daten?</summary><p>Für die Betreuung brauche ich Zugang zu Systemen, nicht zu Ihren Inhalten. Ich arbeite an Konfiguration, Struktur und Skripten. Ihre eigentlichen Daten (Datenbank-Inhalte, Dokumente, E-Mails) bleiben dabei auf Ihren Systemen und werden nicht abgezogen oder in Cloud- oder KI-Dienste gegeben. Muss ich für eine konkrete Aufgabe doch an echte Daten, geschieht das nur nach Absprache, dokumentiert und im Rahmen des Auftragsverarbeitungsvertrags. Auch die KI-Werkzeuge, die ich nutze, sehen ausschließlich Code und Struktur, nie Ihre Inhalte.</p></details>
+        <details><summary>Nutzen Sie KI bei der Entwicklung?</summary><p>Ja, als Werkzeug. KI nimmt mir Routine ab. Die Entscheidungen (wie etwas aufgebaut wird, was sicher ist) und die Verantwortung dafür bleiben bei mir. <strong>Ihre Daten sehen die Werkzeuge nicht</strong>, nur Code und Struktur.</p></details>
       </div>
     </section>
 
@@ -148,24 +160,6 @@ structuredData: partials/jsonld-home.njk
         <h2>Wie kann ich helfen?</h2>
         <p class="lead">Kostenloses Erstgespräch (30 Minuten), unverbindlich. <strong>Antwort innerhalb eines Werktags.</strong></p>
         <form class="contact-form" data-contact-error="Bitte E-Mail oder Telefon angeben, damit ich antworten kann." data-fallback-text="Ihr E-Mail-Programm sollte sich öffnen. Falls nicht: Text kopieren und an pk@kozlowski-it.de schicken oder 0162 8213267 anrufen." data-copy-label="Text kopieren" data-copied-label="Kopiert ✓">
-          <fieldset class="type-choice">
-            <legend>Worum geht's?</legend>
-            <label class="type-card">
-              <input type="radio" name="art" value="IT-Betreuung &amp; Infrastruktur" data-label="Art der Anfrage" checked />
-              <span class="type-card-inner">
-                <strong>IT-Betreuung &amp; Infrastruktur</strong>
-                <span>Backup, Server, Netzwerk, Wartung oder akute Störung</span>
-              </span>
-            </label>
-            <label class="type-card">
-              <input type="radio" name="art" value="Software &amp; Projekt" data-label="Art der Anfrage" />
-              <span class="type-card-inner">
-                <strong>Software &amp; Projekt</strong>
-                <span>Web-Anwendung, Workflow-Tool, Schnittstelle oder eine Idee</span>
-              </span>
-            </label>
-          </fieldset>
-
           <label>Name <span aria-hidden="true">*</span>
             <input type="text" name="name" data-label="Name" required autocomplete="name" />
           </label>
@@ -177,20 +171,21 @@ structuredData: partials/jsonld-home.njk
               <input type="tel" name="telefon" data-label="Telefon" autocomplete="tel" />
             </label>
           </div>
-          <label>Firma (optional)
-            <input type="text" name="firma" data-label="Firma" autocomplete="organization" />
+          <label>Was hakt, was wünschen Sie sich? <span aria-hidden="true">*</span>
+            <textarea name="beschreibung" data-label="Anliegen" rows="4" required placeholder="Beschreiben Sie kurz Ihre Situation: Was läuft nicht, oder was möchten Sie verbessern?"></textarea>
           </label>
 
-          <fieldset class="branch" data-branch="IT-Betreuung &amp; Infrastruktur">
+          <details class="more-fields">
+            <summary>Weitere Angaben (optional)</summary>
+            <label>Firma
+              <input type="text" name="firma" data-label="Firma" autocomplete="organization" />
+            </label>
             <div class="field-row">
-              <label>Anliegen
-                <select name="infra_anliegen" data-label="Anliegen">
-                  <option>Datensicherung / Backup</option>
-                  <option>Server &amp; Virtualisierung</option>
-                  <option>Netzwerk &amp; Firewall</option>
-                  <option>Wartung &amp; Betreuung</option>
-                  <option>Störung / Notfall</option>
-                  <option>Sonstiges / weiß nicht genau</option>
+              <label>Worum geht's?
+                <select name="art" data-label="Art der Anfrage">
+                  <option>IT-Betreuung &amp; Infrastruktur</option>
+                  <option>Software &amp; Projekt</option>
+                  <option>Weiß ich noch nicht genau</option>
                 </select>
               </label>
               <label>Wie dringend?
@@ -202,54 +197,12 @@ structuredData: partials/jsonld-home.njk
                 </select>
               </label>
             </div>
-            <label>Anzahl Geräte / Server (ca., optional)
-              <input type="text" name="umfang" data-label="Umfang" placeholder="z. B. 1 Server, 8 Arbeitsplätze" />
-            </label>
-            <label>Was hakt, was wünschen Sie sich? <span aria-hidden="true">*</span>
-              <textarea name="beschreibung_infra" data-label="Beschreibung" rows="4" required placeholder="Beschreiben Sie kurz Ihre Situation: Was läuft nicht, oder was möchten Sie verbessern?"></textarea>
-            </label>
-          </fieldset>
-
-          <fieldset class="branch" data-branch="Software &amp; Projekt" disabled hidden>
-            <div class="field-row">
-              <label>Art des Projekts
-                <select name="projekt_art" data-label="Art des Projekts">
-                  <option>Neue Web-Anwendung</option>
-                  <option>Bestehende Software erweitern</option>
-                  <option>Workflow- / Freigabe-System</option>
-                  <option>Schnittstelle / API / Automatisierung</option>
-                  <option>Beratung / noch unklar</option>
-                </select>
-              </label>
-              <label>Zeitrahmen (optional)
-                <select name="zeitrahmen" data-label="Zeitrahmen">
-                  <option>Noch offen</option>
-                  <option>So schnell wie möglich</option>
-                  <option>In 1–3 Monaten</option>
-                  <option>Dieses Jahr</option>
-                </select>
-              </label>
-            </div>
-            <label>Budget-Rahmen (optional)
-              <select name="budget" data-label="Budget-Rahmen">
-                <option>Noch offen</option>
-                <option>bis 2.000 €</option>
-                <option>2.000–5.000 €</option>
-                <option>5.000–15.000 €</option>
-                <option>über 15.000 €</option>
-              </select>
-            </label>
-            <label>Ihre Projekt-Idee <span aria-hidden="true">*</span>
-              <textarea name="beschreibung_projekt" data-label="Projekt-Idee" rows="6" required placeholder="Beschreiben Sie Ihr Vorhaben wie eine kleine Ausschreibung: Was soll die Software können? Für wen ist sie? Welches Problem löst sie? Gibt es etwas Ähnliches, das Sie kennen? Je konkreter, desto besser kann ich es einschätzen."></textarea>
-            </label>
-          </fieldset>
+          </details>
 
           <p class="form-hint">Mindestens E-Mail oder Telefon angeben. Ihre Angaben gehen direkt an mich, ohne Zwischendienste.</p>
           <p class="form-status" role="alert" aria-live="polite"></p>
           <button type="submit" class="btn primary big">Anfrage senden</button>
         </form>
-        <!-- Termin-Buchung: aktiviert sich, sobald data-booking-url gesetzt ist
-             (Cal.com self-hosted). Leer = bleibt versteckt, kein toter Button. -->
         <div class="booking" data-booking-url="https://cal.kozlowski-it.de/erstgespraech" hidden>
           <span class="booking-or">oder</span>
           <a class="btn primary big booking-btn" href="#" target="_blank" rel="noopener"><span aria-hidden="true">📅</span> Direkt einen Termin buchen</a>

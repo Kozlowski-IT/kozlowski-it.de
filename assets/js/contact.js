@@ -18,22 +18,6 @@
   if (!form) return;
 
   const status = form.querySelector('.form-status');
-  const branches = Array.from(form.querySelectorAll('.branch'));
-  const typeRadios = Array.from(form.querySelectorAll('input[name="art"]'));
-
-  // show only the branch matching the chosen type; disable the rest so their
-  // required fields neither block validation nor land in the email
-  function syncBranches() {
-    const chosen = form.querySelector('input[name="art"]:checked');
-    const value = chosen ? chosen.value : '';
-    for (const branch of branches) {
-      const active = branch.dataset.branch === value;
-      branch.hidden = !active;
-      branch.disabled = !active;
-    }
-  }
-  typeRadios.forEach((radio) => radio.addEventListener('change', syncBranches));
-  syncBranches();
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -54,8 +38,9 @@
     status.textContent = '';
 
     // build the email body from all enabled, named, non-radio controls
-    const chosen = form.querySelector('input[name="art"]:checked');
-    const lines = [(chosen?.dataset.label || 'Art') + ': ' + (chosen?.value || ''), ''];
+    const artEl = form.elements.namedItem('art');
+    const artVal = artEl && !artEl.disabled ? (artEl.value || '').toString().trim() : '';
+    const lines = [];
     for (const el of form.elements) {
       if (!el.name || el.disabled || el.type === 'radio' || el.type === 'submit') {
         continue;
@@ -65,7 +50,7 @@
     }
     const text = lines.join('\n');
     const subject = encodeURIComponent(
-      'Anfrage über kozlowski-it.de: ' + (chosen?.value || ''),
+      'Anfrage über kozlowski-it.de' + (artVal ? ': ' + artVal : ''),
     );
     window.location.href =
       'mailto:pk@kozlowski-it.de?subject=' + subject +
