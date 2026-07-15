@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kozlowski IT · IT-Betreuung & Software-Entwicklung</title>
-  <meta name="description" content="Kozlowski IT: Ich halte Ihre IT am Laufen: Datensicherung, Server, Netzwerk. Und ich baue Software, die zu Ihrem Ablauf passt. Festpreise, verständlich erklärt, sauber dokumentiert. Im Landkreis Biberach & Umgebung. Kostenloses Erstgespräch." />
+  <meta name="description" content="Ich halte Ihre IT am Laufen — Datensicherung, Server, Netzwerk — und baue Software nach Maß. Festpreise. IT-Dienstleister im Landkreis Biberach & Umgebung." />
   <meta property="og:title" content="Kozlowski IT · IT-Betreuung & Software-Entwicklung" />
   <meta property="og:description" content="IT, die einfach läuft. Und Software, die zu Ihrem Ablauf passt. Festpreise, kostenloses Erstgespräch." />
   <meta property="og:image" content="https://kozlowski-it.de/assets/img/og-image.png" />
@@ -18,6 +18,33 @@
   <link rel="alternate" hreflang="en" href="https://kozlowski-it.de/en/" />
   <link rel="alternate" hreflang="de" href="https://kozlowski-it.de/" />
   <link rel="stylesheet" href="/assets/css/style.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Kozlowski IT",
+    "url": "https://kozlowski-it.de",
+    "email": "pk@kozlowski-it.de",
+    "telephone": "+49 162 8213267",
+    "priceRange": "€€",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Abteistraße 30/6",
+      "postalCode": "88416",
+      "addressLocality": "Ochsenhausen",
+      "addressCountry": "DE"
+    },
+    "areaServed": [
+      "Landkreis Biberach",
+      "Biberach an der Riß",
+      "Laupheim",
+      "Bad Schussenried",
+      "Riedlingen",
+      "Ochsenhausen",
+      "Ummendorf"
+    ]
+  }
+  </script>
   <script src="/assets/js/theme.js"></script>
   <script src="/assets/js/contact.js" defer></script>
 </head>
@@ -30,6 +57,7 @@
         <a href="#leistungen">Leistungen</a>
         <a href="#projekte">Projekte</a>
         <a href="#ablauf">So läuft's</a>
+        <a class="nav-tel" href="tel:+491628213267"><span aria-hidden="true">📞</span> 0162 8213267</a>
         <a class="nav-contact" href="#kontakt">Kontakt</a>
       </nav>
       <div class="switches">
@@ -87,7 +115,7 @@
             <h3>Wenn kein Fertigprodukt passt</h3>
             <p class="for">Formulare, Freigaben, interne Tools: Software für Ihren konkreten Ablauf.</p>
             <ul>
-              <li><strong>Web-Anwendungen:</strong> modern, schnell, barrierefrei (Angular)</li>
+              <li><strong>Web-Anwendungen:</strong> modern und schnell, Angular-Frontend, barrierearm umgesetzt (WCAG-orientiert)</li>
               <li><strong>APIs &amp; Backends:</strong> sauber strukturiert (NestJS, PostgreSQL)</li>
               <li><strong>Workflow- &amp; Freigabe-Systeme:</strong> Anträge, Prüfprozesse, lückenlose Historie</li>
               <li><strong>Echtzeit-Funktionen:</strong> Änderungen erscheinen sofort, ohne Neuladen</li>
@@ -105,9 +133,9 @@
         <h2>Beides? Genau das ist der Vorteil.</h2>
         <p class="lead">Manche stutzen: Systemintegration <em>und</em> Entwicklung, geht das zusammen? In großen Konzernen sind das zwei Abteilungen. Für ein kleineres Unternehmen ist es das Gegenteil von Verzettelung: ein Ansprechpartner statt zwei Dienstleister, die sich im Ernstfall gegenseitig den Schwarzen Peter zuschieben.</p>
         <ul class="why-points">
-          <li><strong>Kein Schwarze-Peter-Spiel:</strong> nicht „das ist der Server" gegen „das ist der Code". Bei mir ist beides eine Hand.</li>
+          <li><strong>Kein Schwarzer-Peter-Spiel:</strong> nicht „das ist der Server" gegen „das ist der Code". Bei mir liegt beides in einer Hand.</li>
           <li><strong>Software, die zur Umgebung passt:</strong> ich entwickle nicht an Ihrer Infrastruktur vorbei, weil ich sie selbst betreibe.</li>
-          <li><strong>Die Branche nennt es DevOps:</strong> dass Entwicklung und Betrieb zusammengehören, ist längst Standard. Ich lebe das im Kleinen, von der Anwendung bis zum Server darunter.</li>
+          <li><strong>Die Branche nennt es DevOps:</strong> Dass Entwicklung und Betrieb zusammengehören, ist längst Standard. Ich lebe das im Kleinen, von der Anwendung bis zum Server darunter.</li>
         </ul>
       </div>
     </section>
@@ -153,8 +181,7 @@
           <p>Seit über zehn Jahren betreibe ich Linux-Server. Aus Leidenschaft wurde ein Beruf. Heute laufen bei mir über 35 virtuelle Maschinen auf einem eigenen Proxmox-Cluster, hinter einem mehrstufig segmentierten Netzwerk, mit verschlüsselten, getesteten Backups. Das ist mein eigenes „Rechenzentrum im Kleinen", dokumentiert wie im Betrieb. Was ich anbiete, betreibe ich selbst, jeden Tag.</p>
           <ul class="facts">
             <li><strong>10+ Jahre Linux-/Server-Praxis</strong>, 35+ VMs und ~40 Container im Eigenbetrieb</li>
-            <li>IHK-Abschluss <strong>Fachinformatiker Systemintegration</strong> (voraussichtlich Juli 2026)</li>
-            <li>Praxiserfahrung bei IT-Dienstleistern und Systemhäusern</li>
+            <li>Stationen bei IT-Dienstleistern und Systemhäusern; IHK-Fachinformatiker <strong>Systemintegration</strong> – Abschluss 2026</li>
             <li>Arbeitsweise: Festpreise, saubere Dokumentation, kein Fachchinesisch</li>
           </ul>
         </div>
@@ -198,14 +225,9 @@
             </label>
           </fieldset>
 
-          <div class="field-row">
-            <label>Vorname <span aria-hidden="true">*</span>
-              <input type="text" name="vorname" data-label="Vorname" required autocomplete="given-name" />
-            </label>
-            <label>Nachname <span aria-hidden="true">*</span>
-              <input type="text" name="nachname" data-label="Nachname" required autocomplete="family-name" />
-            </label>
-          </div>
+          <label>Name <span aria-hidden="true">*</span>
+            <input type="text" name="name" data-label="Name" required autocomplete="name" />
+          </label>
           <div class="field-row">
             <label>E-Mail
               <input type="email" name="email" data-label="E-Mail" autocomplete="email" />
@@ -300,6 +322,7 @@
   <footer>
     <div class="wrap">
       <span>© 2026 Kozlowski IT · Pascal Kozlowski</span>
+      <span>· Ochsenhausen · Landkreis Biberach &amp; Umgebung</span>
       <span class="spacer"></span>
       <a href="https://github.com/Kozlowski-IT" target="_blank" rel="noopener">GitHub</a>
       <a href="/impressum.html">Impressum</a>

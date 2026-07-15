@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kozlowski IT · IT Care & Software Development</title>
-  <meta name="description" content="Kozlowski IT: I keep your IT running: backups, servers, networks. And I build software that fits your workflow. Fixed prices, plain language, properly documented. Free initial consultation." />
+  <meta name="description" content="I keep your IT running — backups, servers, networks — and build custom software. Fixed prices. IT service provider in the Biberach district, Germany." />
   <meta property="og:title" content="Kozlowski IT · IT Care & Software Development" />
   <meta property="og:description" content="IT that just works. And software that fits your workflow. Fixed prices, free initial consultation." />
   <meta property="og:image" content="https://kozlowski-it.de/assets/img/og-image.png" />
@@ -30,6 +30,7 @@
         <a href="#services">Services</a>
         <a href="#projects">Projects</a>
         <a href="#process">How it works</a>
+        <a class="nav-tel" href="tel:+491628213267"><span aria-hidden="true">📞</span> +49 162 8213267</a>
         <a class="nav-contact" href="#contact">Contact</a>
       </nav>
       <div class="switches">
@@ -73,12 +74,13 @@
               <li><strong>Backups that actually work:</strong> stored off-site, restore-tested regularly</li>
               <li><strong>Server hardening:</strong> protection against attacks, automatic updates, documented</li>
               <li><strong>Databases that just run:</strong> setup, hardening and maintenance of your databases (PostgreSQL), with tested backups, updates and performance tuning</li>
-              <li><strong>Several servers on one machine:</strong> saves hardware, power and risk (Proxmox virtualization)</li>
+              <li><strong>Multiple servers on one machine:</strong> saves hardware and power, new servers in minutes, snapshots for fast recovery (virtualization with Proxmox)</li>
+              <li><strong>High availability on request:</strong> critical systems run redundantly so a hardware failure doesn't stop your business</li>
               <li><strong>Secure networks:</strong> devices cleanly separated, safe remote access</li>
               <li><strong>VMware migration:</strong> escape the license costs, move to Proxmox</li>
               <li><strong>Monthly care from €149/month:</strong> I monitor, update and verify. You just notice everything works</li>
             </ul>
-            <p class="note"><span aria-hidden="true">📦</span> <strong>Fixed-price packages</strong> instead of counting hours.</p>
+            <p class="note"><span aria-hidden="true">📦</span> <strong>Fixed-price packages</strong> instead of counting hours: you know the price up front.</p>
             <p class="card-cta"><a class="btn primary" href="#contact">Free initial consultation</a></p>
           </article>
           <article class="field dev">
@@ -86,7 +88,7 @@
             <h3>When no off-the-shelf product fits</h3>
             <p class="for">Forms, approvals, internal tools: software for your specific workflow.</p>
             <ul>
-              <li><strong>Web applications:</strong> modern, fast, accessible (Angular)</li>
+              <li><strong>Web applications:</strong> modern and fast, Angular frontend, built accessibility-minded (WCAG-oriented)</li>
               <li><strong>APIs &amp; backends:</strong> cleanly structured (NestJS, PostgreSQL)</li>
               <li><strong>Workflow &amp; approval systems:</strong> requests, reviews, complete history</li>
               <li><strong>Real-time features:</strong> changes appear instantly, no reloading</li>
@@ -104,7 +106,7 @@
         <h2>Both? That's exactly the advantage.</h2>
         <p class="lead">Some people pause: system integration <em>and</em> development, can that work together? In large corporations those are two departments. For a smaller company it's the opposite of spreading yourself thin: one point of contact instead of two vendors who blame each other when something breaks.</p>
         <ul class="why-points">
-          <li><strong>No blame game:</strong> not "it's the server" versus "it's the code". With me it's all one hand.</li>
+          <li><strong>No blame game:</strong> not "it's the server" versus "it's the code". With me both are in the same hands.</li>
           <li><strong>Software that fits the environment:</strong> I don't develop past your infrastructure, because I run it myself.</li>
           <li><strong>The industry calls it DevOps:</strong> development and operations belonging together has long been standard. I live that at small scale, from the application down to the server beneath it.</li>
         </ul>
@@ -152,8 +154,7 @@
           <p>I've been running Linux servers for over ten years. A passion became a profession. Today, 35+ virtual machines run on my own Proxmox cluster, behind a multi-tier segmented network, with encrypted, restore-tested backups. That is my own "data center in miniature", documented like a production environment. What I offer, I run myself, every day.</p>
           <ul class="facts">
             <li><strong>10+ years of hands-on Linux/server experience</strong>, 35+ VMs and ~40 containers in operation</li>
-            <li>IHK certification <strong>IT specialist for system integration</strong> (expected July 2026)</li>
-            <li>Hands-on experience at IT service providers</li>
+            <li>Roles at IT service providers and system houses; IHK-certified IT specialist for <strong>systems integration</strong> – degree expected 2026</li>
             <li>How I work: fixed prices, clean documentation, no jargon</li>
           </ul>
         </div>
@@ -162,7 +163,7 @@
 
     <section id="faq">
       <div class="wrap">
-        <h2>Frequent questions</h2>
+        <h2>Frequently asked questions</h2>
         <details><summary>What does it cost?</summary><p>Two simple models, both without counting hours: <strong>ongoing care</strong> is a monthly package from €149/month — I monitor your systems, install updates and check the backups. <strong>One-off jobs and projects</strong> get a one-page fixed-price quote after the free initial consultation. That way you know the price before I start.</p></details>
         <details><summary>Am I locked into a contract?</summary><p>No. Projects are one-off fixed-price engagements. Monthly care can be cancelled. I'd rather convince through work than through contract terms.</p></details>
         <details><summary>What happens in an emergency or data loss?</summary><p>For acute issues you reach me directly by phone and I deal with it as a priority. Maintenance clients have an agreed response time for this. And as a precaution, tested backups are in place: we verify restores <em>before</em> the emergency and document how they work.</p></details>
@@ -197,14 +198,9 @@
             </label>
           </fieldset>
 
-          <div class="field-row">
-            <label>First name <span aria-hidden="true">*</span>
-              <input type="text" name="vorname" data-label="First name" required autocomplete="given-name" />
-            </label>
-            <label>Last name <span aria-hidden="true">*</span>
-              <input type="text" name="nachname" data-label="Last name" required autocomplete="family-name" />
-            </label>
-          </div>
+          <label>Name <span aria-hidden="true">*</span>
+            <input type="text" name="name" data-label="Name" required autocomplete="name" />
+          </label>
           <div class="field-row">
             <label>Email
               <input type="email" name="email" data-label="Email" autocomplete="email" />
@@ -221,7 +217,7 @@
             <div class="field-row">
               <label>Topic
                 <select name="infra_anliegen" data-label="Topic">
-                  <option>Backup / data protection</option>
+                  <option>Backup / data recovery</option>
                   <option>Servers &amp; virtualization</option>
                   <option>Network &amp; firewall</option>
                   <option>Maintenance &amp; care</option>
@@ -291,7 +287,7 @@
           <a class="btn primary big booking-btn" href="#" target="_blank" rel="noopener"><span aria-hidden="true">📅</span> Book an appointment directly</a>
           <p class="form-hint">Pick a free slot for the free initial consultation — you'll see my real availability.</p>
         </div>
-        <p class="plain-mail">Prefer direct? Phone <a href="tel:+491628213267"><strong>+49 162 8213267</strong></a> · Email <a href="mailto:pk@kozlowski-it.de"><strong>pk@kozlowski-it.de</strong></a></p>
+        <p class="plain-mail">Prefer to talk directly? Phone <a href="tel:+491628213267"><strong>+49 162 8213267</strong></a> · Email <a href="mailto:pk@kozlowski-it.de"><strong>pk@kozlowski-it.de</strong></a></p>
       </div>
     </section>
   </main>

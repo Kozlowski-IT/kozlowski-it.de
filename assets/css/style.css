@@ -30,7 +30,7 @@
   --line-strong: #8d8aa3;
   --danger: #b23636;
   --infra: #7c3aed;   /* cyber purple — primary brand accent (IT/infra) */
-  --dev: #0891b2;     /* cyan — secondary accent (software) */
+  --dev: #067a92;     /* cyan — secondary accent (software); darkened for WCAG AA on light bg */
   --infra-soft: #f1ebfe;
   --dev-soft: #e3f3f8;
   --shadow: 0 2px 12px rgba(20, 20, 31, 0.07);
@@ -125,6 +125,7 @@ nav.main a {
   font-size: 14px;
 }
 nav.main a:hover { color: var(--ink); }
+nav.main a.nav-tel { color: var(--infra); font-weight: 600; white-space: nowrap; }
 
 .switches { display: flex; align-items: center; gap: 0.6rem; }
 .lang { font-size: 13px; color: var(--muted); text-decoration: none; }
@@ -773,7 +774,14 @@ footer .spacer { flex: 1; }
   .portal-btn { padding: 0.4rem 0.75rem; font-size: 13px; }
 }
 
+/* end-of-page call to action (demos / projects pages) */
+.end-cta { text-align: center; padding: 2.5rem 0 3.5rem; }
+.end-cta h2 { margin: 0 0 1.1rem; }
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
   html { scroll-behavior: auto; }
 }
