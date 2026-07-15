@@ -4,5 +4,6 @@
   {%- for item in strings.nav.items %}
   <a href="{{ item.url }}">{{ item.label }}</a>
   {%- endfor %}
+  <a class="nav-tel" href="{{ site.telHref }}"><span aria-hidden="true">&#128222;</span> {{ site.telDisplay }}</a>
   <a class="nav-cta" href="{{ site.booking }}">{{ strings.nav.cta }}</a>
 </nav>
