@@ -1,0 +1,22 @@
+{
+  "name": "pk-landing",
+  "version": "1.0.0",
+  "description": "kozlowski-it.de — statischer 11ty-Build (DE/EN aus einer Quelle)",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "build": "eleventy",
+    "serve": "eleventy --serve",
+    "clean": "rm -rf _site",
+    "parity": "node scripts/check-parity.mjs",
+    "check": "npm run build && npm run parity"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "3.1.6",
+    "cheerio": "1.2.0"
+  }
+}

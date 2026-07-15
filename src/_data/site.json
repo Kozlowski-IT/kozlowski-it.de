@@ -1,0 +1,12 @@
+{
+  "name": "Kozlowski IT",
+  "owner": "Pascal Kozlowski",
+  "domain": "https://kozlowski-it.de",
+  "tel": "+49 162 8213267",
+  "telHref": "tel:+491628213267",
+  "email": "pk@kozlowski-it.de",
+  "booking": "https://cal.kozlowski-it.de/erstgespraech",
+  "portal": "https://portal.kozlowski-it.de/",
+  "github": "https://github.com/Kozlowski-IT",
+  "logo": "/assets/img/logo.svg"
+}

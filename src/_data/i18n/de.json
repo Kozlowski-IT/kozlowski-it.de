@@ -1,0 +1,30 @@
+{
+  "skip": "Zum Inhalt springen",
+  "home": "/",
+  "menuOpen": "Menü öffnen",
+  "nav": {
+    "aria": "Hauptnavigation",
+    "items": [
+      { "label": "Leistungen", "url": "/#leistungen" },
+      { "label": "Projekte", "url": "/projekte/" },
+      { "label": "Über mich", "url": "/#ueber" },
+      { "label": "Ablauf", "url": "/#ablauf" }
+    ],
+    "cta": "Termin buchen"
+  },
+  "portal": "Kundenportal",
+  "themeToggle": "Farbschema wechseln",
+  "langSwitch": { "label": "EN", "code": "en", "aria": "Switch to English", "fallback": "/en/" },
+  "footer": {
+    "legalAria": "Rechtliches",
+    "copyright": "© 2026 Kozlowski IT · Pascal Kozlowski",
+    "location": "· Ochsenhausen · Landkreis Biberach & Umgebung",
+    "github": "GitHub",
+    "legal": [
+      { "label": "Impressum", "url": "/impressum/" },
+      { "label": "Datenschutz", "url": "/datenschutz/" },
+      { "label": "AVV-Muster", "url": "/avv/" }
+    ],
+    "tagline": "· Selbst gebaut, ohne Cookies, ohne Tracker."
+  }
+}

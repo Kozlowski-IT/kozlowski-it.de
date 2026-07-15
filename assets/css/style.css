@@ -785,3 +785,93 @@ footer .spacer { flex: 1; }
   }
   html { scroll-behavior: auto; }
 }
+
+/* ── shared-chrome nav: 5-point menu + "Termin buchen" CTA ──────────────
+   Added for the 11ty relaunch (Phase 1). Header/nav/footer are now single
+   partials; DE/EN come from one i18n source. Mobile menu is a CSS-only
+   hamburger (checkbox `#navtoggle` sits before <nav> in the DOM; the sibling
+   selector `#navtoggle:checked ~ nav.main` reveals it). No JS, no inline
+   styles — CSP-safe. Visual order is handled purely via flex `order`. */
+
+/* the absetzte CTA in the main nav */
+nav.main a.nav-cta {
+  color: #fff;
+  background: var(--infra);
+  border: 1px solid var(--infra);
+  border-radius: 7px;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 150ms ease-out, transform 150ms ease-out;
+}
+nav.main a.nav-cta:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--infra) 86%, #000);
+}
+[data-theme='dark'] nav.main a.nav-cta { color: #0c1316; }
+[data-theme='dark'] nav.main a.nav-cta:hover { color: #0c1316; }
+
+/* hamburger control — hidden on desktop, the nav shows inline */
+.nav-toggle,
+.nav-toggle-cb { display: none; }
+
+@media (max-width: 800px) {
+  /* lay the header out so the hamburger + switches share the top row and the
+     nav panel wraps onto its own full-width line below (flex `order`) */
+  header.site .wrap { flex-wrap: wrap; row-gap: 0.6rem; }
+  .wordmark { order: 1; }
+  .nav-toggle { order: 2; }
+  .switches { order: 3; }
+  nav.main { order: 4; flex-basis: 100%; }
+
+  /* keep the checkbox operable (focusable) but visually hidden */
+  .nav-toggle-cb {
+    display: block;
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0; border: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+  }
+  .nav-toggle::before { content: "\2630"; }               /* ☰ */
+  #navtoggle:checked ~ .nav-toggle::before { content: "\2715"; } /* ✕ */
+  .nav-toggle-cb:focus-visible ~ .nav-toggle {
+    outline: 2px solid var(--infra);
+    outline-offset: 2px;
+  }
+
+  /* collapsed by default; the CSS-only sibling selector opens it.
+     `!important` defeats the older mobile rule `nav.main a { display:none }`
+     without editing it, keeping this an additive change. */
+  nav.main {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--line);
+  }
+  #navtoggle:checked ~ nav.main { display: flex; }
+  nav.main a {
+    display: block !important;
+    padding: 0.7rem 0.2rem;
+    font-size: 15px;
+  }
+  nav.main a.nav-cta {
+    display: inline-block !important;
+    margin-top: 0.5rem;
+    align-self: flex-start;
+  }
+}

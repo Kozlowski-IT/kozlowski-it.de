@@ -1,0 +1,16 @@
+{#- Shared footer. Legal links (Impressum/Datenschutz/AVV) live HERE, never in
+    the main nav (design §4). Strings from one i18n source per language. -#}
+<footer>
+  <div class="wrap">
+    <span>{{ strings.footer.copyright }}</span>
+    {%- if strings.footer.location %}
+    <span>{{ strings.footer.location }}</span>
+    {%- endif %}
+    <span class="spacer"></span>
+    <a href="{{ site.github }}" target="_blank" rel="noopener">{{ strings.footer.github }}</a>
+    {%- for item in strings.footer.legal %}
+    <a href="{{ item.url }}">{{ item.label }}</a>
+    {%- endfor %}
+    <span>{{ strings.footer.tagline }}</span>
+  </div>
+</footer>

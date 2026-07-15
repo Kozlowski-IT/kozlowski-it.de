@@ -1,0 +1,19 @@
+{#- Shared site chrome: skip-link + sticky header with CSS-only hamburger.
+    The #navtoggle checkbox sits in the DOM BEFORE <nav> so the pure-CSS
+    sibling selector `#navtoggle:checked ~ nav.main` can reveal the menu on
+    mobile. No JS, no inline styles -> CSP-safe. Visual order via `order`
+    in style.css. -#}
+<a class="skip" href="#main">{{ strings.skip }}</a>
+<header class="site">
+  <div class="wrap">
+    <a class="wordmark" href="{{ strings.home }}"><img src="{{ site.logo }}" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
+    <input type="checkbox" id="navtoggle" class="nav-toggle-cb" />
+    <label for="navtoggle" class="nav-toggle" aria-label="{{ strings.menuOpen }}"></label>
+    {%- include "partials/nav.njk" %}
+    <div class="switches">
+      <a class="portal-btn" href="{{ site.portal }}">{{ strings.portal }}</a>
+      <a class="lang" href="{{ altLangUrl or strings.langSwitch.fallback }}" lang="{{ strings.langSwitch.code }}" aria-label="{{ strings.langSwitch.aria }}">{{ strings.langSwitch.label }}</a>
+      <button id="theme-toggle" type="button" aria-label="{{ strings.themeToggle }}">☾</button>
+    </div>
+  </div>
+</header>

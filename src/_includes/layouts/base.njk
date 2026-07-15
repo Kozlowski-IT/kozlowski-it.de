@@ -1,0 +1,47 @@
+{%- set deUrl = page.url if lang == "de" else altLangUrl -%}
+{%- set enUrl = page.url if lang == "en" else altLangUrl -%}
+<!doctype html>
+<html lang="{{ lang }}" data-translation-key="{{ translationKey }}" data-bilingual="{{ bilingual }}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+  {%- if description %}
+  <meta name="description" content="{{ description }}" />
+  {%- endif %}
+  {%- if robots %}
+  <meta name="robots" content="{{ robots }}" />
+  {%- endif %}
+  {%- if og %}
+  <meta property="og:title" content="{{ og.title }}" />
+  <meta property="og:description" content="{{ og.description }}" />
+  <meta property="og:image" content="{{ site.domain }}/assets/img/og-image.png" />
+  <meta property="og:url" content="{{ site.domain }}{{ page.url }}" />
+  <meta property="og:type" content="website" />
+  {%- endif %}
+  <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg" />
+  <link rel="icon" href="/assets/img/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/img/site.webmanifest" />
+  <meta name="theme-color" content="#7c3aed" />
+  {%- if bilingual and altLangUrl %}
+  <link rel="alternate" hreflang="de" href="{{ site.domain }}{{ deUrl }}" />
+  <link rel="alternate" hreflang="en" href="{{ site.domain }}{{ enUrl }}" />
+  {%- endif %}
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  {%- if structuredData %}
+{% include structuredData %}
+  {%- endif %}
+  <script src="/assets/js/theme.js"></script>
+  {%- if contactScript %}
+  <script src="/assets/js/contact.js" defer></script>
+  {%- endif %}
+</head>
+<body>
+  {%- include "partials/header.njk" %}
+
+  {{ content | safe }}
+
+  {%- include "partials/footer.njk" %}
+</body>
+</html>

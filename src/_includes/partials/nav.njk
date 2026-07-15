@@ -1,0 +1,8 @@
+{#- Main navigation (5 targets). Labels + hrefs come from strings.nav (one
+    i18n source per language). The last item is the absetzte CTA -> cal.rs. -#}
+<nav class="main" aria-label="{{ strings.nav.aria }}">
+  {%- for item in strings.nav.items %}
+  <a href="{{ item.url }}">{{ item.label }}</a>
+  {%- endfor %}
+  <a class="nav-cta" href="{{ site.booking }}">{{ strings.nav.cta }}</a>
+</nav>

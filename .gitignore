@@ -1,0 +1,13 @@
+# 11ty build output
+_site/
+
+# dependencies
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+
+# transient agent scratch (never commit)
+.tmp-out.txt
+.gitlog.txt
+.commitmsg

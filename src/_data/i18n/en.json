@@ -1,0 +1,30 @@
+{
+  "skip": "Skip to content",
+  "home": "/en/",
+  "menuOpen": "Open menu",
+  "nav": {
+    "aria": "Main navigation",
+    "items": [
+      { "label": "Services", "url": "/en/#services" },
+      { "label": "Projects", "url": "/en/projects/" },
+      { "label": "About me", "url": "/en/#about" },
+      { "label": "How it works", "url": "/en/#process" }
+    ],
+    "cta": "Book an appointment"
+  },
+  "portal": "Client Portal",
+  "themeToggle": "Toggle color scheme",
+  "langSwitch": { "label": "DE", "code": "de", "aria": "Auf Deutsch wechseln", "fallback": "/" },
+  "footer": {
+    "legalAria": "Legal",
+    "copyright": "© 2026 Kozlowski IT · Pascal Kozlowski",
+    "location": "",
+    "github": "GitHub",
+    "legal": [
+      { "label": "Legal notice (German)", "url": "/impressum/" },
+      { "label": "Privacy (German)", "url": "/datenschutz/" },
+      { "label": "DPA sample (German)", "url": "/avv/" }
+    ],
+    "tagline": "· Hand-built, no cookies, no trackers."
+  }
+}
