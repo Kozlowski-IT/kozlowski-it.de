@@ -4,6 +4,19 @@
     mobile. No JS, no inline styles -> CSP-safe. Visual order via `order`
     in style.css. -#}
 <a class="skip" href="#main">{{ strings.skip }}</a>
+{%- if minimalHeader %}
+{#- Reduzierter Header für Kampagnen-Landingpages (Spec Teil C): nur Logo +
+    Telefon, keine Nav, keine Cross-Links -> ein einziges Ziel. -#}
+<header class="site minimal">
+  <div class="wrap">
+    <a class="wordmark" href="{{ strings.home }}"><img src="{{ site.logo }}" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
+    <div class="switches">
+      <a class="nav-tel" href="{{ site.telHref }}"><span aria-hidden="true">&#128222;</span> {{ site.telDisplay }}</a>
+      <button id="theme-toggle" type="button" aria-label="{{ strings.themeToggle }}">☾</button>
+    </div>
+  </div>
+</header>
+{%- else %}
 <header class="site">
   <div class="wrap">
     <a class="wordmark" href="{{ strings.home }}"><img src="{{ site.logo }}" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
@@ -17,3 +30,4 @@
     </div>
   </div>
 </header>
+{%- endif %}

@@ -875,3 +875,61 @@ nav.main a.nav-cta:hover {
     align-self: flex-start;
   }
 }
+
+/* ── VMware-Ausstieg Landingpage + Rechner (Spec Teil C) ─────────────── */
+.site.minimal .wrap { justify-content: space-between; }
+
+main.lp { max-width: 780px; }
+.lp-hero { padding: 2.4rem 0 1.4rem; }
+.lp-hero h1 { margin-bottom: 0.6rem; }
+.lp-hero .lead { margin: 0.6rem 0; }
+.source-note { font-size: 13px; color: var(--muted); margin-top: 1rem; }
+.source-note a { color: var(--muted); }
+
+.rechner-wrap { margin: 1.4rem 0 2.4rem; }
+form.rechner {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 14px; padding: 1.4rem; box-shadow: var(--shadow);
+}
+form.rechner label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 0.9rem; }
+form.rechner input[type="number"], form.rechner select {
+  display: block; width: 100%; margin-top: 0.3rem; font-weight: 400; font-size: 15px;
+  padding: 0.55rem 0.6rem; border: 1px solid var(--line-strong);
+  border-radius: 8px; background: var(--bg); color: var(--ink);
+}
+.r-date { display: flex; gap: 0.5rem; }
+.r-date select { flex: 1; }
+.r-date input { width: 5.5rem; }
+form.rechner fieldset { border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.9rem; }
+form.rechner legend { font-weight: 700; font-size: 14px; padding: 0 0.4rem; }
+.r-radio, .r-check { display: flex; align-items: center; gap: 0.5rem; font-weight: 400; margin-bottom: 0.5rem; }
+.r-radio input, .r-check input { width: auto; margin: 0; }
+.r-features legend { margin-bottom: 0.4rem; }
+@media (min-width: 480px) {
+  .r-features > label { display: inline-flex; width: 30%; min-width: 8rem; }
+}
+.r-hint { font-size: 13px; color: var(--muted); font-weight: 400; margin: 0.3rem 0 0; }
+
+.rechner-ergebnis {
+  margin-top: 1.4rem; padding: 1.4rem; background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: 14px; box-shadow: var(--shadow);
+}
+.rechner-ergebnis h3 { margin: 0 0 0.4rem; }
+.r-basis { font-size: 13px; color: var(--muted); margin: 0 0 1rem; }
+.r-table { border-top: 1px solid var(--line); margin-bottom: 1rem; }
+.r-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
+.r-row span { color: var(--muted); }
+.r-row.r-vmware strong { color: var(--danger); }
+.r-row.r-sum { font-size: 16px; }
+.r-row.r-sum strong { color: var(--infra); }
+.r-diff { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.9rem 1rem; border-radius: 10px; margin-bottom: 0.8rem; }
+.r-diff strong { font-size: 22px; }
+.r-diff-pos { background: var(--infra-soft); }
+.r-diff-pos strong { color: var(--infra); }
+.r-diff-neg { background: var(--dev-soft); }
+.r-optional, .r-note, .r-disclaimer { font-size: 13px; color: var(--muted); margin: 0.5rem 0; }
+.r-warn { background: var(--surface); border-left: 3px solid var(--danger); padding: 0.7rem 0.9rem; border-radius: 6px; font-size: 14px; margin: 0.7rem 0; }
+.r-urg { font-weight: 600; color: var(--infra); margin: 0.6rem 0; }
+.r-cta { margin-top: 1.1rem; }
+
+.lp-beleg img { width: 100%; border: 1px solid var(--line); border-radius: 12px; margin: 0.8rem 0; }

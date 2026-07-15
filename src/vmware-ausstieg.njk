@@ -1,0 +1,139 @@
+---
+translationKey: vmware-ausstieg
+bilingual: false
+minimalHeader: true
+calcScript: true
+title: "VMware-Ausstieg-Rechner: Broadcom-Kosten vs. Proxmox | Kozlowski IT"
+description: "Rechnen Sie Ihre VMware-Verlängerung nach Broadcom gegen Proxmox VE, über drei Jahre, in drei Minuten. Ohne Termin, ohne Verkaufsgespräch. Mit ehrlichem Hinweis, wenn ein Wechsel für Sie nicht sinnvoll ist."
+og:
+  title: "VMware-Ausstieg: Broadcom-Kosten in 3 Minuten gegen Proxmox rechnen"
+  description: "Kern-Abos vs. Sockel-Preis: der Rechner zeigt Ihre Differenz über drei Jahre, mit Migrationsaufwand und ehrlichem Bleib-oder-wechsel-Hinweis."
+---
+<main id="main" class="wrap lp">
+
+    <section class="lp-hero" data-section-key="hero">
+      <h1>Broadcom-Verlängerung auf dem Tisch? Rechnen Sie vorher.</h1>
+      <p class="lead">Seit der Umstellung auf Kern-Abos liegen die Steigerungen bei Vertragsverlängerung laut Marktberichten oft beim Drei- bis Fünffachen. Besonders hart trifft es ehemalige Essentials-Kunden, deren Lizenzklasse ersatzlos gestrichen wurde.</p>
+      <p class="lead">Proxmox VE kostet keine Lizenzgebühr pro Kern. Rechnen Sie beide Wege über drei Jahre gegen, in drei Minuten, ohne Termin und ohne Verkaufsgespräch.</p>
+      <p class="cta-row"><a class="btn primary big" href="#rechner">Kosten rechnen</a></p>
+      <p class="source-note">Preisangaben im Rechner sind Marktlage-Listenpreise mit Quelle, keine Zusage. Ihr tatsächliches Angebot kann abweichen. Quellen: <a href="https://www.proxmox.com/en/products/proxmox-virtual-environment/pricing" target="_blank" rel="noopener nofollow">Proxmox VE Pricing</a>, <a href="https://atonementlicensing.com/blog/vmware-subscription-pricing-2026/" target="_blank" rel="noopener nofollow">VMware Subscription Pricing 2026</a>.</p>
+    </section>
+
+    <section class="rechner-wrap" data-section-key="rechner" id="rechner">
+      <h2>Ihr 3-Jahres-Vergleich</h2>
+      <form class="rechner" id="vmware-rechner" novalidate>
+        <div class="field-row">
+          <label>Anzahl Hosts
+            <input type="number" id="r-hosts" min="1" step="1" value="3" inputmode="numeric" />
+          </label>
+          <label>Anzahl VMs (ca.)
+            <input type="number" id="r-vms" min="1" step="1" value="30" inputmode="numeric" />
+          </label>
+        </div>
+        <div class="field-row">
+          <label>Sockets pro Host
+            <input type="number" id="r-sockets" min="1" step="1" value="2" inputmode="numeric" />
+          </label>
+          <label>Kerne pro Socket
+            <input type="number" id="r-cores" min="1" step="1" value="16" inputmode="numeric" />
+          </label>
+        </div>
+
+        <fieldset class="r-kostenweg">
+          <legend>Aktuelle VMware-Kosten</legend>
+          <label class="r-radio"><input type="radio" name="kostenweg" value="bekannt" checked /> <span>Ich kenne meine Summe (vom Verlängerungsangebot)</span></label>
+          <label class="r-radio"><input type="radio" name="kostenweg" value="schaetzen" /> <span>Bitte aus Listenpreisen schätzen</span></label>
+        </fieldset>
+
+        <div class="r-branch" id="r-branch-bekannt">
+          <label>Ihre aktuelle oder angebotene VMware-Summe pro Jahr (€)
+            <input type="number" id="r-vmwareKosten" min="0" step="1" placeholder="z. B. 12000" inputmode="numeric" />
+          </label>
+        </div>
+
+        <div class="r-branch" id="r-branch-schaetzen" hidden>
+          <label>Aktuelle Edition
+            <select id="r-edition">
+              <option value="vsphere-standard">vSphere Standard</option>
+              <option value="vvf" selected>vSphere Foundation (VVF)</option>
+              <option value="vcf">VMware Cloud Foundation (VCF)</option>
+              <option value="enterprise-plus">vSphere Enterprise Plus (alt)</option>
+              <option value="essentials">Essentials / Essentials Plus</option>
+              <option value="unklar">weiß nicht</option>
+            </select>
+          </label>
+          <p class="r-hint">Geschätzt mit gerundeten Listenpreisen pro Kern (Marktlage 2026) und dem 16-Kerne-pro-CPU-Minimum von Broadcom. Für Essentials und „weiß nicht" gibt es keinen belastbaren Listenpreis, bitte dann die bekannte Summe eintragen.</p>
+        </div>
+
+        <div class="field-row">
+          <label>Proxmox-Support-Tier
+            <select id="r-proxmoxTier">
+              <option value="community">Community (120 €/Sockel/Jahr)</option>
+              <option value="basic">Basic (370 €)</option>
+              <option value="standard" selected>Standard (550 €)</option>
+              <option value="premium">Premium (1.100 €)</option>
+            </select>
+          </label>
+          <label>Vertragsende
+            <span class="r-date">
+              <select id="r-vMonat" aria-label="Monat">
+                <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mär</option><option value="4">Apr</option><option value="5">Mai</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Okt</option><option value="11">Nov</option><option value="12">Dez</option>
+              </select>
+              <input type="number" id="r-vJahr" min="2026" max="2032" step="1" value="2026" aria-label="Jahr" inputmode="numeric" />
+            </span>
+          </label>
+        </div>
+
+        <fieldset class="r-features">
+          <legend>Genutzte Features (Mehrfachauswahl)</legend>
+          <label class="r-check"><input type="checkbox" value="vmotion" /> <span>vMotion</span></label>
+          <label class="r-check"><input type="checkbox" value="ha" /> <span>HA</span></label>
+          <label class="r-check"><input type="checkbox" value="drs" /> <span>DRS</span></label>
+          <label class="r-check"><input type="checkbox" value="vsan" /> <span>vSAN</span></label>
+          <label class="r-check"><input type="checkbox" value="nsx" /> <span>NSX</span></label>
+          <label class="r-check"><input type="checkbox" value="veeam" /> <span>Veeam-Backup</span></label>
+        </fieldset>
+
+        <button type="button" class="btn primary big" id="r-rechnen">Rechnen</button>
+      </form>
+
+      <div class="rechner-ergebnis" id="r-ergebnis" role="region" aria-live="polite" hidden></div>
+    </section>
+
+    <section class="lp-einwaende" data-section-key="einwaende">
+      <h2>Die Fragen, die jetzt kommen</h2>
+      <div class="fields">
+        <article class="field">
+          <h3>„Ist Proxmox überhaupt reif für den Produktivbetrieb?"</h3>
+          <p>Proxmox VE läuft auf rund 1,5 Millionen Hosts und bringt Live-Migration, HA-Cluster, Snapshots, rollenbasierte Rechte und integriertes Backup mit. Die Frage ist längst nicht mehr ob, sondern ob es zu Ihrer Umgebung passt. Bei vSAN, NSX oder VMware-zertifizierter Branchensoftware sage ich Ihnen ehrlich, dass Sie bleiben sollten.</p>
+        </article>
+        <article class="field">
+          <h3>„Wir haben niemanden, der Linux kann."</h3>
+          <p>Das ist der eigentliche Punkt. Der Hypervisor-Wechsel ist nicht das Ende des Projekts, sondern der Anfang vom neuen Betrieb. Deshalb gibt es Migration und laufenden Betrieb bei mir als Paket. Sie tauschen nicht eine Abhängigkeit gegen die nächste.</p>
+        </article>
+        <article class="field">
+          <h3>„Wie lange dauert das?"</h3>
+          <p>Bei 50 bis 200 VMs und strukturierter Planung typischerweise 8 bis 12 Wochen. Der größte Teil davon ist Planung, Test und Validierung, nicht das Kopieren.</p>
+        </article>
+        <article class="field">
+          <h3>„Und wenn etwas schiefgeht?"</h3>
+          <p>Migration in Wellen: erst unkritische Systeme, dann produktive. Rollback-Plan vor dem ersten Schnitt. Die alte Umgebung bleibt stehen, bis die neue nachweislich läuft.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="lp-beleg" data-section-key="beleg">
+      <h2>Das betreibe ich selbst</h2>
+      <img src="/assets/img/pve-architektur-de.jpg" alt="Architekturdiagramm eines Proxmox-VE-Clusters mit VMs, Containern und Firewall-Kaskade" loading="lazy" />
+      <p>Ich betreibe selbst einen Proxmox-VE-Cluster mit 35+ VMs und rund 40 Containern, hinter einer mehrstufigen Firewall-Kaskade, mit verschlüsselten und auf Wiederherstellung getesteten Backups. Kein Testlabor, sondern meine Produktivumgebung. Was ich anbiete, betreibe ich selbst.</p>
+      <p class="r-hint">Sobald die erste Kundenmigration abgeschlossen ist, steht hier der konkrete Fall: Ausgangslage, Lizenzkosten vorher, Dauer, Lizenzkosten nachher.</p>
+    </section>
+
+    <section class="end-cta" data-section-key="cta">
+      <div class="cta-row center">
+        <a class="btn primary big" href="#rechner">Kosten rechnen</a>
+      </div>
+      <p>Oder direkt sprechen: 30 Minuten, unverbindlich. Und wenn der Wechsel für Sie nicht sinnvoll ist, sage ich Ihnen das. Telefon <a href="tel:+491628213267"><strong>0162 8213267</strong></a>, E-Mail <a href="mailto:pk@kozlowski-it.de"><strong>pk@kozlowski-it.de</strong></a>.</p>
+    </section>
+
+  </main>
