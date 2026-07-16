@@ -944,3 +944,21 @@ details.more-fields > summary {
 details.more-fields > summary::-webkit-details-marker { display: none; }
 details.more-fields > summary::before { content: "+ "; font-weight: 700; }
 details.more-fields[open] > summary::before { content: "– "; }
+
+/* ── Startseiten-Feinschliff: Hero-Eyebrow, Trust-Punkte, Karten-Ausrichtung ── */
+/* Default-Farbe fuer Eyebrows ohne Modifier; .eyebrow.infra/.dev gewinnen weiter
+   (hoehere Spezifitaet), daher keine Regression in den Karten. */
+.eyebrow { color: var(--infra); }
+.hero-eyebrow { margin-bottom: 0.5rem; }
+.hero-trust {
+  list-style: none; padding: 0; margin: 1rem 0 1.4rem;
+  display: grid; gap: 0.35rem;
+}
+.hero-trust li { position: relative; padding-left: 1.4rem; color: var(--muted); font-size: 15px; }
+.hero-trust li::before { content: "✓"; position: absolute; left: 0; color: var(--infra); font-weight: 700; }
+
+/* Gleich hohe Karten: CTA-Zeile unten buendig, damit Buttons auf einer Linie stehen. */
+.fields .field { display: flex; flex-direction: column; }
+.fields .field .card-cta { margin-top: auto; margin-bottom: 0; }
+
+.devops-note, .process-note { font-size: 14px; color: var(--muted); margin-top: 1.1rem; }
