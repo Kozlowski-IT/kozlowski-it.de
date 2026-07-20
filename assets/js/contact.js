@@ -49,6 +49,13 @@
       lines.push(label + ': ' + ((el.value || '').toString().trim() || '–'));
     }
     const text = lines.join('\n');
+
+    // Conversion-Signal (cookielos, via Matomo): Formular erfolgreich abgeschickt.
+    // Label ist nur die Anfrage-Art (Kategorie), kein PII.
+    if (window._paq) {
+      window._paq.push(['trackEvent', 'Kontakt', 'Formular gesendet', artVal || 'Anfrage']);
+    }
+
     const subject = encodeURIComponent(
       'Anfrage über kozlowski-it.de' + (artVal ? ': ' + artVal : ''),
     );
@@ -73,6 +80,10 @@
     copy.className = 'copy-btn';
     copy.textContent = form.dataset.copyLabel || 'Text kopieren';
     copy.addEventListener('click', () => {
+      // Fallback-Kopie zaehlt ebenfalls als Kontakt-Absicht (Mail-Client oeffnete nicht).
+      if (window._paq) {
+        window._paq.push(['trackEvent', 'Kontakt', 'Text kopiert']);
+      }
       navigator.clipboard?.writeText('An: pk@kozlowski-it.de\n\n' + text).then(
         () => { copy.textContent = form.dataset.copiedLabel || 'Kopiert ✓'; },
         () => { copy.textContent = 'pk@kozlowski-it.de'; },
