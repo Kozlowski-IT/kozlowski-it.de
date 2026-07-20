@@ -26,14 +26,17 @@
     "click",
     function (e) {
       var a = e.target && e.target.closest && e.target.closest("a[href]");
-      if (!a) return;
+      if (!a || !window._paq) return;
       var href = a.getAttribute("href") || "";
+      // WICHTIG: window._paq, nicht die lokale Referenz. Matomo ersetzt window._paq
+      // nach dem Laden durch den Tracker-Proxy; die urspruengliche Array-Referenz ist
+      // danach tot, Pushes dorthin gehen verloren.
       if (href.indexOf("tel:") === 0) {
-        _paq.push(["trackEvent", "Kontakt", "Anruf-Klick"]);
+        window._paq.push(["trackEvent", "Kontakt", "Anruf-Klick"]);
       } else if (href.indexOf("mailto:") === 0) {
-        _paq.push(["trackEvent", "Kontakt", "E-Mail-Klick"]);
+        window._paq.push(["trackEvent", "Kontakt", "E-Mail-Klick"]);
       } else if (href.indexOf("cal.kozlowski-it.de") !== -1) {
-        _paq.push(["trackEvent", "Kontakt", "Termin-Klick"]);
+        window._paq.push(["trackEvent", "Kontakt", "Termin-Klick"]);
       }
     },
     true,
