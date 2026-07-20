@@ -6,12 +6,13 @@ og:
   title: "Kozlowski IT · IT Care, Infrastructure & Software"
   description: "IT that runs. Software that fits your business. One point of contact, clear costs, free initial consultation."
 contactScript: true
+structuredData: partials/jsonld-home.njk
 ---
 <main id="main">
     <section class="hero" data-section-key="hero">
       <div class="wrap">
         <span class="avatar-wrapper">
-          <img class="portrait" src="/assets/img/avatar2.webp" alt="Portrait of Pascal Kozlowski" />
+          <img class="portrait" src="/assets/img/avatar2.webp" alt="Portrait of Pascal Kozlowski" width="132" height="132" fetchpriority="high" />
         </span>
         <div>
           <p class="eyebrow hero-eyebrow">IT Care &amp; Software Development · Biberach district, Germany</p>
@@ -193,7 +194,7 @@ contactScript: true
         <details><summary>Am I locked into a contract?</summary><p>Pure projects are one-off engagements with a clearly agreed scope. Ongoing care can be cancelled. I want to convince through reliable work, not through unnecessarily long contract terms.</p></details>
         <details><summary>What happens in an outage or data loss?</summary><p>For acute issues you reach me directly by phone and I deal with it as a priority. For maintenance clients a fixed response time can be agreed to match the package. As a precaution, tested backups are in place: we verify restores <em>before</em> the emergency and document how they work.</p></details>
         <details><summary>You work alone, what happens if you're unavailable?</summary><p>Fair question. I document systems and access so they're ready to hand over and someone else can take over in an emergency, instead of hoarding knowledge in my head. On top of that come the tested, off-site backups with verified recovery. So your operation doesn't depend on my presence, and you aren't made artificially dependent.</p></details>
-        <details><summary>How do you handle data protection and GDPR?</summary><p>A data processing agreement (DPA) is part of every engagement. Data stays on systems in Germany, backups are encrypted, access rights are clearly defined. I work aligned with the German BSI baseline-protection methodology, which is a way of working, not a certification.</p></details>
+        <details><summary>How do you handle data protection and GDPR?</summary><p>A data processing agreement (DPA) is part of every engagement. On the infrastructure I run, data is held in German data centers; if you also use cloud services such as Microsoft 365, the storage location follows their terms. Backups are encrypted, access rights are clearly defined. I work aligned with the German BSI baseline-protection methodology, which is a way of working, not a certification.</p></details>
         <details><summary>Do you see our data when maintaining our systems?</summary><p>To maintain your IT I need access to systems, not to your content. I work on configuration, structure and scripts. Your actual data (database contents, documents, emails) stays on your systems. If a specific task genuinely requires real data, it only happens by arrangement, documented, and under the data processing agreement.</p></details>
         <details><summary>Will I understand what's being done?</summary><p>Yes, that's part of the job. No jargon, everything documented in writing and explained so you can pass it on to your team.</p></details>
         <details><summary>Do you use AI for development?</summary><p>Yes, as a tool for routine work. Architecture, security, review and responsibility stay with me. Your confidential content is not simply fed into public AI services.</p></details>
@@ -252,7 +253,7 @@ contactScript: true
           </details>
 
           <p class="form-hint">Provide at least an email or phone number. Your details go straight to me, with no intermediary services.</p>
-          <p class="form-status" role="alert" aria-live="polite"></p>
+          <p class="form-status" role="alert"></p>
           <button type="submit" class="btn primary big">Request a free consultation</button>
         </form>
         <div class="booking" data-booking-url="https://cal.kozlowski-it.de/erstgespraech" hidden>

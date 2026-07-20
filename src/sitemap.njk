@@ -5,7 +5,7 @@ eleventyExcludeFromCollections: true
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {%- for p in collections.all %}
-{%- if p.url and p.url.endsWith("/") %}
+{%- if p.url and p.url.endsWith("/") and not p.data.robots %}
   <url><loc>{{ site.domain }}{{ p.url }}</loc></url>
 {%- endif %}
 {%- endfor %}

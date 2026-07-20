@@ -23,6 +23,7 @@
     <input type="checkbox" id="navtoggle" class="nav-toggle-cb" />
     <label for="navtoggle" class="nav-toggle" aria-label="{{ strings.menuOpen }}"></label>
     {%- include "partials/nav.njk" %}
+    <a class="nav-tel header-tel" href="{{ site.telHref }}"><span aria-hidden="true">&#128222;</span> {{ site.telDisplay }}</a>
     <div class="switches">
       <a class="portal-btn" href="{{ site.portal }}">{{ strings.portal }}</a>
       <a class="lang" href="{{ altLangUrl or strings.langSwitch.fallback }}" lang="{{ strings.langSwitch.code }}" aria-label="{{ strings.langSwitch.aria }}">{{ strings.langSwitch.label }}</a>
