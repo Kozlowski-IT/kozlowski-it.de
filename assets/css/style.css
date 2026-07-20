@@ -70,7 +70,7 @@ h1, h2, h3 { font-family: 'Sora', sans-serif; letter-spacing: -0.01em; }
 
 a { color: var(--infra); }
 
-.wrap { max-width: 66rem; margin: 0 auto; padding: 0 1.5rem; }
+.wrap { max-width: 70rem; margin: 0 auto; padding: 0 1.5rem; }
 
 /* ── header ─────────────────────────────────────────────── */
 header.site {
@@ -816,7 +816,7 @@ nav.main a.nav-cta:hover {
 .nav-toggle,
 .nav-toggle-cb { display: none; }
 
-@media (max-width: 800px) {
+@media (max-width: 940px) {
   /* lay the header out so the hamburger + switches share the top row and the
      nav panel wraps onto its own full-width line below (flex `order`) */
   header.site .wrap { flex-wrap: wrap; row-gap: 0.6rem; }
@@ -962,3 +962,55 @@ details.more-fields[open] > summary::before { content: "– "; }
 .fields .field .card-cta { margin-top: auto; margin-bottom: 0; }
 
 .devops-note, .process-note { font-size: 14px; color: var(--muted); margin-top: 1.1rem; }
+
+/* ── Startseite v3: 3 gleichwertige Karten, Trust-Bar, Beispiele, Kontakt-Hints ── */
+.wrap.wide { max-width: 76rem; }
+
+.fields.three { grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 1.6rem; }
+.fields.three .field { padding: 1.9rem; }
+.card-desc { margin: 0.2rem 0 0.9rem; }
+.fields.three .field ul { margin-top: 0; }
+/* Sekundaerlink oben, Primaer-Button unten -> Primaer-CTAs aller Karten fluchten */
+.fields.three .card-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 0.55rem; }
+.card-link { font-size: 14px; font-weight: 600; color: var(--infra); }
+.field.dev .card-link { color: var(--dev); }
+.card-link:hover { text-decoration: underline; }
+
+/* Karten-Hover nur auf Zeigergeräten; Reduced-Motion respektiert */
+@media (hover: hover) {
+  .fields .field { transition: transform 0.15s ease, border-color 0.15s ease; }
+  .fields .field:hover { transform: translateY(-3px); border-color: var(--line-strong); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fields .field { transition: none; }
+  .fields .field:hover { transform: none; }
+}
+
+.demo-hint { font-size: 14px; color: var(--muted); margin: 1.1rem 0 0; }
+.demo-hint span { color: var(--dev); }
+
+.trust-bar {
+  margin: 1.3rem 0 0; padding: 0.9rem 1.1rem;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 10px; text-align: center; font-size: 14px; color: var(--muted);
+}
+
+.examples {
+  list-style: none; padding: 0; margin: 0 0 1.4rem;
+  display: grid; gap: 0.55rem 1.5rem;
+}
+@media (min-width: 720px) { .examples { grid-template-columns: 1fr 1fr; } }
+.examples li { position: relative; padding-left: 1.5rem; }
+.examples li::before { content: "\2192"; position: absolute; left: 0; color: var(--infra); font-weight: 700; }
+
+.contact-hints {
+  list-style: none; padding: 0; margin: 0 0 1.6rem;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.4rem;
+  font-size: 14px; color: var(--muted);
+}
+.contact-hints li { position: relative; padding-left: 1.3rem; }
+.contact-hints li::before { content: "\2713"; position: absolute; left: 0; color: var(--infra); font-weight: 700; }
+
+/* Responsive: Tablet 2 Spalten, Mobil 1 Spalte (nach den Basisregeln -> Order gewinnt) */
+@media (max-width: 1024px) { .fields.three { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px)  { .fields.three { grid-template-columns: 1fr; } .fields.three .field { padding: 1.5rem; } }
