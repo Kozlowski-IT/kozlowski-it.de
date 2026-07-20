@@ -976,6 +976,19 @@ details.more-fields[open] > summary::before { content: "– "; }
 .field.dev .card-link { color: var(--dev); }
 .card-link:hover { text-decoration: underline; }
 
+/* Analyse-Callout: abgesetzter Vertrauensanker, kein vierter Leistungsbereich */
+.callout {
+  background: var(--surface); border: 1px solid var(--line-strong);
+  border-left: 4px solid var(--infra); border-radius: 12px;
+  padding: 1.6rem 1.8rem; box-shadow: var(--shadow);
+}
+.callout h2 { margin: 0.2rem 0 0.2rem; }
+.callout-sub { color: var(--infra); font-weight: 600; margin: 0 0 0.8rem; }
+.callout .lead { max-width: 52rem; margin-bottom: 1rem; }
+.callout .why-points { margin-bottom: 1rem; }
+.callout-note { font-size: 13px; color: var(--muted); margin: 0 0 1rem; }
+@media (max-width: 560px) { .callout { padding: 1.3rem 1.2rem; } }
+
 /* Karten-Hover nur auf Zeigergeräten; Reduced-Motion respektiert */
 @media (hover: hover) {
   .fields .field { transition: transform 0.15s ease, border-color 0.15s ease; }
