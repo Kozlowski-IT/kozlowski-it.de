@@ -13,7 +13,7 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "test": "npm run test:int",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/run.ts",
-    "export": "node -e \"console.log(\\\"export: Platzhalter (wird in einem späteren Task implementiert)\\\")\""
+    "export": "cross-env NODE_OPTIONS=--no-deprecation tsx src/export/cli.ts"
   },
   "dependencies": {
     "@payloadcms/next": "3.93.0",
