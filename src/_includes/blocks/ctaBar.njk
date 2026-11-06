@@ -1,0 +1,26 @@
+{#- ctaBar — section.end-cta. variant: default (h2, Text, div.cta-row.center)
+    · buttonsFirst (cta-row vor dem Text, Landingpage). -#}
+{%- from "blocks/_macros.njk" import attrs, buttons -%}
+{%- macro row(block) -%}
+{%- if block.buttons | length %}
+      <div class="cta-row center">
+        {{ buttons(block.buttons) }}
+      </div>
+{%- endif %}
+{%- endmacro -%}
+    <section{{ attrs(block, "end-cta") }}>
+      {%- if frame == "home" %}
+      <div class="wrap">
+      {%- endif %}
+      {%- if block.heading %}
+      <h2>{{ block.heading }}</h2>
+      {%- endif %}
+      {%- if block.variant == "buttonsFirst" %}{{ row(block) }}{% endif %}
+      {%- if block.text %}
+      {{ block.text | rich | safe }}
+      {%- endif %}
+      {%- if block.variant != "buttonsFirst" %}{{ row(block) }}{% endif %}
+      {%- if frame == "home" %}
+      </div>
+      {%- endif %}
+    </section>

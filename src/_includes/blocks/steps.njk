@@ -1,0 +1,28 @@
+{#- steps — variant: fields (div.fields > article.field: p.eyebrow.infra, h3, p.card-desc).
+    Ohne accent-Feld: Klasse "infra" ist fest (it-infrastrukturanalyse.njk). dauer wird heute nicht gerendert. -#}
+{%- from "blocks/_macros.njk" import attrs -%}
+    <section{{ attrs(block) }}>
+      {%- if frame == "home" %}
+      <div class="wrap">
+      {%- endif %}
+      {%- if block.heading %}
+      <h2>{{ block.heading }}</h2>
+      {%- endif %}
+      <div class="fields">
+        {%- for step in block.steps %}
+        <article class="field">
+          {%- if step.label %}
+          <p class="eyebrow infra">{{ step.label }}</p>
+          {%- endif %}
+          <h3>{{ step.title }}</h3>
+          {{ step.text | richP("card-desc") | safe }}
+        </article>
+        {%- endfor %}
+      </div>
+      {%- if block.note %}
+      {{ block.note | richNote(block.noteClass, block.noteIcon) | safe }}
+      {%- endif %}
+      {%- if frame == "home" %}
+      </div>
+      {%- endif %}
+    </section>

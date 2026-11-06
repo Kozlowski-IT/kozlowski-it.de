@@ -1,0 +1,41 @@
+---
+pagination:
+  data: cms.pages
+  size: 1
+  alias: cmsPage
+  addAllPagesToCollections: true
+permalink: "{{ cmsPage.permalink }}"
+---
+{#- CMS-Seiten aus content/pages.json (src/_data/cms.js). Seiten-Daten (title,
+    translationKey, robots, contactScript …) setzt cms-pages.11tydata.js.
+    Seitenrahmen nach cmsPage.frame (Task 3): home | subpage | subpageTabs |
+    landing | legal | legalWrap. Ohne CMS-Seiten erzeugt diese Vorlage nichts. -#}
+{%- set frame = cmsPage.frame -%}
+{%- set mainClass = { "home": "", "subpage": "wrap", "subpageTabs": "wrap", "landing": "wrap lp", "legal": "legal", "legalWrap": "legal" }[frame] -%}
+<main id="main"{% if mainClass %} class="{{ mainClass }}"{% endif %}>
+{%- if frame == "subpage" or frame == "subpageTabs" %}
+    <div class="subnav">
+      <a class="subnav-home" href="{{ strings.home }}">{{ strings.subnav.home }}</a>
+      {%- if frame == "subpageTabs" %}
+      <nav class="page-tabs" aria-label="{{ strings.subnav.tabsAria }}">
+        {%- for tab in strings.subnav.tabs %}
+        {%- if tab.key == cmsPage.translationKey %}
+        <a class="tab active" href="{{ tab.url }}" aria-current="page">{{ tab.label }}</a>
+        {%- else %}
+        <a class="tab" href="{{ tab.url }}">{{ tab.label }}</a>
+        {%- endif %}
+        {%- endfor %}
+      </nav>
+      {%- endif %}
+    </div>
+{%- endif %}
+{%- if frame == "legalWrap" %}
+    <div class="wrap">
+{%- endif %}
+{%- for block in cmsPage.blocks %}
+{% include "blocks/" + block.blockType + ".njk" %}
+{%- endfor %}
+{%- if frame == "legalWrap" %}
+    </div>
+{%- endif %}
+  </main>

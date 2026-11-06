@@ -1,0 +1,48 @@
+{#- text — Reihenfolge: eyebrow, heading, sub, lead, body, note, buttons.
+    variant: default (section) · callout (div.callout) · about (section.about > div.text)
+    · why (section.why) · legal (ohne section, direkt in main.legal). -#}
+{%- from "blocks/_macros.njk" import attrs, buttons -%}
+{%- macro inner(block) -%}
+{%- set lvl = "h1" if block.headingLevel == "h1" else "h2" %}
+{%- if block.eyebrow %}
+          <p class="eyebrow">{{ block.eyebrow }}</p>
+{%- endif %}
+{%- if block.heading %}
+          <{{ lvl }}>{{ block.heading }}</{{ lvl }}>
+{%- endif %}
+{%- if block.sub %}
+          <p class="callout-sub">{{ block.sub }}</p>
+{%- endif %}
+{%- if block.lead %}
+          {{ block.lead | richP("lead") | safe }}
+{%- endif %}
+{%- if block.body %}
+          {{ block.body | richUl(block.listClass) | safe }}
+{%- endif %}
+{%- if block.note %}
+          {{ block.note | richNote(block.noteClass, block.noteIcon) | safe }}
+{%- endif %}
+{%- if block.buttons | length %}
+          <p class="card-cta">{{ buttons(block.buttons) }}</p>
+{%- endif %}
+{%- endmacro -%}
+{%- if block.variant == "legal" %}
+{{ inner(block) }}
+{%- else %}
+    <section{{ attrs(block, { "about": "about", "why": "why" }[block.variant]) }}>
+      {%- if frame == "home" %}
+      <div class="wrap">
+      {%- endif %}
+      {%- if block.variant == "callout" %}
+        <div class="callout">{{ inner(block) }}
+        </div>
+      {%- elif block.variant == "about" %}
+        <div class="text">{{ inner(block) }}
+        </div>
+      {%- else %}{{ inner(block) }}
+      {%- endif %}
+      {%- if frame == "home" %}
+      </div>
+      {%- endif %}
+    </section>
+{%- endif %}

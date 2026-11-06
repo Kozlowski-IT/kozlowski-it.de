@@ -10,7 +10,7 @@ import { exportContent } from '@/export/exportContent'
 
 let payload: Payload
 const mediaDir = path.resolve(__dirname, '../../media')
-const dataDir = path.resolve(__dirname, '../../../src/_data')
+const dataDir = path.resolve(__dirname, '../../../src/_data/legacy')
 const json = (p: string) => JSON.parse(fs.readFileSync(p, 'utf8'))
 
 const text = (t: string, format = 0, extra: object = {}) => ({

@@ -5,11 +5,11 @@ import type { Payload } from 'payload'
 
 // cms/src/seed -> Repo-Root (unabhängig vom cwd)
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
-const dataDir = path.join(repoRoot, 'src/_data')
+const dataDir = path.join(repoRoot, 'src/_data/legacy')
 
 const readJson = (rel: string) => JSON.parse(fs.readFileSync(path.join(dataDir, rel), 'utf8'))
 
-/** Idempotent: schreibt site.json und i18n/{de,en}.json in die Globals site/chrome. */
+/** Idempotent: schreibt (src/_data/legacy/) site.json und i18n/{de,en}.json in die Globals site/chrome. */
 export async function seedGlobals(payload: Payload): Promise<void> {
   await payload.updateGlobal({ slug: 'site', data: readJson('site.json') })
   for (const locale of ['de', 'en'] as const) {

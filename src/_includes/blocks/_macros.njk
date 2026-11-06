@@ -1,0 +1,22 @@
+{#- Gemeinsame Bausteine der Block-Partials. Makro-Ausgabe ist bereits escaped. -#}
+
+{#- Attribute einer Section: class (optional), id nur bei anchorId, data-section-key immer. -#}
+{% macro attrs(block, cls) -%}
+{% if cls %} class="{{ cls }}"{% endif %}{% if block.anchorId %} id="{{ block.anchorId }}"{% endif %} data-section-key="{{ block.sectionKey }}"
+{%- endmacro %}
+
+{#- Ein Button/Link (buttons[]: label, href, style, icon, newTab, download). -#}
+{% macro button(b) -%}
+{%- set cls = b.style | buttonClass -%}
+<a{% if cls %} class="{{ cls }}"{% endif %} href="{{ b.href }}"{% if b.newTab %} target="_blank" rel="noopener"{% endif %}{% if b.download %} download{% endif %}>{% if b.icon %}<span aria-hidden="true">{{ b.icon }}</span> {% endif %}{{ b.label }}</a>
+{%- endmacro %}
+
+{#- Mehrere Buttons, durch Leerzeichen getrennt (wie im heutigen Markup). -#}
+{% macro buttons(list) -%}
+{% for b in list %}{{ button(b) }}{% if not loop.last %} {% endif %}{% endfor %}
+{%- endmacro %}
+
+{#- Akzent-Klasse mit führendem Leerzeichen ("" bei none/leer). -#}
+{% macro accent(a) -%}
+{% if a and a != "none" %} {{ a }}{% endif %}
+{%- endmacro %}

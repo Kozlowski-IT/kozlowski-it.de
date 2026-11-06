@@ -47,5 +47,24 @@ export const Chrome: GlobalConfig = {
         t('tagline'),
       ],
     },
+    {
+      // Unterseiten-Leiste (pages.frame = subpage/subpageTabs): Zurück-Link + Tabs Demos/Projekte.
+      // tabs[].key = translationKey der Zielseite; der passende Tab wird als aktiv markiert.
+      // Bewusst optional (nullable Spalten): Pflichtfelder würden beim Schema-Push NOT-NULL-Spalten
+      // in bestehende chrome-Zeilen schreiben (Rückfrage + Datenverlust-Warnung, auch Dev-DB).
+      // Der Eleventy-Build bricht ab, wenn eine Unterseite subnav braucht und es fehlt (lib/content.js).
+      name: 'subnav',
+      type: 'group',
+      fields: [
+        t('home', false),
+        t('tabsAria', false),
+        {
+          name: 'tabs',
+          type: 'array',
+          localized: true,
+          fields: [t('key', false), t('label', false), t('url', false)],
+        },
+      ],
+    },
   ],
 }

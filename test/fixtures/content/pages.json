@@ -1,0 +1,264 @@
+[
+  {
+    "translationKey": "demos",
+    "bilingual": true,
+    "noindex": false,
+    "minimalHeader": false,
+    "structuredData": "none",
+    "frame": "subpageTabs",
+    "locales": {
+      "de": {
+        "slug": "demos",
+        "title": "Fixture Demos",
+        "description": "Fixture Demos Beschreibung",
+        "blocks": [
+          { "blockType": "hero", "sectionKey": "intro", "variant": "intro", "h1": "Anwendungen zum Ausprobieren", "claim": "<p>Echte Software.</p>" },
+          {
+            "blockType": "cards", "sectionKey": "list", "variant": "demos",
+            "cards": [
+              {
+                "accent": "none", "title": "FlowGate", "subtitle": "Antrags- & Freigabe-Workflow", "badge": "Open Source",
+                "image": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Bild-Alt aus Media" },
+                "imageAlt": "FlowGate: Board",
+                "text": "<p>Mehrstufiger Genehmigungsprozess.</p>",
+                "chips": [ { "label": "Angular" }, { "label": "NestJS" } ],
+                "link": { "href": "https://flowgate.kozlowski-it.de", "newTab": true },
+                "buttons": [
+                  { "label": "Demo öffnen", "href": "https://flowgate.kozlowski-it.de", "style": "primary", "newTab": true },
+                  { "label": "Quellcode", "href": "https://github.com/Kozlowski-IT/flowgate", "style": "btn", "newTab": true }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "en": {
+        "slug": "demos",
+        "title": "Fixture demos",
+        "description": "Fixture demos description",
+        "blocks": [
+          { "blockType": "hero", "sectionKey": "intro", "variant": "intro", "h1": "Applications to try out", "claim": "<p>Real software.</p>" },
+          {
+            "blockType": "cards", "sectionKey": "list", "variant": "demos",
+            "cards": [
+              {
+                "accent": "none", "title": "FlowGate", "subtitle": "Request & approval workflow",
+                "image": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Image alt from media" },
+                "text": "<p>A multi-step approval process.</p>",
+                "chips": [ { "label": "Angular" } ],
+                "link": { "href": "https://flowgate.kozlowski-it.de", "newTab": true },
+                "buttons": [ { "label": "Open demo", "href": "https://flowgate.kozlowski-it.de", "style": "primary", "newTab": true } ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "translationKey": "impressum",
+    "bilingual": false,
+    "noindex": true,
+    "minimalHeader": false,
+    "structuredData": "none",
+    "frame": "legal",
+    "locales": {
+      "de": {
+        "slug": "impressum",
+        "title": "Impressum · Fixture",
+        "blocks": [
+          {
+            "blockType": "text", "sectionKey": "legal", "variant": "legal", "heading": "Impressum", "headingLevel": "h1",
+            "body": "<p>Angaben gemäß § 5 DDG:</p><p>Kozlowski IT<br />88416 Ochsenhausen</p><h2>Haftung für Links</h2><p><a href=\"/\">‹ Zurück zur Startseite</a></p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "translationKey": "home",
+    "bilingual": true,
+    "noindex": false,
+    "minimalHeader": false,
+    "structuredData": "home",
+    "frame": "home",
+    "locales": {
+      "de": {
+        "slug": "index",
+        "title": "Fixture-Start <script>alert(1)</script> & \"x\"",
+        "description": "Fixture-Beschreibung",
+        "og": { "title": "OG-Titel DE" },
+        "blocks": [
+          {
+            "blockType": "hero", "sectionKey": "hero", "variant": "home",
+            "eyebrow": "IT-Betreuung · Fixture",
+            "h1": "<script>alert(1)</script> & \"x\"",
+            "claim": "<p>Betreuung &amp; Server.</p>",
+            "trustPoints": [ { "text": "Ein Ansprechpartner" }, { "text": "Antwort in einem Werktag" } ],
+            "buttons": [ { "label": "Mit dem Sicherheitscheck starten", "href": "#sicherheitscheck", "style": "primaryBig", "newTab": false } ],
+            "photo": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Porträt aus Media", "width": 8, "height": 8 },
+            "photoAlt": "Porträt von Pascal Kozlowski"
+          },
+          {
+            "blockType": "text", "sectionKey": "sicherheitscheck", "anchorId": "sicherheitscheck", "variant": "callout",
+            "eyebrow": "Der erste Schritt", "heading": "Der Sicherheitscheck", "sub": "Ein kleiner erster Schritt.",
+            "lead": "<p>Ich komme zu Ihnen.</p>",
+            "body": "<p>Was Sie danach wissen:</p><ul class=\"list-bullet\"><li\n          class=\"\"\n          style=\"\"\n          value=\"1\"\n        ><strong>Ob Ihre Sicherungen tragen.</strong> Geprüft.</li><li\n          class=\"\"\n          style=\"\"\n          value=\"2\"\n        >Zugänge</li></ul>",
+            "listClass": "why-points",
+            "note": "<p>Der Umfang ist klein.</p>", "noteClass": "callout-note",
+            "buttons": [ { "label": "Sicherheitscheck anfragen", "href": "#kontakt", "style": "primaryBig" } ]
+          },
+          {
+            "blockType": "cards", "sectionKey": "leistungen", "anchorId": "leistungen", "variant": "why",
+            "eyebrow": "Leistungen", "heading": "Zwei Dinge",
+            "cards": [
+              { "accent": "none", "title": "Server", "text": "<p><strong>VMware-Ausstieg:</strong> rechnen. <a href=\"/vmware-ausstieg/\">VMware-Kosten prüfen →</a></p>" }
+            ],
+            "note": "<p>Monatspakete · Festpreise</p>", "noteClass": "trust-bar"
+          },
+          {
+            "blockType": "contactForm", "sectionKey": "kontakt", "anchorId": "kontakt", "variant": "default",
+            "eyebrow": "Unverbindlich starten", "heading": "Lassen Sie uns sprechen.",
+            "lead": "<p>Kostenloses Erstgespräch.</p>",
+            "hints": [ { "text": "Ca. 30 Minuten" } ],
+            "messages": { "error": "Bitte E-Mail oder Telefon angeben.", "fallback": "Fallback-Text", "copyLabel": "Text kopieren", "copiedLabel": "Kopiert ✓" },
+            "name": { "label": "Name", "dataLabel": "Name" },
+            "email": { "label": "E-Mail", "dataLabel": "E-Mail" },
+            "phone": { "label": "Telefon", "dataLabel": "Telefon" },
+            "message": { "label": "Was hakt?", "dataLabel": "Anliegen", "placeholder": "Beschreiben Sie kurz" },
+            "moreSummary": "Weitere Angaben (optional)",
+            "company": { "label": "Firma", "dataLabel": "Firma" },
+            "requestType": { "label": "Worum geht's?", "dataLabel": "Art der Anfrage", "options": [ { "label": "Sicherheitscheck" }, { "label": "IT-Betreuung & Sicherheit" } ] },
+            "urgency": { "label": "Wie dringend?", "dataLabel": "Dringlichkeit", "options": [ { "label": "Diese Woche" } ] },
+            "formHint": "Mindestens E-Mail oder Telefon angeben.",
+            "submit": "Kostenloses Erstgespräch anfragen",
+            "booking": { "or": "oder", "button": "Direkt einen Termin buchen", "icon": "📅", "hint": "Freien Slot wählen." },
+            "note": "<p>Lieber direkt? <a href=\"tel:+491628213267\"><strong>0162 8213267</strong></a></p>", "noteClass": "plain-mail"
+          }
+        ]
+      },
+      "en": {
+        "slug": "index",
+        "title": "Fixture home",
+        "description": "Fixture description",
+        "blocks": [
+          {
+            "blockType": "hero", "sectionKey": "hero", "variant": "home",
+            "eyebrow": "IT care · Fixture", "h1": "Your IT runs.",
+            "claim": "<p>Care &amp; servers.</p>",
+            "trustPoints": [ { "text": "One contact" } ],
+            "buttons": [ { "label": "Start with the security check", "href": "#security-check", "style": "primaryBig" } ],
+            "photo": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Portrait from media" }
+          },
+          {
+            "blockType": "text", "sectionKey": "sicherheitscheck", "anchorId": "security-check", "variant": "callout",
+            "heading": "The security check", "lead": "<p>I come to you.</p>", "listClass": "none"
+          },
+          {
+            "blockType": "cards", "sectionKey": "leistungen", "anchorId": "services", "variant": "why",
+            "heading": "Two things", "cards": [ { "accent": "none", "title": "Servers", "text": "<p>Text</p>" } ]
+          },
+          {
+            "blockType": "contactForm", "sectionKey": "kontakt", "anchorId": "contact", "variant": "default",
+            "heading": "Let's talk.",
+            "name": { "label": "Name", "dataLabel": "Name" },
+            "submit": "Request a free consultation"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "translationKey": "it-betreuung",
+    "bilingual": true,
+    "noindex": false,
+    "minimalHeader": false,
+    "structuredData": "none",
+    "frame": "subpage",
+    "locales": {
+      "de": {
+        "slug": "it-betreuung",
+        "title": "IT-Betreuung · Fixture",
+        "description": "IT-Betreuung Beschreibung",
+        "blocks": [
+          { "blockType": "hero", "sectionKey": "intro", "variant": "intro", "h1": "IT-Betreuung & Infrastruktur", "claim": "<p>Für alle ohne IT-Abteilung.</p>", "note": "<p>Bezahlte Analyse.</p>", "noteClass": "note", "noteIcon": "ℹ️" },
+          {
+            "blockType": "cards", "sectionKey": "preis", "variant": "fields", "heading": "Was es kostet", "lead": "<p>Kein Stundenzählen.</p>",
+            "cards": [
+              { "accent": "infra", "eyebrow": "Laufende Betreuung", "title": "ab 149 €/Monat", "text": "<p>Basispaket.</p>" },
+              { "accent": "dev", "title": "Web-Anwendungen", "text": "<p>Modern.</p>" },
+              { "accent": "none", "title": "Ohne Akzent", "text": "<p>Neutral.</p>" }
+            ],
+            "note": "<p>Bei unklaren Umgebungen.</p>", "noteClass": "note", "noteIcon": "🔍"
+          },
+          {
+            "blockType": "steps", "sectionKey": "ablauf", "variant": "fields", "heading": "So läuft es",
+            "steps": [ { "label": "1 · Erstgespräch", "title": "Ziel verstehen", "text": "<p>Wir klären Ziel.</p>" } ]
+          },
+          {
+            "blockType": "faq", "sectionKey": "faq", "anchorId": "faq", "variant": "default", "heading": "Häufige Fragen",
+            "items": [ { "question": "Was kostet das?", "answer": "<p>Wir testen, <em>bevor</em> es brennt.</p>" } ]
+          },
+          {
+            "blockType": "ctaBar", "sectionKey": "cta", "variant": "default", "heading": "Wo hakt es?", "text": "<p>30 Minuten.</p>",
+            "buttons": [ { "label": "Kostenloses Erstgespräch →", "href": "/#kontakt", "style": "primaryBig" } ]
+          }
+        ]
+      },
+      "en": {
+        "slug": "it-care",
+        "title": "IT care · Fixture",
+        "description": "IT care description",
+        "blocks": [
+          { "blockType": "hero", "sectionKey": "intro", "variant": "intro", "h1": "IT care & infrastructure", "claim": "<p>For everyone without an IT department.</p>" },
+          { "blockType": "cards", "sectionKey": "preis", "variant": "fields", "heading": "Pricing", "cards": [ { "accent": "infra", "title": "from €149/month", "text": "<p>Base.</p>" } ] },
+          { "blockType": "steps", "sectionKey": "ablauf", "variant": "fields", "heading": "How it works", "steps": [] },
+          { "blockType": "faq", "sectionKey": "faq", "anchorId": "faq", "variant": "default", "heading": "FAQ", "items": [] },
+          { "blockType": "ctaBar", "sectionKey": "cta", "variant": "default", "heading": "Where does it hurt?", "buttons": [] }
+        ]
+      }
+    }
+  },
+  {
+    "translationKey": "vmware-ausstieg",
+    "bilingual": false,
+    "noindex": false,
+    "minimalHeader": true,
+    "structuredData": "none",
+    "frame": "landing",
+    "locales": {
+      "de": {
+        "slug": "vmware-ausstieg",
+        "title": "VMware-Ausstieg · Fixture",
+        "description": "Rechner",
+        "blocks": [
+          {
+            "blockType": "hero", "sectionKey": "hero", "variant": "landing", "h1": "Broadcom-Verlängerung?",
+            "claim": "<p>Absatz eins.</p><p>Absatz zwei.</p>",
+            "buttons": [ { "label": "Kosten rechnen", "href": "#rechner", "style": "primaryBig" } ],
+            "note": "<p>Quellen: <a href=\"https://www.proxmox.com/\" rel=\"noopener nofollow\" target=\"_blank\">Proxmox</a>.</p>", "noteClass": "source-note"
+          },
+          {
+            "blockType": "vmwareCalculator", "sectionKey": "rechner", "anchorId": "rechner", "variant": "default",
+            "heading": "Ihr 3-Jahres-Vergleich",
+            "labels": { "hosts": "Anzahl Hosts", "calculate": "Rechnen", "monthAria": "Monat", "yearAria": "Jahr" },
+            "editions": [ { "value": "vvf", "label": "vSphere Foundation (VVF)" } ],
+            "tiers": [ { "value": "standard", "label": "Standard (550 €)" } ],
+            "months": [ { "value": "1", "label": "Jan" } ],
+            "features": [ { "value": "ha", "label": "HA" } ]
+          },
+          {
+            "blockType": "figure", "sectionKey": "beleg", "variant": "beleg", "heading": "Das betreibe ich selbst",
+            "image": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Architekturdiagramm" },
+            "caption": "<p>Proxmox-VE-Cluster.</p>", "note": "<p>Sobald die erste Migration fertig ist.</p>", "noteClass": "r-hint"
+          },
+          {
+            "blockType": "ctaBar", "sectionKey": "cta", "variant": "buttonsFirst",
+            "text": "<p>Oder direkt sprechen.</p>",
+            "buttons": [ { "label": "Kosten rechnen", "href": "#rechner", "style": "primaryBig" } ]
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,113 @@
+{#- cards — variant: fields (div.fields > article.field) · objections (section.lp-einwaende, wie fields)
+    · why (div.why je Karte; Inline-Links → a.card-link) · explore (div.explore > a.explore-card)
+    · projects (section.projects.standalone > article.project) · demos (section.demo-list > article.demo).
+    accent (Task 3): fields/objections → auf p.eyebrow, sonst auf article; projects → span.tag;
+    explore → span.explore-tag; why/demos → nicht gerendert. -#}
+{%- from "blocks/_macros.njk" import attrs, buttons, accent -%}
+{%- set v = block.variant -%}
+{%- set sectionClass = { "objections": "lp-einwaende", "projects": "projects standalone", "demos": "demo-list" }[v] -%}
+    <section{{ attrs(block, sectionClass) }}>
+      {%- if frame == "home" %}
+      <div class="wrap">
+      {%- endif %}
+      {%- if block.eyebrow %}
+        <p class="eyebrow">{{ block.eyebrow }}</p>
+      {%- endif %}
+      {%- if block.heading %}
+        <h2>{{ block.heading }}</h2>
+      {%- endif %}
+      {%- if block.lead %}
+        {{ block.lead | richP("lead") | safe }}
+      {%- endif %}
+      {%- if v == "fields" or v == "objections" %}
+        <div class="fields">
+          {%- for card in block.cards %}
+          <article class="field{% if not card.eyebrow %}{{ accent(card.accent) }}{% endif %}">
+            {%- if card.eyebrow %}
+            <p class="eyebrow{{ accent(card.accent) }}">{{ card.eyebrow }}</p>
+            {%- endif %}
+            <h3>{{ card.title }}</h3>
+            {{ card.text | rich | safe }}
+          </article>
+          {%- endfor %}
+        </div>
+      {%- elif v == "why" %}
+        {%- for card in block.cards %}
+        <div class="why">
+          <h3>{{ card.title }}</h3>
+          {{ card.text | richA("card-link") | safe }}
+        </div>
+        {%- endfor %}
+      {%- elif v == "explore" %}
+        <div class="explore">
+          {%- for card in block.cards %}
+          <a class="explore-card{% if card.image %} has-thumb{% endif %}" href="{{ card.link.href }}"{% if card.link.newTab %} target="_blank" rel="noopener"{% endif %}>
+            {%- if card.image %}
+            <img class="explore-thumb" src="{{ card.image.publicPath }}" alt="{{ card.imageAlt or card.image.alt }}" loading="lazy" />
+            {%- endif %}
+            {%- if card.tag %}
+            <span class="explore-tag{{ accent(card.accent) }}">{{ card.tag }}</span>
+            {%- endif %}
+            <h3>{{ card.title }}</h3>
+            {{ card.text | rich | safe }}
+            {%- if card.link.label %}
+            <span class="explore-go" aria-hidden="true">{{ card.link.label }}</span>
+            {%- endif %}
+          </a>
+          {%- endfor %}
+        </div>
+      {%- elif v == "projects" %}
+        {%- for card in block.cards %}
+      <article class="project">
+        {%- if card.image %}
+        <img src="{{ card.image.publicPath }}" alt="{{ card.imageAlt or card.image.alt }}" loading="lazy" />
+        {%- endif %}
+        <div class="body">
+          {%- if card.tag %}
+          <span class="tag{{ accent(card.accent) }}">{{ card.tag }}</span>
+          {%- endif %}
+          <h3>{{ card.title }}</h3>
+          {{ card.text | rich | safe }}
+          {%- if card.buttons | length %}
+          <div class="links">
+            {{ buttons(card.buttons) }}
+          </div>
+          {%- endif %}
+        </div>
+      </article>
+        {%- endfor %}
+      {%- elif v == "demos" %}
+        {%- for card in block.cards %}
+      <article class="demo">
+        {%- if card.image %}
+        <a class="demo-shot" href="{{ card.link.href }}"{% if card.link.newTab %} target="_blank" rel="noopener"{% endif %}>
+          <img src="{{ card.image.publicPath }}" alt="{{ card.imageAlt or card.image.alt }}" loading="lazy" />
+        </a>
+        {%- endif %}
+        <div class="demo-body">
+          <h2>{{ card.title }}</h2>
+          {%- if card.subtitle %}
+          <p class="demo-sub">{{ card.subtitle }}{% if card.badge %} <span class="oss-tag">{{ card.badge }}</span>{% endif %}</p>
+          {%- endif %}
+          {{ card.text | rich | safe }}
+          {%- if card.chips | length %}
+          <div class="demo-chips">
+            {% for chip in card.chips %}<span class="chip">{{ chip.label }}</span>{% endfor %}
+          </div>
+          {%- endif %}
+          {%- if card.buttons | length %}
+          <div class="demo-actions">
+            {{ buttons(card.buttons) }}
+          </div>
+          {%- endif %}
+        </div>
+      </article>
+        {%- endfor %}
+      {%- endif %}
+      {%- if block.note %}
+        {{ block.note | richNote(block.noteClass, block.noteIcon) | safe }}
+      {%- endif %}
+      {%- if frame == "home" %}
+      </div>
+      {%- endif %}
+    </section>

@@ -1,0 +1,56 @@
+{#- hero — variant: home (section.hero, Porträt, Trust-Liste) · intro (section.demos-intro)
+    · landing (section.lp-hero). claim: jeder Absatz → p.claim (home) bzw. p.lead. -#}
+{%- from "blocks/_macros.njk" import attrs, buttons -%}
+{%- if block.variant == "home" %}
+    <section{{ attrs(block, "hero") }}>
+      <div class="wrap">
+        {%- if block.photo %}
+        <span class="avatar-wrapper">
+          <img class="portrait" src="{{ block.photo.publicPath }}" alt="{{ block.photoAlt or block.photo.alt }}" width="132" height="132" fetchpriority="high" />
+        </span>
+        {%- endif %}
+        <div>
+          {%- if block.eyebrow %}
+          <p class="eyebrow hero-eyebrow">{{ block.eyebrow }}</p>
+          {%- endif %}
+          <h1>{{ block.h1 }}</h1>
+          {{ block.claim | richP("claim") | safe }}
+          {%- if block.trustPoints | length %}
+          <ul class="hero-trust">
+            {%- for t in block.trustPoints %}
+            <li>{{ t.text }}</li>
+            {%- endfor %}
+          </ul>
+          {%- endif %}
+          {%- if block.buttons | length %}
+          <div class="cta-row">
+            {{ buttons(block.buttons) }}
+          </div>
+          {%- endif %}
+          {%- if block.note %}
+          {{ block.note | richNote(block.noteClass, block.noteIcon) | safe }}
+          {%- endif %}
+        </div>
+      </div>
+    </section>
+{%- else %}
+    <section{{ attrs(block, "lp-hero" if block.variant == "landing" else "demos-intro") }}>
+      {%- if frame == "home" %}<div class="wrap">{% endif %}
+      {%- if block.eyebrow %}
+      <p class="eyebrow">{{ block.eyebrow }}</p>
+      {%- endif %}
+      <h1>{{ block.h1 }}</h1>
+      {{ block.claim | richP("lead") | safe }}
+      {%- if block.buttons | length %}
+      {%- if block.variant == "landing" %}
+      <p class="cta-row">{{ buttons(block.buttons) }}</p>
+      {%- else %}
+      <div class="cta-row">{{ buttons(block.buttons) }}</div>
+      {%- endif %}
+      {%- endif %}
+      {%- if block.note %}
+      {{ block.note | richNote(block.noteClass, block.noteIcon) | safe }}
+      {%- endif %}
+      {%- if frame == "home" %}</div>{% endif %}
+    </section>
+{%- endif %}

@@ -1,5 +1,8 @@
-import { readFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { dirname, join } from "node:path";
+import { contentDir, loadMedia } from "./lib/content.js";
+import { buttonClass, rich, richA, richNote, richP, richUl } from "./lib/richtext.js";
 
 // kozlowski-it.de — Eleventy v3 config (ESM).
 // dir.input = "src" is LOAD-BEARING: without it, 11ty would render docs/*.md
@@ -25,6 +28,47 @@ export default function (eleventyConfig) {
       return url;
     }
   });
+
+  // CMS-Rich-Text (content/pages.json): Klassen nach Task-3-Konvention, Ausgabe mit | safe.
+  eleventyConfig.addFilter("rich", rich);
+  eleventyConfig.addFilter("richP", richP);
+  eleventyConfig.addFilter("richUl", richUl);
+  eleventyConfig.addFilter("richA", richA);
+  eleventyConfig.addFilter("richNote", richNote);
+  eleventyConfig.addFilter("buttonClass", buttonClass);
+
+  // CMS-Medien: content/media/<file> landet in der Ausgabe unter seinem publicPath
+  // (content/media/index.json). publicPath wird vor dem Build erneut geprüft
+  // (/assets/-Präfix, kein "..", kein Backslash/NUL) -> sonst bricht der Build ab.
+  // Kopiert wird NACH dem Build, damit die CMS-Datei eine gleichnamige Datei aus
+  // assets/ (Passthrough) überschreibt: Inhalt aus dem CMS gewinnt.
+  // --serve: Export-Ergebnis und Loader beobachten (liegen außerhalb von src/).
+  eleventyConfig.addWatchTarget(contentDir());
+  eleventyConfig.addWatchTarget("lib/");
+  let media = [];
+  eleventyConfig.on("eleventy.before", () => {
+    media = loadMedia();
+  });
+  eleventyConfig.on("eleventy.after", ({ directories, dir }) => {
+    const out = directories?.output ?? dir.output;
+    for (const m of media) {
+      const dest = join(out, m.publicPath);
+      mkdirSync(dirname(dest), { recursive: true });
+      copyFileSync(m.src, dest);
+    }
+  });
+
+  // Nur für Tests (test/render.test.mjs): LEGACY_PAGES=off baut ausschließlich die
+  // CMS-Seiten, damit Fixture-Seiten wie / nicht mit src/index.njk kollidieren.
+  // Ohne die Variable bleibt alles wie bisher: doppelte Permalinks brechen den Build ab.
+  if (process.env.LEGACY_PAGES === "off") {
+    const keep = new Set(["cms-pages.njk", "404.njk", "robots.njk", "sitemap.njk"]);
+    for (const sub of ["", "en"]) {
+      for (const f of readdirSync(join("src", sub))) {
+        if (f.endsWith(".njk") && !keep.has(f)) eleventyConfig.ignores.add(join("src", sub, f));
+      }
+    }
+  }
 
   return {
     dir: {

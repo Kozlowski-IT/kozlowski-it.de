@@ -1640,6 +1640,18 @@ export interface Chrome {
       | null;
     tagline: string;
   };
+  subnav?: {
+    home?: string | null;
+    tabsAria?: string | null;
+    tabs?:
+      | {
+          key?: string | null;
+          label?: string | null;
+          url?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1713,6 +1725,20 @@ export interface ChromeSelect<T extends boolean = true> {
               id?: T;
             };
         tagline?: T;
+      };
+  subnav?:
+    | T
+    | {
+        home?: T;
+        tabsAria?: T;
+        tabs?:
+          | T
+          | {
+              key?: T;
+              label?: T;
+              url?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

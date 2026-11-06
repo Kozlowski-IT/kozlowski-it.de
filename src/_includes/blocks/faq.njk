@@ -1,0 +1,16 @@
+{#- faq — <details><summary>Frage</summary>Antwort (Rich-Text)</details>. -#}
+{%- from "blocks/_macros.njk" import attrs -%}
+    <section{{ attrs(block) }}>
+      {%- if frame == "home" %}
+      <div class="wrap">
+      {%- endif %}
+        {%- if block.heading %}
+        <h2>{{ block.heading }}</h2>
+        {%- endif %}
+        {%- for item in block.items %}
+        <details><summary>{{ item.question }}</summary>{{ item.answer | rich | safe }}</details>
+        {%- endfor %}
+      {%- if frame == "home" %}
+      </div>
+      {%- endif %}
+    </section>

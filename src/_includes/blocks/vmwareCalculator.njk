@@ -1,0 +1,79 @@
+{#- vmwareCalculator — section.rechner-wrap. Texte aus dem CMS; Standardwerte, Vorauswahl
+    (Edition vvf, Tier standard) und Rechenlogik bleiben im Code (assets/js/vmware-rechner.js). -#}
+{%- from "blocks/_macros.njk" import attrs -%}
+{%- set l = block.labels or {} -%}
+    <section{{ attrs(block, "rechner-wrap") }}>
+      {%- if block.heading %}
+      <h2>{{ block.heading }}</h2>
+      {%- endif %}
+      <form class="rechner" id="vmware-rechner" novalidate>
+        <div class="field-row">
+          <label>{{ l.hosts }}
+            <input type="number" id="r-hosts" min="1" step="1" value="3" inputmode="numeric" />
+          </label>
+          <label>{{ l.vms }}
+            <input type="number" id="r-vms" min="1" step="1" value="30" inputmode="numeric" />
+          </label>
+        </div>
+        <div class="field-row">
+          <label>{{ l.sockets }}
+            <input type="number" id="r-sockets" min="1" step="1" value="2" inputmode="numeric" />
+          </label>
+          <label>{{ l.cores }}
+            <input type="number" id="r-cores" min="1" step="1" value="16" inputmode="numeric" />
+          </label>
+        </div>
+
+        <fieldset class="r-kostenweg">
+          <legend>{{ l.costLegend }}</legend>
+          <label class="r-radio"><input type="radio" name="kostenweg" value="bekannt" checked /> <span>{{ l.costKnown }}</span></label>
+          <label class="r-radio"><input type="radio" name="kostenweg" value="schaetzen" /> <span>{{ l.costEstimate }}</span></label>
+        </fieldset>
+
+        <div class="r-branch" id="r-branch-bekannt">
+          <label>{{ l.vmwareCost }}
+            <input type="number" id="r-vmwareKosten" min="0" step="1" placeholder="{{ l.vmwareCostPlaceholder }}" inputmode="numeric" />
+          </label>
+        </div>
+
+        <div class="r-branch" id="r-branch-schaetzen" hidden>
+          <label>{{ l.edition }}
+            <select id="r-edition">
+              {%- for o in block.editions %}
+              <option value="{{ o.value }}"{% if o.value == "vvf" %} selected{% endif %}>{{ o.label }}</option>
+              {%- endfor %}
+            </select>
+          </label>
+          <p class="r-hint">{{ l.estimateHint }}</p>
+        </div>
+
+        <div class="field-row">
+          <label>{{ l.proxmoxTier }}
+            <select id="r-proxmoxTier">
+              {%- for o in block.tiers %}
+              <option value="{{ o.value }}"{% if o.value == "standard" %} selected{% endif %}>{{ o.label }}</option>
+              {%- endfor %}
+            </select>
+          </label>
+          <label>{{ l.contractEnd }}
+            <span class="r-date">
+              <select id="r-vMonat" aria-label="{{ l.monthAria }}">
+                {% for o in block.months %}<option value="{{ o.value }}">{{ o.label }}</option>{% endfor %}
+              </select>
+              <input type="number" id="r-vJahr" min="2026" max="2032" step="1" value="2026" aria-label="{{ l.yearAria }}" inputmode="numeric" />
+            </span>
+          </label>
+        </div>
+
+        <fieldset class="r-features">
+          <legend>{{ l.featuresLegend }}</legend>
+          {%- for o in block.features %}
+          <label class="r-check"><input type="checkbox" value="{{ o.value }}" /> <span>{{ o.label }}</span></label>
+          {%- endfor %}
+        </fieldset>
+
+        <button type="button" class="btn primary big" id="r-rechnen">{{ l.calculate }}</button>
+      </form>
+
+      <div class="rechner-ergebnis" id="r-ergebnis" role="region" aria-live="polite" hidden></div>
+    </section>

@@ -6,7 +6,7 @@ import config from '@/payload.config'
 import { describe, it, beforeAll, expect } from 'vitest'
 import { seedGlobals } from '@/seed/seedGlobals'
 
-const dataDir = path.resolve(__dirname, '../../../src/_data')
+const dataDir = path.resolve(__dirname, '../../../src/_data/legacy')
 const json = (rel: string) => JSON.parse(fs.readFileSync(path.join(dataDir, rel), 'utf8'))
 
 const META = new Set(['id', 'createdAt', 'updatedAt', 'globalType'])

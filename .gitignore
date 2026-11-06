@@ -1,5 +1,6 @@
 # 11ty build output
 _site/
+.test-site/
 
 # dependencies
 node_modules/
@@ -16,7 +17,7 @@ node_modules/
 # CMS (Payload) und generierte Artefakte
 cms/.env
 cms/.next
-content/
+/content/
 .baseline/
 releases/
 preview/

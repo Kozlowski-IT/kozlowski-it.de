@@ -1,0 +1,20 @@
+{#- figure — variant: default (section) · beleg (section.lp-beleg): h2, img, Bildtext, Hinweis. -#}
+{%- from "blocks/_macros.njk" import attrs -%}
+    <section{{ attrs(block, "lp-beleg" if block.variant == "beleg") }}>
+      {%- if frame == "home" %}
+      <div class="wrap">
+      {%- endif %}
+      {%- if block.heading %}
+      <h2>{{ block.heading }}</h2>
+      {%- endif %}
+      <img src="{{ block.image.publicPath }}" alt="{{ block.alt or block.image.alt }}" loading="lazy" />
+      {%- if block.caption %}
+      {{ block.caption | rich | safe }}
+      {%- endif %}
+      {%- if block.note %}
+      {{ block.note | richNote(block.noteClass, block.noteIcon) | safe }}
+      {%- endif %}
+      {%- if frame == "home" %}
+      </div>
+      {%- endif %}
+    </section>

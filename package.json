@@ -13,7 +13,8 @@
     "serve": "eleventy --serve",
     "clean": "rm -rf _site",
     "parity": "node scripts/check-parity.mjs",
-    "check": "npm run build && npm run parity"
+    "check": "npm run build && npm run parity",
+    "test": "node --test \"test/**/*.test.mjs\""
   },
   "devDependencies": {
     "@11ty/eleventy": "3.1.6",

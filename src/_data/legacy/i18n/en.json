@@ -26,5 +26,13 @@
       { "label": "DPA sample (German)", "url": "/avv/" }
     ],
     "tagline": "· Hand-built · no tracking cookies · no third-party trackers"
+  },
+  "subnav": {
+    "home": "‹ Home",
+    "tabsAria": "Switch section",
+    "tabs": [
+      { "key": "demos", "label": "Live demos", "url": "/en/demos/" },
+      { "key": "projekte", "label": "Projects & references", "url": "/en/projects/" }
+    ]
   }
 }

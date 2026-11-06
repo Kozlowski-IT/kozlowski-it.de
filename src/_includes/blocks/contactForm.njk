@@ -1,0 +1,79 @@
+{#- contactForm — section.contact. Texte aus dem CMS, Logik in assets/js/contact.js
+    (Feldnamen name/email/telefon/beschreibung/firma/art/dringlichkeit sind fest).
+    Buchungs-URL aus dem Global site (site.booking). -#}
+{%- from "blocks/_macros.njk" import attrs -%}
+    <section{{ attrs(block, "contact") }}>
+      {%- if frame == "home" %}
+      <div class="wrap">
+      {%- endif %}
+        {%- if block.eyebrow %}
+        <p class="eyebrow">{{ block.eyebrow }}</p>
+        {%- endif %}
+        {%- if block.heading %}
+        <h2>{{ block.heading }}</h2>
+        {%- endif %}
+        {%- if block.lead %}
+        {{ block.lead | richP("lead") | safe }}
+        {%- endif %}
+        {%- if block.hints | length %}
+        <ul class="contact-hints">
+          {%- for h in block.hints %}
+          <li>{{ h.text }}</li>
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+        <form class="contact-form" data-contact-error="{{ block.messages.error }}" data-fallback-text="{{ block.messages.fallback }}" data-copy-label="{{ block.messages.copyLabel }}" data-copied-label="{{ block.messages.copiedLabel }}">
+          <label>{{ block.name.label }} <span aria-hidden="true">*</span>
+            <input type="text" name="name" data-label="{{ block.name.dataLabel }}" required autocomplete="name" />
+          </label>
+          <div class="field-row">
+            <label>{{ block.email.label }}
+              <input type="email" name="email" data-label="{{ block.email.dataLabel }}" autocomplete="email" />
+            </label>
+            <label>{{ block.phone.label }}
+              <input type="tel" name="telefon" data-label="{{ block.phone.dataLabel }}" autocomplete="tel" />
+            </label>
+          </div>
+          <label>{{ block.message.label }} <span aria-hidden="true">*</span>
+            <textarea name="beschreibung" data-label="{{ block.message.dataLabel }}" rows="4" required placeholder="{{ block.message.placeholder }}"></textarea>
+          </label>
+
+          <details class="more-fields">
+            <summary>{{ block.moreSummary }}</summary>
+            <label>{{ block.company.label }}
+              <input type="text" name="firma" data-label="{{ block.company.dataLabel }}" autocomplete="organization" />
+            </label>
+            <div class="field-row">
+              <label>{{ block.requestType.label }}
+                <select name="art" data-label="{{ block.requestType.dataLabel }}">
+                  {%- for o in block.requestType.options %}
+                  <option>{{ o.label }}</option>
+                  {%- endfor %}
+                </select>
+              </label>
+              <label>{{ block.urgency.label }}
+                <select name="dringlichkeit" data-label="{{ block.urgency.dataLabel }}">
+                  {%- for o in block.urgency.options %}
+                  <option>{{ o.label }}</option>
+                  {%- endfor %}
+                </select>
+              </label>
+            </div>
+          </details>
+
+          <p class="form-hint">{{ block.formHint }}</p>
+          <p class="form-status" role="alert"></p>
+          <button type="submit" class="btn primary big">{{ block.submit }}</button>
+        </form>
+        <div class="booking" data-booking-url="{{ site.booking }}" hidden>
+          <span class="booking-or">{{ block.booking.or }}</span>
+          <a class="btn primary big booking-btn" href="#" target="_blank" rel="noopener">{% if block.booking.icon %}<span aria-hidden="true">{{ block.booking.icon }}</span> {% endif %}{{ block.booking.button }}</a>
+          <p class="form-hint">{{ block.booking.hint }}</p>
+        </div>
+        {%- if block.note %}
+        {{ block.note | richNote(block.noteClass, block.noteIcon) | safe }}
+        {%- endif %}
+      {%- if frame == "home" %}
+      </div>
+      {%- endif %}
+    </section>

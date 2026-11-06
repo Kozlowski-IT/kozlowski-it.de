@@ -26,5 +26,13 @@
       { "label": "AVV-Muster", "url": "/avv/" }
     ],
     "tagline": "· Selbst gebaut · keine Tracking-Cookies · keine Drittanbieter-Tracker"
+  },
+  "subnav": {
+    "home": "‹ Startseite",
+    "tabsAria": "Bereich wechseln",
+    "tabs": [
+      { "key": "demos", "label": "Live-Demos", "url": "/demos/" },
+      { "key": "projekte", "label": "Projekte & Referenzen", "url": "/projekte/" }
+    ]
   }
 }

@@ -1,0 +1,146 @@
+{
+  "de": {
+    "skip": "Zum Inhalt springen",
+    "home": "/",
+    "menuOpen": "Menü öffnen",
+    "nav": {
+      "aria": "Hauptnavigation",
+      "items": [
+        {
+          "label": "Leistungen",
+          "url": "/#leistungen"
+        },
+        {
+          "label": "Projekte",
+          "url": "/projekte/"
+        },
+        {
+          "label": "Über mich",
+          "url": "/ueber-mich/"
+        },
+        {
+          "label": "Ablauf",
+          "url": "/#ablauf"
+        }
+      ],
+      "cta": "Termin buchen"
+    },
+    "portal": "Kundenportal",
+    "themeToggle": "Farbschema wechseln",
+    "langSwitch": {
+      "label": "EN",
+      "code": "en",
+      "aria": "Switch to English",
+      "fallback": "/en/"
+    },
+    "footer": {
+      "legalAria": "Rechtliches",
+      "copyright": "© 2026 Kozlowski IT · Pascal Kozlowski",
+      "location": "· Ochsenhausen · Landkreis Biberach & Umgebung",
+      "github": "GitHub",
+      "legal": [
+        {
+          "label": "Impressum",
+          "url": "/impressum/"
+        },
+        {
+          "label": "Datenschutz",
+          "url": "/datenschutz/"
+        },
+        {
+          "label": "AVV-Muster",
+          "url": "/avv/"
+        }
+      ],
+      "tagline": "· Selbst gebaut · keine Tracking-Cookies · keine Drittanbieter-Tracker"
+    },
+    "subnav": {
+      "home": "‹ Startseite",
+      "tabsAria": "Bereich wechseln",
+      "tabs": [
+        {
+          "key": "demos",
+          "label": "Live-Demos",
+          "url": "/demos/"
+        },
+        {
+          "key": "projekte",
+          "label": "Projekte & Referenzen",
+          "url": "/projekte/"
+        }
+      ]
+    }
+  },
+  "en": {
+    "skip": "Skip to content",
+    "home": "/en/",
+    "menuOpen": "Open menu",
+    "nav": {
+      "aria": "Main navigation",
+      "items": [
+        {
+          "label": "Services",
+          "url": "/en/#services"
+        },
+        {
+          "label": "Projects",
+          "url": "/en/projects/"
+        },
+        {
+          "label": "About me",
+          "url": "/en/about/"
+        },
+        {
+          "label": "How it works",
+          "url": "/en/#process"
+        }
+      ],
+      "cta": "Book an appointment"
+    },
+    "portal": "Client Portal",
+    "themeToggle": "Toggle color scheme",
+    "langSwitch": {
+      "label": "DE",
+      "code": "de",
+      "aria": "Auf Deutsch wechseln",
+      "fallback": "/"
+    },
+    "footer": {
+      "legalAria": "Legal",
+      "copyright": "© 2026 Kozlowski IT · Pascal Kozlowski",
+      "location": "",
+      "github": "GitHub",
+      "legal": [
+        {
+          "label": "Legal notice (German)",
+          "url": "/impressum/"
+        },
+        {
+          "label": "Privacy (German)",
+          "url": "/datenschutz/"
+        },
+        {
+          "label": "DPA sample (German)",
+          "url": "/avv/"
+        }
+      ],
+      "tagline": "· Hand-built · no tracking cookies · no third-party trackers"
+    },
+    "subnav": {
+      "home": "‹ Home",
+      "tabsAria": "Switch section",
+      "tabs": [
+        {
+          "key": "demos",
+          "label": "Live demos",
+          "url": "/en/demos/"
+        },
+        {
+          "key": "projekte",
+          "label": "Projects & references",
+          "url": "/en/projects/"
+        }
+      ]
+    }
+  }
+}
