@@ -133,3 +133,65 @@ test("Bedienfehler: fehlendes/leeres Verzeichnis oder unbekannte URL -> Exit 2 (
     assert.equal(run(fx("base")).status, 2);
   } finally { rmSync(d, { recursive: true, force: true }); }
 });
+
+// --- Fix-Runde 1: Einzel-Seiten-Vergleich über zwei temporäre Verzeichnisse ---
+function pair(a, b, file = "index.html", extra = {}) {
+  const d = mkdtempSync(join(process.env.TMPDIR || tmpdir(), "equal-"));
+  for (const [side, content] of [["a", a], ["b", b]]) {
+    mkdirSync(join(d, side));
+    writeFileSync(join(d, side, file), content);
+    for (const [n, c] of Object.entries(extra[side] || {})) writeFileSync(join(d, side, n), c);
+  }
+  return { a: join(d, "a"), b: join(d, "b"), done: () => rmSync(d, { recursive: true, force: true }) };
+}
+const doc = (body) => `<!doctype html>\n<html><head><title>t</title></head><body>${body}</body></html>\n`;
+const status = (a, b) => { const p = pair(doc(a), doc(b)); try { return run(p.a, p.b).status; } finally { p.done(); } };
+
+test("Whitespace am Rand INLINE-Eltern zählt (führend/abschließend)", () => {
+  assert.equal(status("<p>Hallo<b> Welt</b></p>", "<p>Hallo<b>Welt</b></p>"), 1);
+  assert.equal(status("<p><b>Hallo </b>Welt</p>", "<p><b>Hallo</b>Welt</p>"), 1);
+  assert.equal(status('<p>x<a href="/">  link</a></p>', '<p>x<a href="/">link</a></p>'), 1);
+  assert.equal(status("<p><b> </b>x</p>", "<p><b></b>x</p>"), 1);
+});
+
+test("Whitespace am Rand von Block-Eltern bleibt egal, Runs im Inline-Rand werden kollabiert", () => {
+  assert.equal(status("<p>  Hallo <b>Welt</b>  </p>", "<p>Hallo <b>Welt</b></p>"), 0);
+  assert.equal(status("<p><b>  Hallo   </b>Welt</p>", "<p><b> Hallo </b>Welt</p>"), 0);
+});
+
+test("NBSP / schmale Leerzeichen sind kein HTML-Whitespace", () => {
+  assert.equal(status("<p>a&nbsp;b</p>", "<p>a b</p>"), 1);
+  assert.equal(status("<p>a b</p>", "<p>a b</p>"), 1);
+  assert.equal(status("<p>a b</p>", "<p>a b</p>"), 1);
+  assert.equal(status('<p title="a&nbsp;b">x</p>', '<p title="a b">x</p>'), 1);
+  assert.equal(status("<p>&nbsp;x</p>", "<p>x</p>"), 1);
+});
+
+test("<template>-Inhalt wird verglichen", () => {
+  assert.equal(status("<template><p>eins</p></template>", "<template><p>zwei</p></template>"), 1);
+  assert.equal(status("<template><p>eins</p></template>", "<template><p>eins</p></template>"), 0);
+});
+
+test("CDATA in XML wird verglichen; unbekannter Knotentyp -> walk wirft (fail closed)", async () => {
+  const p = pair("<r><![CDATA[x]]></r>", "<r><![CDATA[y]]></r>", "sitemap.xml");
+  try { assert.equal(run(p.a, p.b).status, 1); } finally { p.done(); }
+  const { walk } = await import("../scripts/check-equal.mjs");
+  assert.throws(() => walk({ type: "root", children: [{ type: "frobnicate" }] }, "", false, []), /unbekannter Knotentyp "frobnicate"/);
+});
+
+test("Nicht-HTML-Dateien werden byte-genau verglichen (gleich/anders/fehlt/extra)", () => {
+  const same = pair(doc("x"), doc("x"), "index.html", { a: { "robots.txt": "A\n", "x.bin": Buffer.from([1, 2, 3]) }, b: { "robots.txt": "A\n", "x.bin": Buffer.from([1, 2, 3]) } });
+  try { assert.equal(run(same.a, same.b).status, 0); } finally { same.done(); }
+  const diff = pair(doc("x"), doc("x"), "index.html", { a: { "robots.txt": "A\n" }, b: { "robots.txt": "A \n" } });
+  try {
+    const r = run(diff.a, diff.b);
+    assert.equal(r.status, 1);
+    assert.match(out(r), /robots\.txt/);
+  } finally { diff.done(); }
+  const bin = pair(doc("x"), doc("x"), "index.html", { a: { "x.bin": Buffer.from([1, 2, 3]) }, b: { "x.bin": Buffer.from([1, 2, 4]) } });
+  try { assert.equal(run(bin.a, bin.b).status, 1); } finally { bin.done(); }
+  const miss = pair(doc("x"), doc("x"), "index.html", { a: { "a.css": "1" }, b: {} });
+  try { const r = run(miss.a, miss.b); assert.equal(r.status, 1); assert.match(out(r), /fehlt.*a\.css/); } finally { miss.done(); }
+  const ext = pair(doc("x"), doc("x"), "index.html", { a: {}, b: { "a.css": "1" } });
+  try { const r = run(ext.a, ext.b); assert.equal(r.status, 1); assert.match(out(r), /zusätzlich.*a\.css/); } finally { ext.done(); }
+});

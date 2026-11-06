@@ -19,5 +19,6 @@ cms/.env
 cms/.next
 /content/
 .baseline/
+.baseline.new/
 releases/
 preview/
