@@ -7,6 +7,8 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Site } from './globals/Site'
+import { Chrome } from './globals/Chrome'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -19,6 +21,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media],
+  globals: [Site, Chrome],
   editor: lexicalEditor(),
   localization: {
     locales: [

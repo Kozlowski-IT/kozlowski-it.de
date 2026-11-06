@@ -87,8 +87,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('de' | 'en') | ('de' | 'en')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    site: Site;
+    chrome: Chrome;
+  };
+  globalsSelect: {
+    site: SiteSelect<false> | SiteSelect<true>;
+    chrome: ChromeSelect<false> | ChromeSelect<true>;
+  };
   locale: 'de' | 'en';
   widgets: {
     collections: CollectionsWidget;
@@ -316,6 +322,150 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site".
+ */
+export interface Site {
+  id: number;
+  name: string;
+  owner: string;
+  domain: string;
+  tel: string;
+  telDisplay: string;
+  telHref: string;
+  email: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  region: string;
+  booking: string;
+  portal: string;
+  github: string;
+  logo: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chrome".
+ */
+export interface Chrome {
+  id: number;
+  skip: string;
+  home: string;
+  menuOpen: string;
+  nav: {
+    aria: string;
+    items?:
+      | {
+          label: string;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    cta: string;
+  };
+  portal: string;
+  themeToggle: string;
+  langSwitch: {
+    label: string;
+    code: string;
+    aria: string;
+    fallback: string;
+  };
+  footer: {
+    legalAria: string;
+    copyright: string;
+    location?: string | null;
+    github: string;
+    legal?:
+      | {
+          label: string;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    tagline: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site_select".
+ */
+export interface SiteSelect<T extends boolean = true> {
+  name?: T;
+  owner?: T;
+  domain?: T;
+  tel?: T;
+  telDisplay?: T;
+  telHref?: T;
+  email?: T;
+  street?: T;
+  postalCode?: T;
+  city?: T;
+  region?: T;
+  booking?: T;
+  portal?: T;
+  github?: T;
+  logo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chrome_select".
+ */
+export interface ChromeSelect<T extends boolean = true> {
+  skip?: T;
+  home?: T;
+  menuOpen?: T;
+  nav?:
+    | T
+    | {
+        aria?: T;
+        items?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        cta?: T;
+      };
+  portal?: T;
+  themeToggle?: T;
+  langSwitch?:
+    | T
+    | {
+        label?: T;
+        code?: T;
+        aria?: T;
+        fallback?: T;
+      };
+  footer?:
+    | T
+    | {
+        legalAria?: T;
+        copyright?: T;
+        location?: T;
+        github?: T;
+        legal?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        tagline?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
