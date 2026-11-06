@@ -1,6 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { CollectionConfig } from 'payload'
+import { checkPublicPath } from '../fields/publicPath'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -26,13 +27,11 @@ export const Media: CollectionConfig = {
       name: 'publicPath',
       type: 'text',
       unique: true,
-      // Der Export kopiert die Datei an diesen Pfad → nur unter /assets/, kein Traversal.
-      validate: (value: string | null | undefined) => {
+      // Der Export kopiert die Datei an diesen Pfad → nur Bilder unter /assets/ (nicht js/css/fonts),
+      // kein Traversal, Endung passend zur Datei (fields/publicPath.ts; Eleventy prüft erneut).
+      validate: (value: string | null | undefined, { data, originalDoc }: any) => {
         if (value == null || value === '') return true // Default setzt der Hook
-        if (!value.startsWith('/assets/')) return 'publicPath muss mit /assets/ beginnen'
-        if (value.includes('..') || value.includes('\\') || value.includes('\0'))
-          return 'publicPath darf weder "..", Backslash noch NUL enthalten'
-        return true
+        return checkPublicPath(value, data?.filename ?? originalDoc?.filename)
       },
       admin: {
         description: 'Pfad in der Website-Ausgabe. Leer = /assets/media/<Dateiname>.',
@@ -49,7 +48,8 @@ export const Media: CollectionConfig = {
   upload: {
     // cms/media (gitignored); der Export kopiert genutzte Dateien nach publicPath
     staticDir: path.resolve(dirname, '../../media'),
-    mimeTypes: ['image/*'],
+    // nur Rasterbilder; kein SVG (kann Skript tragen)
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif'],
     imageSizes: [
       { name: 'sm', width: 480, withoutEnlargement: true, formatOptions: { format: 'webp', options: { quality: 80 } } },
       { name: 'md', width: 960, withoutEnlargement: true, formatOptions: { format: 'webp', options: { quality: 80 } } },

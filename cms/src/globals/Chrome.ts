@@ -1,4 +1,5 @@
 import type { Field, GlobalConfig } from 'payload'
+import { validateHref } from '../fields/url'
 
 const t = (name: string, required = true): Field => ({
   name,
@@ -7,12 +8,15 @@ const t = (name: string, required = true): Field => ({
   required,
 })
 
+// Text-Feld mit Link-Ziel (Allow-List, s. fields/url.ts)
+const u = (name: string, required = true): Field => ({ ...t(name, required), validate: validateHref }) as Field
+
 // Link-Liste: Array selbst lokalisiert, weil die URLs pro Sprache verschieden sind (/ vs. /en/).
 const links = (name: string): Field => ({
   name,
   type: 'array',
   localized: true,
-  fields: [t('label'), t('url')],
+  fields: [t('label'), u('url')],
 })
 
 export const Chrome: GlobalConfig = {
@@ -21,7 +25,7 @@ export const Chrome: GlobalConfig = {
   access: { read: () => true },
   fields: [
     t('skip'),
-    t('home'),
+    u('home'),
     t('menuOpen'),
     {
       name: 'nav',
@@ -33,7 +37,7 @@ export const Chrome: GlobalConfig = {
     {
       name: 'langSwitch',
       type: 'group',
-      fields: [t('label'), t('code'), t('aria'), t('fallback')],
+      fields: [t('label'), t('code'), t('aria'), u('fallback')],
     },
     {
       name: 'footer',
@@ -62,7 +66,7 @@ export const Chrome: GlobalConfig = {
           name: 'tabs',
           type: 'array',
           localized: true,
-          fields: [t('key', false), t('label', false), t('url', false)],
+          fields: [t('key', false), t('label', false), u('url', false)],
         },
       ],
     },

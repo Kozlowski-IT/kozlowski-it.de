@@ -153,7 +153,7 @@ describe('exportContent', () => {
 
   it('Medien: nur referenzierte Dateien, an publicPath-Schlüssel, Manifest, Waisen bleiben draußen', async () => {
     const used = await payload.create({
-      collection: 'media', locale: 'de', data: { alt: 'Porträt', publicPath: '/assets/img/t-exp-used.webp' } as any, file: await png('used'),
+      collection: 'media', locale: 'de', data: { alt: 'Porträt', publicPath: '/assets/img/t-exp-used.png' } as any, file: await png('used'),
     })
     await payload.create({ collection: 'media', locale: 'de', data: { alt: 'ungenutzt' } as any, file: await png('unused') })
     fs.writeFileSync(path.join(mediaDir, 't-exp-orphan.png'), 'x') // Datei ohne Media-Dokument
@@ -163,10 +163,10 @@ describe('exportContent', () => {
     const { res, pages } = await run(false)
     expect(res.missing.filter((m) => m.startsWith('k7/de'))).toEqual([])
     const photo = pages[0].locales.de.blocks[0].photo
-    expect(photo).toMatchObject({ publicPath: '/assets/img/t-exp-used.webp', file: used.filename, alt: 'Porträt' })
+    expect(photo).toMatchObject({ publicPath: '/assets/img/t-exp-used.png', file: used.filename, alt: 'Porträt' })
     expect(fs.readdirSync(path.join(out, 'media')).sort()).toEqual([used.filename, 'index.json'].sort())
     expect(fs.readFileSync(path.join(out, 'media', used.filename!)).equals(fs.readFileSync(path.join(mediaDir, used.filename!)))).toBe(true)
-    expect(json(path.join(out, 'media/index.json'))).toEqual([{ file: used.filename, publicPath: '/assets/img/t-exp-used.webp' }])
+    expect(json(path.join(out, 'media/index.json'))).toEqual([{ file: used.filename, publicPath: '/assets/img/t-exp-used.png' }])
   })
 
   it('referenzierte, aber auf der Platte fehlende Mediendatei → missing', async () => {

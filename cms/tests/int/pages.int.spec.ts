@@ -39,6 +39,7 @@ const plain = (v: any): string =>
     .join('')
 
 let payload: Payload
+const errPathsP = (e: unknown) => (e as ValidationError).data.errors.map((x) => x.path)
 
 // Felder ohne Namen (row/collapsible) sind nur Layout → auflösen
 const flat = (fields: any[]): any[] =>
@@ -134,6 +135,40 @@ describe('Collection pages', () => {
     ).rejects.toBeInstanceOf(ValidationError)
   })
 
+  it.each([
+    ['javascript:alert(1)'],
+    ['JavaScript:alert(1)'],
+    ['java\tscript:alert(1)'],
+    ['data:text/html,x'],
+    ['//evil.example'],
+  ])('Link-Ziel %j in Button bzw. Karten-Link wird abgelehnt', async (bad) => {
+    const button = await payload
+      .create({
+        collection: 'pages', locale: 'de',
+        data: { ...basePage('t-href-b', 'test-href-b'), layout: [{ blockType: 'ctaBar', sectionKey: 'cta', buttons: [{ label: 'x', href: bad }] }] },
+      })
+      .catch((e) => e)
+    expect(button).toBeInstanceOf(ValidationError)
+    expect(errPathsP(button).some((p: string) => p.endsWith('.href'))).toBe(true)
+    const card = await payload
+      .create({
+        collection: 'pages', locale: 'de',
+        data: { ...basePage('t-href-c', 'test-href-c'), layout: [{ blockType: 'cards', sectionKey: 'k', cards: [{ title: 't', link: { href: bad } }] }] },
+      })
+      .catch((e) => e)
+    expect(card).toBeInstanceOf(ValidationError)
+    expect(errPathsP(card).some((p: string) => p.endsWith('link.href'))).toBe(true)
+  })
+
+  it('erlaubte Link-Ziele speichern (/pfad, #anker, https, mailto, tel)', async () => {
+    const hrefs = ['/#kontakt', '#rechner', 'https://cal.kozlowski-it.de/x', 'mailto:pk@kozlowski-it.de', 'tel:+491628213267']
+    const doc = await payload.create({
+      collection: 'pages', locale: 'de',
+      data: { ...basePage('t-href-ok', 'test-href-ok'), layout: [{ blockType: 'text', sectionKey: 's', buttons: hrefs.map((href) => ({ label: 'x', href })) }] },
+    })
+    expect((doc.layout?.[0] as any).buttons.map((b: any) => b.href)).toEqual(hrefs)
+  })
+
   it('(c) Karten-Text mit 200 Zeichen speichert (lengthHint ist nur Warnung)', async () => {
     const long = 'x'.repeat(200)
     const page = await payload.create({
@@ -190,13 +225,18 @@ describe('Collection pages', () => {
   })
 })
 
-// Kleines PNG für Upload-Tests
-const png = async (tag: string, color = '#7c3aed') => {
+// Kleines Bild für Upload-Tests (Format png/webp/jpeg, damit die Endung zu publicPath passt)
+const png = async (tag: string, color = '#7c3aed', fmt: 'png' | 'webp' | 'jpeg' = 'png') => {
   const sharp = (await import('sharp')).default
   const data = await sharp({ create: { width: 1200, height: 600, channels: 3, background: color } })
-    .png()
+    .toFormat(fmt)
     .toBuffer()
-  return { data, mimetype: 'image/png', name: `t-${tag}-${Date.now()}.png`, size: data.length }
+  const ext = fmt === 'jpeg' ? 'jpg' : fmt
+  return { data, mimetype: `image/${fmt}`, name: `t-${tag}-${Date.now()}.${ext}`, size: data.length }
+}
+const fmtOf = (publicPath: unknown): 'png' | 'webp' | 'jpeg' => {
+  const e = /\.([a-z]+)$/i.exec(String(publicPath ?? ''))?.[1]?.toLowerCase()
+  return e === 'webp' ? 'webp' : e === 'jpg' || e === 'jpeg' ? 'jpeg' : 'png'
 }
 
 const errPaths = (e: unknown) => (e as ValidationError).data.errors.map((x) => x.path)
@@ -204,7 +244,9 @@ const errPaths = (e: unknown) => (e as ValidationError).data.errors.map((x) => x
 describe('Collection media', () => {
   const created: number[] = []
   const mk = async (data: Record<string, unknown>, tag: string, color?: string) => {
-    const m = await payload.create({ collection: 'media', locale: 'de', data: data as any, file: await png(tag, color) })
+    const m = await payload.create({
+      collection: 'media', locale: 'de', data: data as any, file: await png(tag, color, fmtOf(data.publicPath)),
+    })
     created.push(m.id)
     return m
   }
@@ -237,13 +279,13 @@ describe('Collection media', () => {
     expect(sizes.length).toBeGreaterThan(0)
     for (const s of sizes.filter((s) => s.filename)) expect(s.mimeType).toBe('image/webp')
 
-    // migriertes Bestandsbild behält seinen Pfad
+    // migriertes Bestandsbild behält seinen Pfad (Endung muss zur Datei passen: hier .png)
     const kept = await payload.update({
       collection: 'media',
       id: m.id,
-      data: { publicPath: '/assets/img/avatar2.webp' },
+      data: { publicPath: '/assets/img/t-avatar.png' },
     })
-    expect(kept.publicPath).toBe('/assets/img/avatar2.webp')
+    expect(kept.publicPath).toBe('/assets/img/t-avatar.png')
 
     const en = await payload.findByID({ collection: 'media', id: m.id, locale: 'en' })
     expect(en.alt ?? null).toBeNull()
@@ -255,10 +297,42 @@ describe('Collection media', () => {
     ['relativ', 'assets/img/x.png'],
     ['Backslash', '/assets\\img\\x.png'],
     ['NUL', '/assets/img/x\0.png'],
+    ['unter /assets/js/', '/assets/js/evil.png'],
+    ['unter /assets/css/', '/assets/css/x.png'],
+    ['unter /assets/fonts/', '/assets/fonts/x.png'],
+    ['JS-Endung', '/assets/js/evil.js'],
+    ['keine Bild-Endung (svg)', '/assets/media/x.svg'],
+    ['keine Bild-Endung (html)', '/assets/media/x.html'],
   ])('publicPath %s wird abgelehnt', async (_label, publicPath) => {
     const e = await mk({ alt: 'x', publicPath }, 'bad').catch((err) => err)
     expect(e).toBeInstanceOf(ValidationError)
     expect(errPaths(e)).toContain('publicPath')
+  })
+
+  it('publicPath-Endung muss zur Datei passen (png hochgeladen, .webp verlangt)', async () => {
+    const e = await payload
+      .create({ collection: 'media', locale: 'de', data: { alt: 'x', publicPath: '/assets/img/t-mismatch.webp' } as any, file: await png('mismatch') })
+      .catch((err) => err)
+    expect(e).toBeInstanceOf(ValidationError)
+    expect(errPaths(e)).toContain('publicPath')
+    // nachträgliches Umbenennen auf andere Endung ebenso
+    const m = await mk({ alt: 'ok', publicPath: '/assets/img/t-ok.png' }, 'okpng')
+    const e2 = await payload.update({ collection: 'media', id: m.id, data: { publicPath: '/assets/img/t-ok.jpg' } }).catch((err) => err)
+    expect(e2).toBeInstanceOf(ValidationError)
+  })
+
+  it('SVG-Upload wird abgelehnt (mimeTypes nur jpeg/png/webp/avif)', async () => {
+    // harmloses SVG: Payloads eigener SVG-Scan ließe es durch, nur die mimeTypes-Liste lehnt es ab
+    const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8"/></svg>')
+    const e = await payload
+      .create({
+        collection: 'media', locale: 'de', data: { alt: 'svg' } as any,
+        file: { data: svg, mimetype: 'image/svg+xml', name: `t-evil-${Date.now()}.svg`, size: svg.length },
+      })
+      .catch((err) => err)
+    expect(e).toBeInstanceOf(ValidationError)
+    expect(JSON.stringify((e as ValidationError).data)).toMatch(/Invalid MIME type/)
+    expect(await payload.count({ collection: 'media', where: { alt: { equals: 'svg' } } }).then((r) => r.totalDocs)).toBe(0)
   })
 
   it('publicPath ist eindeutig', async () => {

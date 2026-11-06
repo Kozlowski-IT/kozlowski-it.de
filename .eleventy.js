@@ -1,8 +1,9 @@
-import { copyFileSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { contentDir, loadMedia } from "./lib/content.js";
 import { buttonClass, rich, richA, richNote, richP, richUl } from "./lib/richtext.js";
+import { safeHref } from "./lib/url.js";
 
 // kozlowski-it.de — Eleventy v3 config (ESM).
 // dir.input = "src" is LOAD-BEARING: without it, 11ty would render docs/*.md
@@ -36,16 +37,22 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter("richA", richA);
   eleventyConfig.addFilter("richNote", richNote);
   eleventyConfig.addFilter("buttonClass", buttonClass);
+  // Link-Ziele aus Inhalten (CMS/Globals): nur /pfad, #anker, http(s)://, mailto:, tel: — sonst Build-Abbruch.
+  eleventyConfig.addFilter("safeHref", safeHref);
 
   // CMS-Medien: content/media/<file> landet in der Ausgabe unter seinem publicPath
   // (content/media/index.json). publicPath wird vor dem Build erneut geprüft
-  // (/assets/-Präfix, kein "..", kein Backslash/NUL) -> sonst bricht der Build ab.
-  // Kopiert wird NACH dem Build, damit die CMS-Datei eine gleichnamige Datei aus
-  // assets/ (Passthrough) überschreibt: Inhalt aus dem CMS gewinnt.
+  // (lib/content.js: /assets/-Präfix, kein "..", Backslash/NUL, nicht js/css/fonts,
+  // Bild-Endung passend zur Datei) -> sonst bricht der Build ab.
+  // Kopiert wird NACH dem Build. Liegt am Ziel schon eine Datei (z. B. aus dem
+  // assets/-Passthrough), muss sie byte-identisch sein (migrierte Bestandsbilder, R3);
+  // sonst Build-Abbruch statt stillem Überschreiben. Ausnahme: Dateien, die dieser
+  // Prozess selbst schon platziert hat (--serve, neuer Inhalt am gleichen Pfad).
   // --serve: Export-Ergebnis und Loader beobachten (liegen außerhalb von src/).
   eleventyConfig.addWatchTarget(contentDir());
   eleventyConfig.addWatchTarget("lib/");
   let media = [];
+  const placed = new Set();
   eleventyConfig.on("eleventy.before", () => {
     media = loadMedia();
   });
@@ -53,8 +60,12 @@ export default function (eleventyConfig) {
     const out = directories?.output ?? dir.output;
     for (const m of media) {
       const dest = join(out, m.publicPath);
+      if (existsSync(dest) && !placed.has(dest) && !readFileSync(dest).equals(readFileSync(m.src))) {
+        throw new Error(`cms: Medien-Ziel ${m.publicPath} existiert schon mit anderem Inhalt (Quelle ${m.file})`);
+      }
       mkdirSync(dirname(dest), { recursive: true });
       copyFileSync(m.src, dest);
+      placed.add(dest);
     }
   });
 

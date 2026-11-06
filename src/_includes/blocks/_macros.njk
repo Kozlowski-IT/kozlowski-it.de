@@ -8,7 +8,7 @@
 {#- Ein Button/Link (buttons[]: label, href, style, icon, newTab, download). -#}
 {% macro button(b) -%}
 {%- set cls = b.style | buttonClass -%}
-<a{% if cls %} class="{{ cls }}"{% endif %} href="{{ b.href }}"{% if b.newTab %} target="_blank" rel="noopener"{% endif %}{% if b.download %} download{% endif %}>{% if b.icon %}<span aria-hidden="true">{{ b.icon }}</span> {% endif %}{{ b.label }}</a>
+<a{% if cls %} class="{{ cls }}"{% endif %} href="{{ b.href | safeHref }}"{% if b.newTab %} target="_blank" rel="noopener"{% endif %}{% if b.download %} download{% endif %}>{% if b.icon %}<span aria-hidden="true">{{ b.icon }}</span> {% endif %}{{ b.label }}</a>
 {%- endmacro %}
 
 {#- Mehrere Buttons, durch Leerzeichen getrennt (wie im heutigen Markup). -#}

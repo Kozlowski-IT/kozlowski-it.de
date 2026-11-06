@@ -9,9 +9,9 @@
     Telefon, keine Nav, keine Cross-Links -> ein einziges Ziel. -#}
 <header class="site minimal">
   <div class="wrap">
-    <a class="wordmark" href="{{ strings.home }}"><img src="{{ site.logo }}" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
+    <a class="wordmark" href="{{ strings.home | safeHref }}"><img src="{{ site.logo | safeHref }}" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
     <div class="switches">
-      <a class="nav-tel" href="{{ site.telHref }}"><span aria-hidden="true">&#128222;</span> {{ site.telDisplay }}</a>
+      <a class="nav-tel" href="{{ site.telHref | safeHref }}"><span aria-hidden="true">&#128222;</span> {{ site.telDisplay }}</a>
       <button id="theme-toggle" type="button" aria-label="{{ strings.themeToggle }}">☾</button>
     </div>
   </div>
@@ -19,14 +19,14 @@
 {%- else %}
 <header class="site">
   <div class="wrap">
-    <a class="wordmark" href="{{ strings.home }}"><img src="{{ site.logo }}" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
+    <a class="wordmark" href="{{ strings.home | safeHref }}"><img src="{{ site.logo | safeHref }}" alt="" width="28" height="28" /> Kozlowski <span>IT</span></a>
     <input type="checkbox" id="navtoggle" class="nav-toggle-cb" />
     <label for="navtoggle" class="nav-toggle" aria-label="{{ strings.menuOpen }}"></label>
     {%- include "partials/nav.njk" %}
-    <a class="nav-tel header-tel" href="{{ site.telHref }}"><span aria-hidden="true">&#128222;</span> {{ site.telDisplay }}</a>
+    <a class="nav-tel header-tel" href="{{ site.telHref | safeHref }}"><span aria-hidden="true">&#128222;</span> {{ site.telDisplay }}</a>
     <div class="switches">
-      <a class="portal-btn" href="{{ site.portal }}">{{ strings.portal }}</a>
-      <a class="lang" href="{{ altLangUrl or strings.langSwitch.fallback }}" lang="{{ strings.langSwitch.code }}" aria-label="{{ strings.langSwitch.aria }}">{{ strings.langSwitch.label }}</a>
+      <a class="portal-btn" href="{{ site.portal | safeHref }}">{{ strings.portal }}</a>
+      <a class="lang" href="{{ (altLangUrl or strings.langSwitch.fallback) | safeHref }}" lang="{{ strings.langSwitch.code }}" aria-label="{{ strings.langSwitch.aria }}">{{ strings.langSwitch.label }}</a>
       <button id="theme-toggle" type="button" aria-label="{{ strings.themeToggle }}">☾</button>
     </div>
   </div>

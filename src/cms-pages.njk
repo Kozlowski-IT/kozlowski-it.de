@@ -15,14 +15,14 @@ permalink: "{{ cmsPage.permalink }}"
 <main id="main"{% if mainClass %} class="{{ mainClass }}"{% endif %}>
 {%- if frame == "subpage" or frame == "subpageTabs" %}
     <div class="subnav">
-      <a class="subnav-home" href="{{ strings.home }}">{{ strings.subnav.home }}</a>
+      <a class="subnav-home" href="{{ strings.home | safeHref }}">{{ strings.subnav.home }}</a>
       {%- if frame == "subpageTabs" %}
       <nav class="page-tabs" aria-label="{{ strings.subnav.tabsAria }}">
         {%- for tab in strings.subnav.tabs %}
         {%- if tab.key == cmsPage.translationKey %}
-        <a class="tab active" href="{{ tab.url }}" aria-current="page">{{ tab.label }}</a>
+        <a class="tab active" href="{{ tab.url | safeHref }}" aria-current="page">{{ tab.label }}</a>
         {%- else %}
-        <a class="tab" href="{{ tab.url }}">{{ tab.label }}</a>
+        <a class="tab" href="{{ tab.url | safeHref }}">{{ tab.label }}</a>
         {%- endif %}
         {%- endfor %}
       </nav>

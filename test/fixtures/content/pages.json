@@ -18,7 +18,7 @@
             "cards": [
               {
                 "accent": "none", "title": "FlowGate", "subtitle": "Antrags- & Freigabe-Workflow", "badge": "Open Source",
-                "image": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Bild-Alt aus Media" },
+                "image": { "publicPath": "/assets/media/fixture-portrait.png", "file": "fixture-portrait-1.png", "alt": "Bild-Alt aus Media" },
                 "imageAlt": "FlowGate: Board",
                 "text": "<p>Mehrstufiger Genehmigungsprozess.</p>",
                 "chips": [ { "label": "Angular" }, { "label": "NestJS" } ],
@@ -43,7 +43,7 @@
             "cards": [
               {
                 "accent": "none", "title": "FlowGate", "subtitle": "Request & approval workflow",
-                "image": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Image alt from media" },
+                "image": { "publicPath": "/assets/media/fixture-portrait.png", "file": "fixture-portrait-1.png", "alt": "Image alt from media" },
                 "text": "<p>A multi-step approval process.</p>",
                 "chips": [ { "label": "Angular" } ],
                 "link": { "href": "https://flowgate.kozlowski-it.de", "newTab": true },
@@ -96,7 +96,7 @@
             "claim": "<p>Betreuung &amp; Server.</p>",
             "trustPoints": [ { "text": "Ein Ansprechpartner" }, { "text": "Antwort in einem Werktag" } ],
             "buttons": [ { "label": "Mit dem Sicherheitscheck starten", "href": "#sicherheitscheck", "style": "primaryBig", "newTab": false } ],
-            "photo": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Porträt aus Media", "width": 8, "height": 8 },
+            "photo": { "publicPath": "/assets/media/fixture-portrait.png", "file": "fixture-portrait-1.png", "alt": "Porträt aus Media", "width": 8, "height": 8 },
             "photoAlt": "Porträt von Pascal Kozlowski"
           },
           {
@@ -148,7 +148,7 @@
             "claim": "<p>Care &amp; servers.</p>",
             "trustPoints": [ { "text": "One contact" } ],
             "buttons": [ { "label": "Start with the security check", "href": "#security-check", "style": "primaryBig" } ],
-            "photo": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Portrait from media" }
+            "photo": { "publicPath": "/assets/media/fixture-portrait.png", "file": "fixture-portrait-1.png", "alt": "Portrait from media" }
           },
           {
             "blockType": "text", "sectionKey": "sicherheitscheck", "anchorId": "security-check", "variant": "callout",
@@ -249,7 +249,7 @@
           },
           {
             "blockType": "figure", "sectionKey": "beleg", "variant": "beleg", "heading": "Das betreibe ich selbst",
-            "image": { "publicPath": "/assets/media/fixture-portrait.svg", "file": "fixture-portrait-1.svg", "alt": "Architekturdiagramm" },
+            "image": { "publicPath": "/assets/media/fixture-portrait.png", "file": "fixture-portrait-1.png", "alt": "Architekturdiagramm" },
             "caption": "<p>Proxmox-VE-Cluster.</p>", "note": "<p>Sobald die erste Migration fertig ist.</p>", "noteClass": "r-hint"
           },
           {

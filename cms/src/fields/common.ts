@@ -1,5 +1,6 @@
 import type { Field } from 'payload'
 import { lengthHint } from './lengthHint'
+import { validateHref } from './url'
 
 /** Lokalisierter Text (einzeilig). */
 export const ltext = (name: string, extra: Partial<Field> = {}): Field =>
@@ -35,7 +36,7 @@ export const buttons = (name = 'buttons', maxRows?: number): Field => ({
       type: 'row',
       fields: [
         ltext('label', { required: true, admin: { width: '50%' } } as Partial<Field>),
-        ltext('href', { required: true, admin: { width: '50%' } } as Partial<Field>),
+        ltext('href', { required: true, validate: validateHref, admin: { width: '50%' } } as Partial<Field>),
       ],
     },
     {
@@ -68,7 +69,7 @@ export const link = (name = 'link'): Field => ({
     {
       type: 'row',
       fields: [
-        ltext('href', { admin: { width: '50%' } } as Partial<Field>),
+        ltext('href', { validate: validateHref, admin: { width: '50%' } } as Partial<Field>),
         ltext('label', { admin: { width: '50%', description: 'Sichtbarer Linktext (optional)' } } as Partial<Field>),
       ],
     },

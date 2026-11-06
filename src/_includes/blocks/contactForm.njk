@@ -65,7 +65,7 @@
           <p class="form-status" role="alert"></p>
           <button type="submit" class="btn primary big">{{ block.submit }}</button>
         </form>
-        <div class="booking" data-booking-url="{{ site.booking }}" hidden>
+        <div class="booking" data-booking-url="{{ site.booking | safeHref }}" hidden>
           <span class="booking-or">{{ block.booking.or }}</span>
           <a class="btn primary big booking-btn" href="#" target="_blank" rel="noopener">{% if block.booking.icon %}<span aria-hidden="true">{{ block.booking.icon }}</span> {% endif %}{{ block.booking.button }}</a>
           <p class="form-hint">{{ block.booking.hint }}</p>

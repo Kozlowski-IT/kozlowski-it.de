@@ -41,7 +41,7 @@
       {%- elif v == "explore" %}
         <div class="explore">
           {%- for card in block.cards %}
-          <a class="explore-card{% if card.image %} has-thumb{% endif %}" href="{{ card.link.href }}"{% if card.link.newTab %} target="_blank" rel="noopener"{% endif %}>
+          <a class="explore-card{% if card.image %} has-thumb{% endif %}" href="{{ card.link.href | safeHref }}"{% if card.link.newTab %} target="_blank" rel="noopener"{% endif %}>
             {%- if card.image %}
             <img class="explore-thumb" src="{{ card.image.publicPath }}" alt="{{ card.imageAlt or card.image.alt }}" loading="lazy" />
             {%- endif %}
@@ -80,7 +80,7 @@
         {%- for card in block.cards %}
       <article class="demo">
         {%- if card.image %}
-        <a class="demo-shot" href="{{ card.link.href }}"{% if card.link.newTab %} target="_blank" rel="noopener"{% endif %}>
+        <a class="demo-shot" href="{{ card.link.href | safeHref }}"{% if card.link.newTab %} target="_blank" rel="noopener"{% endif %}>
           <img src="{{ card.image.publicPath }}" alt="{{ card.imageAlt or card.image.alt }}" loading="lazy" />
         </a>
         {%- endif %}
