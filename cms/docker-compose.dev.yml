@@ -1,0 +1,17 @@
+# Optionale lokale Postgres-Instanz (Alternative zum user-level Postgres).
+# Start: docker compose -f cms/docker-compose.dev.yml up -d
+services:
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: cms
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: cms
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+volumes:
+  pgdata:

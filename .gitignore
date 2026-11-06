@@ -11,3 +11,12 @@ node_modules/
 .tmp-out.txt
 .gitlog.txt
 .commitmsg
+.superpowers/
+
+# CMS (Payload) und generierte Artefakte
+cms/.env
+cms/.next
+content/
+.baseline/
+releases/
+preview/
