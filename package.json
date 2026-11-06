@@ -13,6 +13,8 @@
     "serve": "eleventy --serve",
     "clean": "rm -rf _site",
     "parity": "node scripts/check-parity.mjs",
+    "baseline": "bash scripts/baseline.sh",
+    "equal": "node scripts/check-equal.mjs .baseline _site",
     "check": "npm run build && npm run parity",
     "test": "node --test \"test/**/*.test.mjs\""
   },
