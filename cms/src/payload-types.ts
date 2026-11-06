@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -156,6 +158,10 @@ export interface User {
 export interface Media {
   id: number;
   alt: string;
+  /**
+   * Pfad in der Website-Ausgabe. Leer = /assets/media/<Dateiname>.
+   */
+  publicPath?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -167,6 +173,811 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    sm?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    md?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    lg?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  /**
+   * DE-Pfad
+   */
+  slug: string;
+  /**
+   * EN-Pfad (leer bei bilingual = aus)
+   */
+  slugEn?: string | null;
+  translationKey: string;
+  description?: string | null;
+  ogTitle?: string | null;
+  ogDescription?: string | null;
+  layout?:
+    | (
+        | HeroBlock
+        | TextBlock
+        | CardsBlock
+        | StepsBlock
+        | FaqBlock
+        | CtaBarBlock
+        | FigureBlock
+        | ContactFormBlock
+        | VmwareCalculatorBlock
+      )[]
+    | null;
+  /**
+   * aus = nur DE (Impressum, Datenschutz, AVV …)
+   */
+  bilingual?: boolean | null;
+  noindex?: boolean | null;
+  minimalHeader?: boolean | null;
+  structuredData?: ('none' | 'home') | null;
+  /**
+   * Seitenrahmen um die Bausteine
+   */
+  frame?: ('home' | 'subpage' | 'subpageTabs' | 'landing' | 'legal' | 'legalWrap') | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock".
+ */
+export interface HeroBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: ('home' | 'intro' | 'landing') | null;
+  eyebrow?: string | null;
+  h1: string;
+  /**
+   * Empfehlung: höchstens 220 Zeichen (nur Hinweis, kein Blocker).
+   */
+  claim?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  trustPoints?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  buttons?:
+    | {
+        label: string;
+        href: string;
+        style?: ('primaryBig' | 'primary' | 'ghosted' | 'devBig' | 'btn' | 'cardLink' | 'devlink' | 'plain') | null;
+        /**
+         * Emoji in <span aria-hidden>, optional
+         */
+        icon?: string | null;
+        newTab?: boolean | null;
+        download?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  photo?: (number | null) | Media;
+  /**
+   * Überschreibt media.alt (optional)
+   */
+  photoAlt?: string | null;
+  note?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  noteClass?: ('note' | 'callout-note' | 'trust-bar' | 'plain-mail' | 'muted' | 'r-hint' | 'source-note') | null;
+  /**
+   * Emoji vor dem Hinweis (<span aria-hidden>), optional
+   */
+  noteIcon?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextBlock".
+ */
+export interface TextBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: ('default' | 'callout' | 'about' | 'why' | 'legal') | null;
+  eyebrow?: string | null;
+  heading?: string | null;
+  headingLevel?: ('h1' | 'h2') | null;
+  /**
+   * Unterzeile (p.callout-sub)
+   */
+  sub?: string | null;
+  /**
+   * Absatz/Absätze mit class="lead"
+   */
+  lead?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * CSS-Klasse für Listen im Rich-Text
+   */
+  listClass?: ('none' | 'why-points' | 'examples' | 'facts' | 'excl') | null;
+  note?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  noteClass?: ('note' | 'callout-note' | 'trust-bar' | 'plain-mail' | 'muted' | 'r-hint' | 'source-note') | null;
+  /**
+   * Emoji vor dem Hinweis (<span aria-hidden>), optional
+   */
+  noteIcon?: string | null;
+  buttons?:
+    | {
+        label: string;
+        href: string;
+        style?: ('primaryBig' | 'primary' | 'ghosted' | 'devBig' | 'btn' | 'cardLink' | 'devlink' | 'plain') | null;
+        /**
+         * Emoji in <span aria-hidden>, optional
+         */
+        icon?: string | null;
+        newTab?: boolean | null;
+        download?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'text';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardsBlock".
+ */
+export interface CardsBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: ('fields' | 'why' | 'objections' | 'explore' | 'projects' | 'demos') | null;
+  eyebrow?: string | null;
+  heading?: string | null;
+  lead?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  cards?:
+    | {
+        icon?: 'none' | null;
+        /**
+         * Farbklasse (article.field.dev, eyebrow.infra, tag.infra …)
+         */
+        accent?: ('none' | 'infra' | 'dev' | 'live') | null;
+        image?: (number | null) | Media;
+        /**
+         * Überschreibt media.alt (optional)
+         */
+        imageAlt?: string | null;
+        eyebrow?: string | null;
+        /**
+         * Etikett (span.tag / span.explore-tag)
+         */
+        tag?: string | null;
+        title: string;
+        /**
+         * p.demo-sub
+         */
+        subtitle?: string | null;
+        /**
+         * span.oss-tag in der Unterzeile
+         */
+        badge?: string | null;
+        /**
+         * Empfehlung: höchstens 160 Zeichen (nur Hinweis, kein Blocker).
+         */
+        text?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        chips?:
+          | {
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        link?: {
+          href?: string | null;
+          /**
+           * Sichtbarer Linktext (optional)
+           */
+          label?: string | null;
+          newTab?: boolean | null;
+        };
+        buttons?:
+          | {
+              label: string;
+              href: string;
+              style?:
+                ('primaryBig' | 'primary' | 'ghosted' | 'devBig' | 'btn' | 'cardLink' | 'devlink' | 'plain') | null;
+              /**
+               * Emoji in <span aria-hidden>, optional
+               */
+              icon?: string | null;
+              newTab?: boolean | null;
+              download?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  note?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  noteClass?: ('note' | 'callout-note' | 'trust-bar' | 'plain-mail' | 'muted' | 'r-hint' | 'source-note') | null;
+  /**
+   * Emoji vor dem Hinweis (<span aria-hidden>), optional
+   */
+  noteIcon?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock".
+ */
+export interface StepsBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: 'fields' | null;
+  heading?: string | null;
+  steps?:
+    | {
+        /**
+         * z. B. „1 · Kostenloses Erstgespräch"
+         */
+        label?: string | null;
+        title: string;
+        text?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        dauer?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  note?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  noteClass?: ('note' | 'callout-note' | 'trust-bar' | 'plain-mail' | 'muted' | 'r-hint' | 'source-note') | null;
+  /**
+   * Emoji vor dem Hinweis (<span aria-hidden>), optional
+   */
+  noteIcon?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'steps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock".
+ */
+export interface FaqBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: 'default' | null;
+  heading?: string | null;
+  items?:
+    | {
+        question: string;
+        answer: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBarBlock".
+ */
+export interface CtaBarBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: ('default' | 'buttonsFirst') | null;
+  heading?: string | null;
+  text?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  buttons?:
+    | {
+        label: string;
+        href: string;
+        style?: ('primaryBig' | 'primary' | 'ghosted' | 'devBig' | 'btn' | 'cardLink' | 'devlink' | 'plain') | null;
+        /**
+         * Emoji in <span aria-hidden>, optional
+         */
+        icon?: string | null;
+        newTab?: boolean | null;
+        download?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'ctaBar';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FigureBlock".
+ */
+export interface FigureBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: ('default' | 'beleg') | null;
+  heading?: string | null;
+  image: number | Media;
+  /**
+   * Überschreibt media.alt (optional)
+   */
+  alt?: string | null;
+  caption?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  note?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  noteClass?: ('note' | 'callout-note' | 'trust-bar' | 'plain-mail' | 'muted' | 'r-hint' | 'source-note') | null;
+  /**
+   * Emoji vor dem Hinweis (<span aria-hidden>), optional
+   */
+  noteIcon?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'figure';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactFormBlock".
+ */
+export interface ContactFormBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: 'default' | null;
+  eyebrow?: string | null;
+  heading?: string | null;
+  lead?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  hints?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  messages?: {
+    error?: string | null;
+    fallback?: string | null;
+    copyLabel?: string | null;
+    copiedLabel?: string | null;
+  };
+  name?: {
+    label?: string | null;
+    dataLabel?: string | null;
+  };
+  email?: {
+    label?: string | null;
+    dataLabel?: string | null;
+  };
+  phone?: {
+    label?: string | null;
+    dataLabel?: string | null;
+  };
+  message?: {
+    label?: string | null;
+    dataLabel?: string | null;
+    placeholder?: string | null;
+  };
+  moreSummary?: string | null;
+  company?: {
+    label?: string | null;
+    dataLabel?: string | null;
+  };
+  requestType?: {
+    label?: string | null;
+    dataLabel?: string | null;
+    options?:
+      | {
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  urgency?: {
+    label?: string | null;
+    dataLabel?: string | null;
+    options?:
+      | {
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  formHint?: string | null;
+  submit?: string | null;
+  booking?: {
+    or?: string | null;
+    button?: string | null;
+    icon?: string | null;
+    hint?: string | null;
+  };
+  note?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  noteClass?: ('note' | 'callout-note' | 'trust-bar' | 'plain-mail' | 'muted' | 'r-hint' | 'source-note') | null;
+  /**
+   * Emoji vor dem Hinweis (<span aria-hidden>), optional
+   */
+  noteIcon?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactForm';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VmwareCalculatorBlock".
+ */
+export interface VmwareCalculatorBlock {
+  /**
+   * data-section-key, gilt für DE und EN
+   */
+  sectionKey: string;
+  /**
+   * Sprungmarke (id), pro Sprache; leer = keine id
+   */
+  anchorId?: string | null;
+  /**
+   * Markup-Variante (bestimmt Wrapper/Klassen im Template)
+   */
+  variant?: 'default' | null;
+  heading?: string | null;
+  labels?: {
+    hosts?: string | null;
+    vms?: string | null;
+    sockets?: string | null;
+    cores?: string | null;
+    costLegend?: string | null;
+    costKnown?: string | null;
+    costEstimate?: string | null;
+    vmwareCost?: string | null;
+    vmwareCostPlaceholder?: string | null;
+    edition?: string | null;
+    estimateHint?: string | null;
+    proxmoxTier?: string | null;
+    contractEnd?: string | null;
+    monthAria?: string | null;
+    yearAria?: string | null;
+    featuresLegend?: string | null;
+    calculate?: string | null;
+  };
+  editions?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  tiers?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  months?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  features?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'vmwareCalculator';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -199,6 +1010,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -271,6 +1086,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  publicPath?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -282,6 +1098,441 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        sm?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        md?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        lg?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  slugEn?: T;
+  translationKey?: T;
+  description?: T;
+  ogTitle?: T;
+  ogDescription?: T;
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        text?: T | TextBlockSelect<T>;
+        cards?: T | CardsBlockSelect<T>;
+        steps?: T | StepsBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        ctaBar?: T | CtaBarBlockSelect<T>;
+        figure?: T | FigureBlockSelect<T>;
+        contactForm?: T | ContactFormBlockSelect<T>;
+        vmwareCalculator?: T | VmwareCalculatorBlockSelect<T>;
+      };
+  bilingual?: T;
+  noindex?: T;
+  minimalHeader?: T;
+  structuredData?: T;
+  frame?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  eyebrow?: T;
+  h1?: T;
+  claim?: T;
+  trustPoints?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  buttons?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        style?: T;
+        icon?: T;
+        newTab?: T;
+        download?: T;
+        id?: T;
+      };
+  photo?: T;
+  photoAlt?: T;
+  note?: T;
+  noteClass?: T;
+  noteIcon?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextBlock_select".
+ */
+export interface TextBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  eyebrow?: T;
+  heading?: T;
+  headingLevel?: T;
+  sub?: T;
+  lead?: T;
+  body?: T;
+  listClass?: T;
+  note?: T;
+  noteClass?: T;
+  noteIcon?: T;
+  buttons?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        style?: T;
+        icon?: T;
+        newTab?: T;
+        download?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardsBlock_select".
+ */
+export interface CardsBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  eyebrow?: T;
+  heading?: T;
+  lead?: T;
+  cards?:
+    | T
+    | {
+        icon?: T;
+        accent?: T;
+        image?: T;
+        imageAlt?: T;
+        eyebrow?: T;
+        tag?: T;
+        title?: T;
+        subtitle?: T;
+        badge?: T;
+        text?: T;
+        chips?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        link?:
+          | T
+          | {
+              href?: T;
+              label?: T;
+              newTab?: T;
+            };
+        buttons?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              style?: T;
+              icon?: T;
+              newTab?: T;
+              download?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  note?: T;
+  noteClass?: T;
+  noteIcon?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock_select".
+ */
+export interface StepsBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  heading?: T;
+  steps?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        text?: T;
+        dauer?: T;
+        id?: T;
+      };
+  note?: T;
+  noteClass?: T;
+  noteIcon?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock_select".
+ */
+export interface FaqBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  heading?: T;
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBarBlock_select".
+ */
+export interface CtaBarBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  heading?: T;
+  text?: T;
+  buttons?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        style?: T;
+        icon?: T;
+        newTab?: T;
+        download?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FigureBlock_select".
+ */
+export interface FigureBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  heading?: T;
+  image?: T;
+  alt?: T;
+  caption?: T;
+  note?: T;
+  noteClass?: T;
+  noteIcon?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactFormBlock_select".
+ */
+export interface ContactFormBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  eyebrow?: T;
+  heading?: T;
+  lead?: T;
+  hints?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  messages?:
+    | T
+    | {
+        error?: T;
+        fallback?: T;
+        copyLabel?: T;
+        copiedLabel?: T;
+      };
+  name?:
+    | T
+    | {
+        label?: T;
+        dataLabel?: T;
+      };
+  email?:
+    | T
+    | {
+        label?: T;
+        dataLabel?: T;
+      };
+  phone?:
+    | T
+    | {
+        label?: T;
+        dataLabel?: T;
+      };
+  message?:
+    | T
+    | {
+        label?: T;
+        dataLabel?: T;
+        placeholder?: T;
+      };
+  moreSummary?: T;
+  company?:
+    | T
+    | {
+        label?: T;
+        dataLabel?: T;
+      };
+  requestType?:
+    | T
+    | {
+        label?: T;
+        dataLabel?: T;
+        options?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+      };
+  urgency?:
+    | T
+    | {
+        label?: T;
+        dataLabel?: T;
+        options?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+      };
+  formHint?: T;
+  submit?: T;
+  booking?:
+    | T
+    | {
+        or?: T;
+        button?: T;
+        icon?: T;
+        hint?: T;
+      };
+  note?: T;
+  noteClass?: T;
+  noteIcon?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VmwareCalculatorBlock_select".
+ */
+export interface VmwareCalculatorBlockSelect<T extends boolean = true> {
+  sectionKey?: T;
+  anchorId?: T;
+  variant?: T;
+  heading?: T;
+  labels?:
+    | T
+    | {
+        hosts?: T;
+        vms?: T;
+        sockets?: T;
+        cores?: T;
+        costLegend?: T;
+        costKnown?: T;
+        costEstimate?: T;
+        vmwareCost?: T;
+        vmwareCostPlaceholder?: T;
+        edition?: T;
+        estimateHint?: T;
+        proxmoxTier?: T;
+        contractEnd?: T;
+        monthAria?: T;
+        yearAria?: T;
+        featuresLegend?: T;
+        calculate?: T;
+      };
+  editions?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  tiers?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  months?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  features?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

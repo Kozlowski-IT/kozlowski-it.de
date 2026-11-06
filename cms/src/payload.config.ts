@@ -1,5 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { LinkFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -7,6 +7,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Pages } from './collections/Pages'
 import { Site } from './globals/Site'
 import { Chrome } from './globals/Chrome'
 
@@ -20,9 +21,17 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Pages],
   globals: [Site, Chrome],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [
+      ...defaultFeatures.filter((f) => f.key !== 'link'),
+      // rel="nofollow" für Quellen-Links (z. B. Preisquellen auf der Landingpage)
+      LinkFeature({
+        fields: ({ defaultFields }) => [...defaultFields, { name: 'nofollow', type: 'checkbox' }],
+      }),
+    ],
+  }),
   localization: {
     locales: [
       { code: 'de', label: 'Deutsch' },
