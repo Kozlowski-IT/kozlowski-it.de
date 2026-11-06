@@ -23,7 +23,7 @@ export const hero: Block = {
       fields: [ltext('text', { required: true })],
     },
     buttons('buttons', 2),
-    { name: 'photo', type: 'upload', relationTo: 'media' },
+    { name: 'photo', type: 'upload', relationTo: 'media', localized: true },
     ltext('photoAlt', { admin: { description: 'Überschreibt media.alt (optional)' } }),
     ...noteFields(),
   ],

@@ -25,11 +25,21 @@ export const Media: CollectionConfig = {
     {
       name: 'publicPath',
       type: 'text',
+      unique: true,
+      // Der Export kopiert die Datei an diesen Pfad → nur unter /assets/, kein Traversal.
+      validate: (value: string | null | undefined) => {
+        if (value == null || value === '') return true // Default setzt der Hook
+        if (!value.startsWith('/assets/')) return 'publicPath muss mit /assets/ beginnen'
+        if (value.includes('..') || value.includes('\\') || value.includes('\0'))
+          return 'publicPath darf weder "..", Backslash noch NUL enthalten'
+        return true
+      },
       admin: {
         description: 'Pfad in der Website-Ausgabe. Leer = /assets/media/<Dateiname>.',
       },
       hooks: {
-        beforeChange: [
+        // beforeValidate, damit auch der Default durch validate läuft
+        beforeValidate: [
           ({ value, data, originalDoc }) =>
             value || `/assets/media/${data?.filename ?? originalDoc?.filename}`,
         ],

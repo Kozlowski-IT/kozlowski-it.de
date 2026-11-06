@@ -41,7 +41,8 @@ export const cards: Block = {
             },
           ],
         },
-        { name: 'image', type: 'upload', relationTo: 'media' },
+        // lokalisiert: Diagramme gibt es je Sprache (netzplan-de/-en …)
+        { name: 'image', type: 'upload', relationTo: 'media', localized: true },
         ltext('imageAlt', { admin: { description: 'Überschreibt media.alt (optional)' } }),
         ltext('eyebrow'),
         ltext('tag', { admin: { description: 'Etikett (span.tag / span.explore-tag)' } }),

@@ -13,7 +13,7 @@ export const figure: Block = {
     ...sectionFields(),
     variantField(['default', 'beleg']),
     ltext('heading'),
-    { name: 'image', type: 'upload', relationTo: 'media', required: true },
+    { name: 'image', type: 'upload', relationTo: 'media', required: true, localized: true },
     ltext('alt', { admin: { description: 'Überschreibt media.alt (optional)' } }),
     rich('caption'),
     ...noteFields(),

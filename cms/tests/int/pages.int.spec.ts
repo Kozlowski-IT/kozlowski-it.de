@@ -1,8 +1,10 @@
 // @vitest-environment node
 // (jsdom bricht die Upload-Typerkennung von Payload: fileTypeFromBuffer)
 import { getPayload, type Payload, ValidationError } from 'payload'
+import fs from 'node:fs'
+import path from 'node:path'
 import config from '@/payload.config'
-import { describe, it, beforeAll, beforeEach, expect } from 'vitest'
+import { describe, it, beforeAll, beforeEach, afterAll, expect } from 'vitest'
 import type { TextBlock } from '@/payload-types'
 
 type RichText = NonNullable<TextBlock['body']>
@@ -188,44 +190,131 @@ describe('Collection pages', () => {
   })
 })
 
+// Kleines PNG für Upload-Tests
+const png = async (tag: string, color = '#7c3aed') => {
+  const sharp = (await import('sharp')).default
+  const data = await sharp({ create: { width: 1200, height: 600, channels: 3, background: color } })
+    .png()
+    .toBuffer()
+  return { data, mimetype: 'image/png', name: `t-${tag}-${Date.now()}.png`, size: data.length }
+}
+
+const errPaths = (e: unknown) => (e as ValidationError).data.errors.map((x) => x.path)
+
 describe('Collection media', () => {
+  const created: number[] = []
+  const mk = async (data: Record<string, unknown>, tag: string, color?: string) => {
+    const m = await payload.create({ collection: 'media', locale: 'de', data: data as any, file: await png(tag, color) })
+    created.push(m.id)
+    return m
+  }
+
   beforeAll(async () => {
     payload = await getPayload({ config: await config })
+    await payload.delete({ collection: 'pages', where: { id: { exists: true } } })
+    await payload.delete({ collection: 'media', where: { id: { exists: true } } })
+  })
+
+  afterAll(async () => {
+    await payload.delete({ collection: 'pages', where: { id: { exists: true } } })
+    for (const id of created) await payload.delete({ collection: 'media', id }).catch(() => {})
+    // Abgelehnte Uploads hinterlassen Größen-Dateien (Payload schreibt vor der Validierung)
+    const dir = path.resolve(__dirname, '../../media')
+    if (fs.existsSync(dir))
+      for (const f of fs.readdirSync(dir)) if (f.startsWith('t-')) fs.rmSync(path.join(dir, f))
   })
 
   it('alt ist Pflicht + lokalisiert, publicPath-Default /assets/media/<filename>, WebP-Größen', async () => {
-    const sharp = (await import('sharp')).default
-    const data = await sharp({
-      create: { width: 1200, height: 600, channels: 3, background: '#7c3aed' },
-    })
-      .png()
-      .toBuffer()
-    const name = `t-media-${Date.now()}.png`
-    const file = { data, mimetype: 'image/png', name, size: data.length }
-
-    const noAlt = await payload.create({ collection: 'media', data: {} as any, file }).catch((e) => e)
+    const noAlt = await payload
+      .create({ collection: 'media', data: {} as any, file: await png('noalt') })
+      .catch((e) => e)
     expect(noAlt).toBeInstanceOf(ValidationError)
-    expect((noAlt as ValidationError).data.errors.map((e) => e.path)).toEqual(['alt'])
+    expect(errPaths(noAlt)).toEqual(['alt'])
 
-    const m = await payload.create({ collection: 'media', locale: 'de', data: { alt: 'Testbild' }, file })
-    try {
-      expect(m.publicPath).toBe(`/assets/media/${m.filename}`)
-      const sizes = Object.values(m.sizes ?? {}) as any[]
-      expect(sizes.length).toBeGreaterThan(0)
-      for (const s of sizes.filter((s) => s.filename)) expect(s.mimeType).toBe('image/webp')
+    const m = await mk({ alt: 'Testbild' }, 'media')
+    expect(m.publicPath).toBe(`/assets/media/${m.filename}`)
+    const sizes = Object.values(m.sizes ?? {}) as any[]
+    expect(sizes.length).toBeGreaterThan(0)
+    for (const s of sizes.filter((s) => s.filename)) expect(s.mimeType).toBe('image/webp')
 
-      // migriertes Bestandsbild behält seinen Pfad
-      const kept = await payload.update({
-        collection: 'media',
-        id: m.id,
-        data: { publicPath: '/assets/img/avatar2.webp' },
-      })
-      expect(kept.publicPath).toBe('/assets/img/avatar2.webp')
+    // migriertes Bestandsbild behält seinen Pfad
+    const kept = await payload.update({
+      collection: 'media',
+      id: m.id,
+      data: { publicPath: '/assets/img/avatar2.webp' },
+    })
+    expect(kept.publicPath).toBe('/assets/img/avatar2.webp')
 
-      const en = await payload.findByID({ collection: 'media', id: m.id, locale: 'en' })
-      expect(en.alt ?? null).toBeNull()
-    } finally {
-      await payload.delete({ collection: 'media', id: m.id })
+    const en = await payload.findByID({ collection: 'media', id: m.id, locale: 'en' })
+    expect(en.alt ?? null).toBeNull()
+  })
+
+  it.each([
+    ['Traversal', '/assets/../../etc/passwd'],
+    ['außerhalb /assets/', '/etc/passwd'],
+    ['relativ', 'assets/img/x.png'],
+    ['Backslash', '/assets\\img\\x.png'],
+    ['NUL', '/assets/img/x\0.png'],
+  ])('publicPath %s wird abgelehnt', async (_label, publicPath) => {
+    const e = await mk({ alt: 'x', publicPath }, 'bad').catch((err) => err)
+    expect(e).toBeInstanceOf(ValidationError)
+    expect(errPaths(e)).toContain('publicPath')
+  })
+
+  it('publicPath ist eindeutig', async () => {
+    await mk({ alt: 'a', publicPath: '/assets/img/dup.webp' }, 'dup1')
+    const e = await mk({ alt: 'b', publicPath: '/assets/img/dup.webp' }, 'dup2').catch((err) => err)
+    expect(e).toBeInstanceOf(ValidationError)
+    expect(errPaths(e)).toContain('publicPath')
+  })
+
+  it('Bilder in Blöcken sind lokalisiert (cards/hero/figure): DE- und EN-Bild im selben Block', async () => {
+    const de = await mk({ alt: 'Netzplan', publicPath: '/assets/img/netzplan-de.jpg' }, 'de', '#111111')
+    const en = await mk({ alt: 'Netzplan', publicPath: '/assets/img/netzplan-en.jpg' }, 'en', '#eeeeee')
+
+    const page = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      data: {
+        slug: 't-img',
+        translationKey: 'test-img',
+        title: 'Bilder',
+        _status: 'published',
+        layout: [
+          { blockType: 'hero', sectionKey: 'hero', h1: 'H', photo: de.id },
+          { blockType: 'cards', sectionKey: 'projekte', variant: 'explore', cards: [{ title: 'K', image: de.id }] },
+          { blockType: 'figure', sectionKey: 'beleg', image: de.id },
+        ],
+      },
+    })
+    const ids = page.layout!.map((b) => b.id)
+    const cardId = (page.layout![1] as any).cards[0].id
+    await payload.update({
+      collection: 'pages',
+      id: page.id,
+      locale: 'en',
+      data: {
+        title: 'Images',
+        layout: [
+          { id: ids[0], blockType: 'hero', sectionKey: 'hero', h1: 'H', photo: en.id },
+          {
+            id: ids[1],
+            blockType: 'cards',
+            sectionKey: 'projekte',
+            variant: 'explore',
+            cards: [{ id: cardId, title: 'C', image: en.id }],
+          },
+          { id: ids[2], blockType: 'figure', sectionKey: 'beleg', image: en.id },
+        ],
+      },
+    })
+
+    const imgs = async (locale: 'de' | 'en') => {
+      const d = await payload.findByID({ collection: 'pages', id: page.id, locale, depth: 1 })
+      const [h, c, f] = d.layout as any[]
+      return [h.photo?.publicPath, c.cards[0].image?.publicPath, f.image?.publicPath]
     }
+    expect(await imgs('de')).toEqual(Array(3).fill('/assets/img/netzplan-de.jpg'))
+    expect(await imgs('en')).toEqual(Array(3).fill('/assets/img/netzplan-en.jpg'))
   })
 })
