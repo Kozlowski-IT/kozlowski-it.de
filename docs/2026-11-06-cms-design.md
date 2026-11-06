@@ -136,6 +136,14 @@ Upload in Payload, automatische WebP-Größen (sharp). Pflichtfeld `alt` (L). Bu
 4. Infra: Zitadel-Projektrolle + OIDC-Apps, edge02-vHost + oauth2-proxy, Stack auf docker01 → Umschaltung der Landing auf `releases/current`. Memory-Notiz zu allen Infra-Änderungen.
 5. KI-Knopf + neue Bausteine (`caseStudy`, `stats`, `logos`, `testimonials`, `figure`).
 
+## 9a. Portabilität (Ergänzung 2026-11-06)
+
+Inhalte dürfen nicht in Payload gefangen sein — ein späterer Umzug in ein anderes CMS (u. a. das künftige CMS der eigenen SaaS-Plattform, Name/Details werden dort entschieden) soll ein Import sein, kein Neubau.
+- Die Naht ist `content/*.json`: Eleventy liest nur diese Dateien; ein anderes CMS muss nur dieses Format erzeugen bzw. ein Importer es lesen.
+- **Inhaltsformat v1** wird Payload-unabhängig dokumentiert (`docs/content-format-v1.md`), jede Datei trägt `schemaVersion: 1`; unbekannte Versionen brechen den Build laut ab.
+- Rich-Text wird als HTML-Teilmenge exportiert (nicht Payload-internes Lexical-JSON); Bild-URLs (`publicPath`) bleiben stabil; Login über Zitadel zieht mit.
+- Gilt auch für künftige Kundenseiten, die mit demselben Bausteinformat gebaut werden.
+
 ## 10. Nicht Teil dieses Projekts (Folgerunde)
 
 Feedback-Runde (Kollege, lnagency.de-Vergleich): Text auf ~800 Wörter Startseite kürzen (Pascal im CMS), Emojis (📄 📅 🔒 🔍) durch eigenes SVG-Icon-Set ersetzen, Farben abstimmen, mehrstufiges Kontaktformular, Fallstudie/Kennzahlen befüllen. **Keine erfundenen Bewertungen** (UWG Anhang Nr. 23b/c) — `testimonials` bleibt leer bis zu echten Kunden.

@@ -211,4 +211,20 @@
 
 ---
 
+### Task 12: Inhaltsformat v1 — portabel dokumentiert + `schemaVersion`
+
+**Files:**
+- Create: `docs/content-format-v1.md`, `test/content-format.test.mjs`
+- Modify: `cms/src/export/exportContent.ts` (jede Datei bekommt `schemaVersion: 1`), `src/_data/cms.js` bzw. `lib/content.js` (liest `schemaVersion`, bricht bei unbekannter Version laut ab), Fixtures unter `test/fixtures/content/`
+
+**Interfaces:**
+- Consumes: Export-Format (Task 4), Renderer (Task 5).
+- Produces: `content/pages.json` = `{ schemaVersion: 1, pages: [...] }`, `content/site.json` = `{ schemaVersion: 1, site: {...} }`, `content/chrome.json` = `{ schemaVersion: 1, de: {...}, en: {...} }`, `content/media/index.json` = `{ schemaVersion: 1, files: {...} }`. `docs/content-format-v1.md` beschreibt **Payload-unabhängig** jede Datei, jeden Bausteintyp mit Feldern (Typ, lokalisiert ja/nein, Pflicht, Längenempfehlung), Rich-Text = HTML-Teilmenge (erlaubte Tags), Bildobjekt (`publicPath`, `alt`), URL-Regeln (`safeHref`-Allow-List) — Zweck: Importer eines anderen CMS (z. B. künftiges TideLane-CMS) gegen dieses Dokument bauen.
+
+- [ ] **Step 1:** Tests: Export schreibt `schemaVersion: 1` in alle vier Dateien; Eleventy-Build mit `schemaVersion: 2` → Fehler „unbekannte Inhaltsformat-Version 2“; jedes im Katalog (`cms/src/blocks/index.ts`) registrierte Feld kommt in `docs/content-format-v1.md` vor (Test liest beides und vergleicht Feldnamen je Block).
+- [ ] **Step 2:** → FAIL. **Step 3:** implementieren + Dokument schreiben. **Step 4:** → PASS; `npm test`, `cd cms && npm run test:int` grün; Gleichheitstest (`npm run equal`) weiter 0.
+- [ ] **Step 5:** Commit `feat(content): Inhaltsformat v1 dokumentiert + schemaVersion`.
+
+---
+
 **Danach:** Plan 2 (Infra + Umschaltung live) und Plan 3 (KI-Knopf `claude-sonnet-5-5` + Bausteine `caseStudy`, `stats`, `logos`, `testimonials`) werden auf Basis des dann vorhandenen Codes geschrieben.
