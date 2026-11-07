@@ -1,7 +1,7 @@
 # CMS-Stack auf docker01
 
 Stack `/opt/docker/apps/cms/` (diese Dateien), Daten `/opt/docker-data/cms/{pgdata,media,work,repo,ssh,backup}`.
-Netze: `dmz_cms` (macvlan, parent `ens20.85`, existiert schon), `cms_db` (bridge, `internal`, legt Compose an).
+Netze: `dmz_cms` (macvlan, parent `ens20.85`, existiert schon), `cms_db` (bridge, `internal`, legt Compose an); `cms_db` hat festes Subnetz `172.31.85.0/28` (postgres `172.31.85.2`, dynamisch nur `.8/29`) — `payload`/`builder` lösen `postgres` per `extra_hosts` auf, weil `resolv-clean.conf` Dockers DNS ersetzt.
 
 | Dienst | Adresse | Aufgabe |
 |---|---|---|

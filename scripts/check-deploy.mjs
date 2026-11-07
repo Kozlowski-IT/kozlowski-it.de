@@ -20,6 +20,9 @@ const LANDING = "deploy/landing";
 const IPS = { payload: "10.30.85.2", preview: "10.30.85.3", builder: "10.30.85.4" };
 const DMZ_NET = "dmz_cms";
 const DB_NET = "cms_db";
+const DB_SUBNET = "172.31.85.0/28";
+const DB_IP_RANGE = "172.31.85.8/29";
+const PG_IP = "172.31.85.2";
 const DATA = "/opt/docker-data/cms";
 const SERVER_URL = "https://cms.kozlowski-it.de";
 const PREVIEW_URL = "https://cms-vorschau.kozlowski-it.de";
@@ -132,8 +135,20 @@ if (compose) {
   check(nets[DB_NET]?.internal === true, `cms-Compose: Netz ${DB_NET} muss internal: true sein`);
   check(nets[DB_NET]?.name === DB_NET, `cms-Compose: Netz ${DB_NET} braucht name: ${DB_NET} (sonst Präfix des Projekts)`);
 
+  const ipam = (nets[DB_NET]?.ipam?.config ?? [])[0] ?? {};
+  check(ipam.subnet === DB_SUBNET, `cms-Compose: Netz ${DB_NET} braucht ipam subnet ${DB_SUBNET} (ist: ${ipam.subnet ?? "—"})`);
+  check(ipam.ip_range === DB_IP_RANGE, `cms-Compose: Netz ${DB_NET} braucht ipam ip_range ${DB_IP_RANGE}, damit dynamische IPs nicht mit statischen kollidieren (ist: ${ipam.ip_range ?? "—"})`);
+
   for (const [name, svc] of Object.entries(services)) {
     const sn = networksOf(svc);
+    // resolv-clean ersetzt Dockers DNS → auf cms_db muss postgres per extra_hosts auflösbar sein
+    if (sn.has(DB_NET) && hasMount(svc, "./resolv-clean.conf", "/etc/resolv.conf")) {
+      const eh = Array.isArray(svc.extra_hosts) ? svc.extra_hosts.map(String) : Object.entries(svc.extra_hosts ?? {}).map(([k, v]) => `${k}:${v}`);
+      check(
+        eh.some((e) => /^postgres[:=]/.test(e) && e.slice("postgres".length + 1) === PG_IP),
+        `${name}: resolv-clean.conf ersetzt Dockers DNS → extra_hosts "postgres:${PG_IP}" fehlt`,
+      );
+    }
     check(!svc.ports, `${name}: keine ports: (Zugriff nur über macvlan-IP bzw. internes Netz)`);
     check(!svc.network_mode, `${name}: kein network_mode`);
     check(!svc.privileged, `${name}: nicht privileged`);
@@ -174,6 +189,7 @@ if (compose) {
     check(JSON.stringify(pn) === JSON.stringify([DB_NET]), `postgres: darf nur an ${DB_NET} (internal) hängen (ist: ${pn.join(", ") || "Default-Netz"})`);
     check(/^postgres:18(\.\d+)?(@sha256:[0-9a-f]{64})?$/.test(pg.image ?? ""), `postgres: Image muss postgres:18[.x][@sha256:…] sein (ist: ${pg.image})`);
     check(hasMount(pg, `${DATA}/pgdata`, "/var/lib/postgresql", false), `postgres: Daten-Mount ${DATA}/pgdata:/var/lib/postgresql fehlt`);
+    check(networksOf(pg).get(DB_NET)?.ipv4_address === PG_IP, `postgres: ipv4_address in ${DB_NET} muss ${PG_IP} sein`);
     check(pg.healthcheck?.test, "postgres: healthcheck fehlt (payload/builder warten darauf)");
   }
 

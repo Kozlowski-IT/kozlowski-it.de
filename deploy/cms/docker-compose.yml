@@ -37,7 +37,8 @@ services:
       retries: 10
       start_period: 20s
     networks:
-      - cms_db
+      cms_db:
+        ipv4_address: 172.31.85.2
 
   payload:
     <<: *hardening
@@ -62,6 +63,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    # resolv-clean.conf ersetzt Dockers eingebetteten DNS (127.0.0.11) → Dienstname postgres per extra_hosts
+    extra_hosts:
+      - "postgres:172.31.85.2"
     networks:
       dmz_cms:
         ipv4_address: 10.30.85.2
@@ -101,6 +105,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    # resolv-clean.conf ersetzt Dockers eingebetteten DNS (127.0.0.11) → Dienstname postgres per extra_hosts
+    extra_hosts:
+      - "postgres:172.31.85.2"
     networks:
       dmz_cms:
         ipv4_address: 10.30.85.4
@@ -133,3 +140,9 @@ networks:
     name: cms_db
     driver: bridge
     internal: true
+    # feste Adressen .2–.7 (postgres .2); dynamische nur aus ip_range .8–.15 → keine Kollision nach Reboot
+    ipam:
+      config:
+        - subnet: 172.31.85.0/28
+          gateway: 172.31.85.1
+          ip_range: 172.31.85.8/29
