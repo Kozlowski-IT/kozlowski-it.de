@@ -1,0 +1,31 @@
+# Build-Kontext für deploy/cms/Dockerfile (Kontext = Repo-Root).
+# Secrets NIE ins Image: jede .env (cms/.env, Stack-.env) bleibt draußen.
+**/.env
+**/.env.*
+
+# Abhängigkeiten/Build-Artefakte: werden im Image frisch erzeugt
+**/node_modules
+cms/.next
+cms/tsconfig.tsbuildinfo
+_site
+.test-site
+
+# Laufzeitdaten/Arbeitsordner (liegen auf docker01 unter /opt/docker-data/cms/)
+cms/media
+content
+content-*
+releases
+preview
+.previews
+.baseline
+.baseline.new
+
+# Repo-/Agenten-Kram
+.git
+.gitignore
+.superpowers
+.serena
+.claude
+docs
+*.log
+.DS_Store

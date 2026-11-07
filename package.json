@@ -16,10 +16,12 @@
     "baseline": "bash scripts/baseline.sh",
     "equal": "node scripts/check-equal.mjs .baseline _site",
     "check": "npm run build && npm run parity",
-    "test": "node --test \"test/**/*.test.mjs\""
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "check:deploy": "node scripts/check-deploy.mjs"
   },
   "devDependencies": {
     "@11ty/eleventy": "3.1.6",
-    "cheerio": "1.2.0"
+    "cheerio": "1.2.0",
+    "yaml": "2.9.1"
   }
 }

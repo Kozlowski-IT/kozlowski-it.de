@@ -1,0 +1,359 @@
+#!/usr/bin/env node
+// Statische Prüfung der Deploy-Dateien (CMS-Stack + Landing), läuft OHNE Docker (dev02).
+//
+//   npm run check:deploy        → "OK" + Exit 0, sonst Liste der Verstöße + Exit 1
+//
+// Ist `docker` vorhanden (docker01), läuft zusätzlich `docker compose config -q` mit
+// env.example als Env-Datei; ohne Docker wird das ausdrücklich als ÜBERSPRUNGEN gemeldet
+// (kein stilles Grün — die echte Compose-Validierung passiert auf docker01).
+import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { parse } from "yaml";
+
+const ROOT = new URL("..", import.meta.url).pathname;
+const CMS = "deploy/cms";
+const LANDING = "deploy/landing";
+
+// Festgelegte Werte (Plan 2, Tabelle „Festgelegte Werte“)
+const IPS = { payload: "10.30.85.2", preview: "10.30.85.3", builder: "10.30.85.4" };
+const DMZ_NET = "dmz_cms";
+const DB_NET = "cms_db";
+const DATA = "/opt/docker-data/cms";
+const SERVER_URL = "https://cms.kozlowski-it.de";
+const PREVIEW_URL = "https://cms-vorschau.kozlowski-it.de";
+const BUILDER_URL = `http://${IPS.builder}:4100`;
+const MIN_NODE = "24.22.1";
+const START_WRAPPER = "/app/deploy/cms/payload-start.sh";
+// Werte, die nie im Klartext in der Compose-Datei stehen dürfen (nur ${VAR}-Verweise)
+const SECRET_KEYS = ["PAYLOAD_SECRET", "EDGE_SHARED_SECRET", "BUILDER_TOKEN", "POSTGRES_PASSWORD"];
+
+const failures = [];
+const fail = (msg) => failures.push(msg);
+const check = (cond, msg) => {
+  if (!cond) fail(msg);
+  return !!cond;
+};
+
+function read(rel) {
+  const p = join(ROOT, rel);
+  if (!existsSync(p)) {
+    fail(`${rel} fehlt`);
+    return null;
+  }
+  return readFileSync(p, "utf8");
+}
+
+function readYaml(rel) {
+  const src = read(rel);
+  if (src === null) return null;
+  try {
+    return parse(src, { merge: true }); // Compose nutzt YAML-Merge-Keys (<<: *anker)
+  } catch (err) {
+    fail(`${rel}: kein gültiges YAML (${err.message.split("\n")[0]})`);
+    return null;
+  }
+}
+
+/** Compose-environment (Mapping oder Liste) → Objekt */
+function envOf(svc) {
+  const e = svc?.environment;
+  if (!e) return {};
+  if (Array.isArray(e)) {
+    return Object.fromEntries(
+      e.map((l) => {
+        const i = String(l).indexOf("=");
+        return i < 0 ? [l, undefined] : [l.slice(0, i), l.slice(i + 1)];
+      }),
+    );
+  }
+  return Object.fromEntries(Object.entries(e).map(([k, v]) => [k, v == null ? v : String(v)]));
+}
+
+/** Compose-volumes (Kurzform) → [{ src, dst, ro }] */
+function volumesOf(svc) {
+  return (svc?.volumes ?? []).map((v) => {
+    if (typeof v === "object") return { src: v.source, dst: v.target, ro: !!v.read_only };
+    const [src, dst, mode = ""] = String(v).split(":");
+    return { src, dst, ro: mode.split(",").includes("ro") };
+  });
+}
+
+/** Compose-networks (Liste oder Mapping) → Map name → config */
+function networksOf(svc) {
+  const n = svc?.networks;
+  if (!n) return new Map();
+  if (Array.isArray(n)) return new Map(n.map((k) => [k, {}]));
+  return new Map(Object.entries(n).map(([k, v]) => [k, v ?? {}]));
+}
+
+const cmdOf = (svc) => (Array.isArray(svc?.command) ? svc.command.map(String) : svc?.command ? String(svc.command).split(/\s+/) : []);
+
+const hasMount = (svc, src, dst, ro) => volumesOf(svc).some((m) => m.src === src && m.dst === dst && (ro === undefined || m.ro === ro));
+
+const isSecretRef = (v) => typeof v === "string" && /^\$\{[A-Z0-9_]+(:\?[^}]*)?\}$/.test(v);
+
+const verGte = (a, b) => {
+  const pa = a.split(".").map(Number);
+  const pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i++) if (pa[i] !== pb[i]) return pa[i] > pb[i];
+  return true;
+};
+
+// ------------------------------------------------------------------ CMS-Stack
+const compose = readYaml(`${CMS}/docker-compose.yml`);
+const services = compose?.services ?? {};
+if (compose) {
+  const names = Object.keys(services).sort();
+  check(
+    JSON.stringify(names) === JSON.stringify(["builder", "payload", "postgres", "preview"]),
+    `cms-Compose: Dienste müssen genau postgres/payload/builder/preview sein (ist: ${names.join(", ")})`,
+  );
+
+  // Netze
+  const nets = compose.networks ?? {};
+  check(nets[DMZ_NET]?.external === true, `cms-Compose: Netz ${DMZ_NET} muss external: true sein (existiert auf docker01)`);
+  check(nets[DB_NET]?.internal === true, `cms-Compose: Netz ${DB_NET} muss internal: true sein`);
+  check(nets[DB_NET]?.name === DB_NET, `cms-Compose: Netz ${DB_NET} braucht name: ${DB_NET} (sonst Präfix des Projekts)`);
+
+  for (const [name, svc] of Object.entries(services)) {
+    const sn = networksOf(svc);
+    check(!svc.ports, `${name}: keine ports: (Zugriff nur über macvlan-IP bzw. internes Netz)`);
+    check(!svc.network_mode, `${name}: kein network_mode`);
+    check(!svc.privileged, `${name}: nicht privileged`);
+    check((svc.security_opt ?? []).includes("no-new-privileges:true"), `${name}: security_opt no-new-privileges:true fehlt`);
+    check((svc.cap_drop ?? []).includes("ALL"), `${name}: cap_drop: [ALL] fehlt`);
+    check(svc.restart === "unless-stopped", `${name}: restart: unless-stopped fehlt`);
+    for (const n of sn.keys()) check(n === DMZ_NET || n === DB_NET, `${name}: unbekanntes Netz ${n}`);
+    if (sn.has(DMZ_NET)) {
+      check(name in IPS, `${name}: hängt an ${DMZ_NET}, erlaubt sind nur payload/preview/builder`);
+      if (name in IPS) {
+        check(sn.get(DMZ_NET).ipv4_address === IPS[name], `${name}: ipv4_address in ${DMZ_NET} muss ${IPS[name]} sein`);
+      }
+      check(
+        hasMount(svc, "./resolv-clean.conf", "/etc/resolv.conf", true),
+        `${name}: DMZ-Dienst ohne ./resolv-clean.conf:/etc/resolv.conf:ro`,
+      );
+    }
+    // Secrets nie im Klartext
+    const env = envOf(svc);
+    for (const k of SECRET_KEYS) {
+      if (k in env) check(isSecretRef(env[k]), `${name}: ${k} muss als \${${k}:?…} aus .env kommen, nicht im Klartext`);
+    }
+    if (env.DATABASE_URL !== undefined) {
+      check(
+        /\$\{POSTGRES_PASSWORD(:\?[^}]*)?\}/.test(env.DATABASE_URL) && /@postgres:5432\//.test(env.DATABASE_URL),
+        `${name}: DATABASE_URL muss Passwort per \${POSTGRES_PASSWORD} und Host postgres:5432 nutzen`,
+      );
+    }
+  }
+  for (const name of Object.keys(IPS)) {
+    check(networksOf(services[name]).has(DMZ_NET), `${name}: muss an ${DMZ_NET} hängen`);
+  }
+
+  // postgres
+  const pg = services.postgres;
+  if (check(pg, "postgres-Dienst fehlt")) {
+    const pn = [...networksOf(pg).keys()];
+    check(JSON.stringify(pn) === JSON.stringify([DB_NET]), `postgres: darf nur an ${DB_NET} (internal) hängen (ist: ${pn.join(", ") || "Default-Netz"})`);
+    check(/^postgres:18(\.\d+)?(@sha256:[0-9a-f]{64})?$/.test(pg.image ?? ""), `postgres: Image muss postgres:18[.x][@sha256:…] sein (ist: ${pg.image})`);
+    check(hasMount(pg, `${DATA}/pgdata`, "/var/lib/postgresql", false), `postgres: Daten-Mount ${DATA}/pgdata:/var/lib/postgresql fehlt`);
+    check(pg.healthcheck?.test, "postgres: healthcheck fehlt (payload/builder warten darauf)");
+  }
+
+  // payload
+  const pl = services.payload;
+  if (check(pl, "payload-Dienst fehlt")) {
+    const env = envOf(pl);
+    check(env.NODE_ENV === "production", "payload: NODE_ENV=production fehlt (sonst push statt Migrationen)");
+    check(env.PAYLOAD_PUBLIC_SERVER_URL === SERVER_URL, `payload: PAYLOAD_PUBLIC_SERVER_URL=${SERVER_URL} fehlt`);
+    check(env.PREVIEW_URL === PREVIEW_URL, `payload: PREVIEW_URL=${PREVIEW_URL} fehlt`);
+    check(env.BUILDER_URL === BUILDER_URL, `payload: BUILDER_URL=${BUILDER_URL} fehlt`);
+    for (const k of ["DATABASE_URL", "PAYLOAD_SECRET", "EDGE_SHARED_SECRET", "BUILDER_TOKEN"]) check(env[k], `payload: ${k} fehlt`);
+    const cmd = cmdOf(pl);
+    check(
+      cmd[0] === "sh" && cmd[1] === START_WRAPPER && cmd.slice(2, 5).join(" ") === "npm --prefix cms" && cmd[5] === "start",
+      `payload: command muss [sh, ${START_WRAPPER}, npm, --prefix, cms, start, …] sein (Startsperre ohne Server-URL/Edge-Secret)`,
+    );
+    check(String(pl.user) === "1000:1000", "payload: user: \"1000:1000\" fehlt (kein root)");
+    check(networksOf(pl).has(DB_NET), `payload: muss an ${DB_NET} hängen`);
+    check(hasMount(pl, `${DATA}/media`, "/app/cms/media", false), `payload: Medien-Mount ${DATA}/media:/app/cms/media (rw) fehlt`);
+  }
+
+  // builder
+  const bl = services.builder;
+  if (check(bl, "builder-Dienst fehlt")) {
+    const env = envOf(bl);
+    check(String(bl.stop_grace_period) === "30s", "builder: stop_grace_period: 30s fehlt");
+    check(env.BUILDER_HOST === "0.0.0.0", "builder: BUILDER_HOST=0.0.0.0 fehlt");
+    check(env.BUILDER_PORT === "4100", "builder: BUILDER_PORT=4100 fehlt");
+    check(env.BUILDER_WORKDIR === "/srv/work", "builder: BUILDER_WORKDIR=/srv/work fehlt");
+    check(env.BUILDER_GIT_REPO === "/srv/repo", "builder: BUILDER_GIT_REPO=/srv/repo fehlt");
+    check(env.BUILDER_SITE_ROOT === "/app", "builder: BUILDER_SITE_ROOT=/app fehlt");
+    check(env.BUILDER_EXPORT_MODULE, "builder: BUILDER_EXPORT_MODULE fehlt");
+    check(!("EDGE_SHARED_SECRET" in env), "builder: darf EDGE_SHARED_SECRET nicht kennen (könnte sonst Identität fälschen)");
+    for (const k of ["DATABASE_URL", "PAYLOAD_SECRET", "BUILDER_TOKEN"]) check(env[k], `builder: ${k} fehlt`);
+    check(String(bl.user) === "1000:1000", "builder: user: \"1000:1000\" fehlt (kein root)");
+    check(cmdOf(bl).includes("../builder/src/server.mjs") || cmdOf(bl).includes("/app/builder/src/server.mjs"), "builder: command startet builder/src/server.mjs nicht");
+    check(networksOf(bl).has(DB_NET), `builder: muss an ${DB_NET} hängen (Export liest die DB)`);
+    check(hasMount(bl, `${DATA}/work`, "/srv/work", false), `builder: ${DATA}/work:/srv/work (rw) fehlt`);
+    check(hasMount(bl, `${DATA}/repo`, "/srv/repo", false), `builder: ${DATA}/repo:/srv/repo (rw) fehlt`);
+    check(volumesOf(bl).some((m) => m.src === `${DATA}/ssh` && m.ro), `builder: SSH-Deploy-Key ${DATA}/ssh nur :ro mounten`);
+    check(volumesOf(bl).some((m) => m.src === `${DATA}/media` && m.dst === "/app/cms/media"), `builder: Medien-Mount ${DATA}/media:/app/cms/media fehlt`);
+    // gleiches Image wie payload (eine Image-Basis für beide)
+    check(bl.image && bl.image === services.payload?.image, "builder: muss dasselbe Image wie payload nutzen");
+  }
+
+  // preview
+  const pv = services.preview;
+  if (check(pv, "preview-Dienst fehlt")) {
+    check(/^nginx:alpine/.test(pv.image ?? ""), "preview: Image nginx:alpine erwartet");
+    check(pv.read_only === true, "preview: read_only: true fehlt");
+    check(hasMount(pv, `${DATA}/work`, "/srv/work", true), `preview: ganzen workDir ${DATA}/work:/srv/work:ro mounten (preview → .previews/<id>)`);
+    check(hasMount(pv, "./preview-nginx.conf", "/etc/nginx/conf.d/default.conf", true), "preview: ./preview-nginx.conf:/etc/nginx/conf.d/default.conf:ro fehlt");
+    for (const m of volumesOf(pv)) check(m.ro, `preview: Mount ${m.src} muss :ro sein`);
+    check([...networksOf(pv).keys()].join() === DMZ_NET, `preview: nur an ${DMZ_NET}`);
+  }
+
+  // Image-Tag aus .env, nicht fest
+  for (const n of ["payload", "builder"]) {
+    check(/^kozlowski\/pk-cms:\$\{CMS_IMAGE_TAG(:\?[^}]*)?\}$/.test(services[n]?.image ?? ""), `${n}: image muss kozlowski/pk-cms:\${CMS_IMAGE_TAG:?…} sein`);
+  }
+}
+
+// Start-Wrapper
+const wrapper = read(`${CMS}/payload-start.sh`);
+if (wrapper !== null) {
+  check(/PAYLOAD_PUBLIC_SERVER_URL/.test(wrapper) && /EDGE_SHARED_SECRET/.test(wrapper), "payload-start.sh: prüft PAYLOAD_PUBLIC_SERVER_URL/EDGE_SHARED_SECRET nicht");
+  check(/exec "\$@"/.test(wrapper), "payload-start.sh: muss am Ende exec \"$@\" ausführen");
+}
+
+// resolv-clean.conf
+const resolv = read(`${CMS}/resolv-clean.conf`);
+if (resolv !== null) {
+  const lines = resolv.split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
+  check(JSON.stringify(lines) === JSON.stringify(["nameserver 9.9.9.9"]), "resolv-clean.conf: genau `nameserver 9.9.9.9` (kein search/ndots)");
+}
+
+// preview-nginx.conf
+const pconf = read(`${CMS}/preview-nginx.conf`);
+if (pconf !== null) {
+  check(/add_header\s+X-Robots-Tag\s+"noindex, nofollow"\s+always\s*;/.test(pconf), 'preview-nginx.conf: add_header X-Robots-Tag "noindex, nofollow" always; fehlt');
+  check(/add_header\s+Content-Security-Policy\s+"[^"]*frame-ancestors https:\/\/cms\.kozlowski-it\.de[^"]*"\s+always\s*;/.test(pconf), "preview-nginx.conf: CSP frame-ancestors https://cms.kozlowski-it.de fehlt");
+  check(/^\s*root\s+\/srv\/work\/preview\s*;/m.test(pconf), "preview-nginx.conf: root /srv/work/preview; fehlt");
+  check(!/X-Frame-Options/i.test(pconf), "preview-nginx.conf: kein X-Frame-Options (bricht die Live-Vorschau im Admin)");
+  // add_header in einem location-Block würde die server-Header still verwerfen (nginx-Vererbung)
+  check(!/location[^{]*\{[^}]*add_header/s.test(pconf), "preview-nginx.conf: kein add_header in location-Blöcken (verdrängt noindex/CSP)");
+}
+
+// env.example: nur Platzhalter, deckt alle ${VAR} der Compose-Datei ab
+const envEx = read(`${CMS}/env.example`);
+if (envEx !== null) {
+  const keys = new Set();
+  for (const [i, raw] of envEx.split("\n").entries()) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const m = /^([A-Z][A-Z0-9_]*)=(.*)$/.exec(line);
+    if (!check(m, `env.example Zeile ${i + 1}: kein KEY=VALUE`)) continue;
+    keys.add(m[1]);
+    check(/^(change-me[a-z0-9-]*|<[^<>]+>)$/.test(m[2]), `env.example: ${m[1]} hat einen echten Wert statt Platzhalter (change-me / <…>)`);
+  }
+  const composeSrc = read(`${CMS}/docker-compose.yml`) ?? "";
+  for (const [, v] of composeSrc.matchAll(/\$\{([A-Z][A-Z0-9_]*)/g)) check(keys.has(v), `env.example: ${v} fehlt (wird in docker-compose.yml benutzt)`);
+}
+
+// Dockerfile
+const df = read(`${CMS}/Dockerfile`);
+if (df !== null) {
+  const from = /^FROM\s+node:(\d+\.\d+\.\d+)-bookworm-slim(@sha256:[0-9a-f]{64})?(\s|$)/m.exec(df);
+  if (check(from, "Dockerfile: FROM node:<x.y.z>-bookworm-slim[@sha256:…] fehlt")) {
+    check(verGte(from[1], MIN_NODE), `Dockerfile: Node ${from[1]} < ${MIN_NODE}`);
+  }
+  check(new RegExp(`RUN\\s+node\\s+-e[^\\n]*${MIN_NODE.replaceAll(".", "\\.")}`).test(df), `Dockerfile: Build-Prüfung node >= ${MIN_NODE} (RUN node -e …) fehlt`);
+  check(/npm\s+ci\b/.test(df) && /npm\s+--prefix\s+cms\s+ci\b/.test(df), "Dockerfile: npm ci für Root und cms/ fehlt");
+  check(/npm\s+--prefix\s+cms\s+run\s+build\b/.test(df), "Dockerfile: npm --prefix cms run build fehlt");
+  const npmrcAt = df.search(/^COPY\b[^\n]*cms\/\.npmrc/m);
+  const cmsCiAt = df.search(/npm\s+--prefix\s+cms\s+ci\b/);
+  check(npmrcAt >= 0 && npmrcAt < cmsCiAt, "Dockerfile: cms/.npmrc (legacy-peer-deps) muss vor npm --prefix cms ci kopiert werden");
+  const users = [...df.matchAll(/^USER\s+(\S+)/gm)].map((m) => m[1]);
+  check(users.length && ["node", "1000", "1000:1000"].includes(users.at(-1)), "Dockerfile: letzter USER muss node (uid 1000) sein");
+  check(!/^(COPY|ADD)\b[^\n]*\.env/m.test(df), "Dockerfile: COPY/ADD einer .env (Secrets nie ins Image)");
+  check(!/^ARG\s+(PAYLOAD_SECRET|DATABASE_URL|EDGE_SHARED_SECRET|BUILDER_TOKEN)/m.test(df), "Dockerfile: Secrets als Build-ARG");
+}
+
+// .dockerignore
+const di = read(".dockerignore");
+if (di !== null) {
+  const pats = new Set(di.split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#")));
+  for (const p of ["**/.env", "**/.env.*", "**/node_modules", ".git", "cms/.next", "cms/media", "_site", ".baseline", ".superpowers", "content"]) {
+    check(pats.has(p), `.dockerignore: ${p} fehlt`);
+  }
+}
+
+// .nvmrc
+const nvmrc = read(".nvmrc");
+if (nvmrc !== null) check(nvmrc.trim() === MIN_NODE, `.nvmrc muss ${MIN_NODE} sein (ist ${nvmrc.trim()})`);
+
+// backup.sh
+const bk = read(`${CMS}/backup.sh`);
+if (bk !== null) {
+  check(/^set -euo pipefail/m.test(bk), "backup.sh: set -euo pipefail fehlt (Exit ≠ 0 bei Fehler)");
+  check(/pg_dump\b[^\n]*-Fc/.test(bk), "backup.sh: pg_dump -Fc fehlt");
+  check(/tar\b[^\n]*media/.test(bk), "backup.sh: tar von media/ fehlt");
+  check(/KEEP=14\b/.test(bk), "backup.sh: KEEP=14 fehlt");
+}
+const readme = read(`${CMS}/README.md`);
+if (readme !== null) check(/\/etc\/cron\.d\/cms-backup/.test(readme) && /^15 3 \* \* \* root /m.test(readme), "README: Cron-Zeile (/etc/cron.d/cms-backup, 15 3 * * * root …) fehlt");
+
+// ------------------------------------------------------------------ Landing
+const lc = readYaml(`${LANDING}/docker-compose.yml`);
+if (lc) {
+  const svcs = Object.entries(lc.services ?? {});
+  check(svcs.length === 1, "landing-Compose: genau ein Dienst erwartet");
+  for (const [name, svc] of svcs) {
+    check(/^nginx:alpine/.test(svc.image ?? ""), `landing/${name}: nginx:alpine erwartet`);
+    check(svc.read_only === true, `landing/${name}: read_only: true fehlt`);
+    check((svc.cap_drop ?? []).includes("ALL"), `landing/${name}: cap_drop: [ALL] fehlt`);
+    check(networksOf(svc).get("macvlan78")?.ipv4_address === "10.30.78.2", `landing/${name}: macvlan78 / 10.30.78.2 fehlt`);
+    check(hasMount(svc, `${DATA}/work/releases`, "/srv/releases", true), `landing/${name}: ${DATA}/work/releases:/srv/releases:ro fehlt`);
+    for (const m of volumesOf(svc)) {
+      check(m.ro, `landing/${name}: Mount ${m.src} muss :ro sein`);
+      check(!/\/current\/?$/.test(m.src ?? ""), `landing/${name}: niemals den Symlink current selbst mounten (${m.src})`);
+    }
+    check(hasMount(svc, "./nginx-default.conf", "/etc/nginx/conf.d/default.conf", true), `landing/${name}: ./nginx-default.conf:/etc/nginx/conf.d/default.conf:ro fehlt`);
+  }
+}
+const lconf = read(`${LANDING}/nginx-default.conf`);
+if (lconf !== null) {
+  check(/^\s*root\s+\/srv\/releases\/current\s*;/m.test(lconf), "landing nginx: root /srv/releases/current; fehlt");
+  check(/^\s*index\s+index\.html\s*;/m.test(lconf), "landing nginx: index index.html; fehlt");
+  check(/^\s*error_page\s+404\s+\/404\.html\s*;/m.test(lconf), "landing nginx: error_page 404 /404.html; fehlt");
+}
+
+// ------------------------------------------------------------------ docker compose config
+let dockerNote = "";
+let hasDocker = false;
+try {
+  execFileSync("docker", ["compose", "version"], { stdio: "ignore" });
+  hasDocker = true;
+} catch {
+  dockerNote = " (docker compose config ÜBERSPRUNGEN: kein docker hier — auf docker01 nachholen)";
+}
+if (hasDocker && compose) {
+  for (const [file, envFile] of [[`${CMS}/docker-compose.yml`, `${CMS}/env.example`], [`${LANDING}/docker-compose.yml`, null]]) {
+    try {
+      const args = ["compose", "-f", join(ROOT, file)];
+      if (envFile) args.push("--env-file", join(ROOT, envFile));
+      execFileSync("docker", [...args, "config", "-q"], { stdio: ["ignore", "ignore", "pipe"] });
+    } catch (err) {
+      fail(`docker compose config für ${file} scheitert: ${String(err.stderr ?? err.message).trim()}`);
+    }
+  }
+}
+
+if (failures.length) {
+  console.error(`check-deploy: ${failures.length} Verstoß/Verstöße:`);
+  for (const f of failures) console.error(`  ✗ ${f}`);
+  process.exit(1);
+}
+console.log(`OK${dockerNote}`);
