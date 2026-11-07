@@ -1,5 +1,5 @@
 // Eleventy rendert CMS-Seiten aus content/*.json (Task 5).
-// Baut einmal mit den Fixtures (CONTENT_DIR=test/fixtures/content, nur CMS-Seiten)
+// Baut einmal mit den Fixtures (CONTENT_DIR=test/fixtures/content)
 // nach .test-site/ und prüft das erzeugte HTML.
 import { test, before } from "node:test";
 import assert from "node:assert/strict";
@@ -36,7 +36,7 @@ function walkHtml(dir) {
 }
 
 before(() => {
-  const r = eleventy(OUT, { CONTENT_DIR: FIXTURES, LEGACY_PAGES: "off" });
+  const r = eleventy(OUT, { CONTENT_DIR: FIXTURES });
   assert.equal(r.status, 0, `Eleventy-Build fehlgeschlagen:\n${r.stdout}\n${r.stderr}`);
 });
 
@@ -46,7 +46,7 @@ test("/ und /en/ existieren mit lang de/en", () => {
   assert.equal($("/en/it-care/")("html").attr("lang"), "en");
   assert.equal($("/")("html").attr("data-translation-key"), "home");
   assert.equal($("/")("html").attr("data-bilingual"), "true");
-  // wirklich die CMS-Seite (nicht die Legacy-Vorlage)
+  // wirklich die Fixture-Seite
   assert.match($("/")("title").text(), /^Fixture-Start/);
   assert.equal($("/en/")("title").text(), "Fixture home");
   assert.equal($("/en/it-care/")("title").text(), "IT care · Fixture");
@@ -237,7 +237,7 @@ function buildVariant(mutate, { prepareOut } = {}) {
   }
   const r = spawnSync(process.execPath, [join(ROOT, "node_modules/@11ty/eleventy/cmd.cjs"), `--output=${out}`, "--quiet"], {
     cwd: ROOT,
-    env: { ...process.env, CONTENT_DIR: dir, LEGACY_PAGES: "off" },
+    env: { ...process.env, CONTENT_DIR: dir },
     encoding: "utf8",
   });
   r.out = out;
@@ -344,18 +344,11 @@ test("Tab-URL / Nav-URL aus chrome.json mit javascript: bricht den Build ab", ()
   }
 });
 
-test("ohne content/: Legacy-Seiten bauen weiter (site/i18n aus legacy/), CMS-Pagination erzeugt nichts", () => {
-  const out = join(TMP, `cms-legacy-${process.pid}`);
+test("ohne content/ bricht der Build ab (keine Legacy-Daten mehr, Inhalte nur aus dem CMS-Export)", () => {
+  const out = join(TMP, `cms-nocontent-${process.pid}`);
   const r = eleventy(out, { CONTENT_DIR: join(TMP, "gibt-es-nicht") });
-  assert.equal(r.status, 0, `${r.stdout}\n${r.stderr}`);
-  // Startseite ist seit Task 7 nur noch CMS: ohne content/ gibt es sie nicht (Pagination erzeugt nichts).
-  assert.ok(!existsSync(join(out, "index.html")), "index.html ohne content/ erzeugt");
-  assert.ok(!existsSync(join(out, "en/index.html")), "en/index.html ohne content/ erzeugt");
-  // noch nicht migrierte Legacy-Seiten bauen weiter
-  const d = cheerio.load(readFileSync(join(out, "it-betreuung/index.html"), "utf8"));
-  assert.equal(d("html").attr("lang"), "de");
-  assert.equal(d("a.skip").text(), "Zum Inhalt springen");
-  assert.equal(d('meta[property="og:url"]').attr("content"), `${DOMAIN}/it-betreuung/`);
-  assert.equal(cheerio.load(readFileSync(join(out, "en/it-care/index.html"), "utf8"))("a.lang").attr("href"), "/it-betreuung/");
+  assert.notEqual(r.status, 0, "Build ohne content/ darf nicht gelingen");
+  assert.match(`${r.stdout}\n${r.stderr}`, /content: .*(site|chrome)\.json fehlt \(zuerst im cms\/ "npm run export" ausführen\)/);
+  assert.ok(!existsSync(join(out, "index.html")), "keine Seite erzeugt");
   rmSync(out, { recursive: true, force: true });
 });

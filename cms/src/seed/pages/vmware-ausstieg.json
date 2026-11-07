@@ -1,0 +1,258 @@
+{
+  "translationKey": "vmware-ausstieg",
+  "slug": "vmware-ausstieg",
+  "bilingual": false,
+  "noindex": false,
+  "minimalHeader": true,
+  "structuredData": "none",
+  "frame": "landing",
+  "media": [
+    {
+      "publicPath": "/assets/img/pve-architektur-de.jpg",
+      "alt": {
+        "de": "Proxmox-Cluster-Architekturdiagramm",
+        "en": "Proxmox-Cluster-Architekturdiagramm"
+      }
+    }
+  ],
+  "locales": {
+    "de": {
+      "title": "VMware-Ausstieg-Rechner: Broadcom-Kosten vs. Proxmox | Kozlowski IT",
+      "description": "Rechnen Sie Ihre VMware-Verlängerung nach Broadcom gegen Proxmox VE, über drei Jahre, in drei Minuten. Ohne Termin, ohne Verkaufsgespräch. Mit ehrlichem Hinweis, wenn ein Wechsel für Sie nicht sinnvoll ist.",
+      "ogTitle": "VMware-Ausstieg: Broadcom-Kosten in 3 Minuten gegen Proxmox rechnen",
+      "ogDescription": "Kern-Abos vs. Sockel-Preis: der Rechner zeigt Ihre Differenz über drei Jahre, mit Migrationsaufwand und ehrlichem Bleib-oder-wechsel-Hinweis.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "hero",
+          "variant": "landing",
+          "h1": "Broadcom-Verlängerung auf dem Tisch? Rechnen Sie vorher.",
+          "claim": {
+            "$html": "<p>Seit der Umstellung auf Kern-Abos liegen die Steigerungen bei Vertragsverlängerung laut Marktberichten oft beim Drei- bis Fünffachen. Besonders hart trifft es ehemalige Essentials-Kunden, deren Lizenzklasse ersatzlos gestrichen wurde.</p><p>Proxmox VE kostet keine Lizenzgebühr pro Kern. Rechnen Sie beide Wege über drei Jahre gegen, in drei Minuten, ohne Termin und ohne Verkaufsgespräch.</p>"
+          },
+          "buttons": [
+            {
+              "label": "Kosten rechnen",
+              "href": "#rechner",
+              "style": "primaryBig"
+            }
+          ],
+          "note": {
+            "$html": "<p>Preisangaben im Rechner sind Marktlage-Listenpreise mit Quelle, keine Zusage. Ihr tatsächliches Angebot kann abweichen. Quellen: <a href=\"https://www.proxmox.com/en/products/proxmox-virtual-environment/pricing\" target=\"_blank\" rel=\"noopener nofollow\">Proxmox VE Pricing</a>, <a href=\"https://atonementlicensing.com/blog/vmware-subscription-pricing-2026/\" target=\"_blank\" rel=\"noopener nofollow\">VMware Subscription Pricing 2026</a>.</p>"
+          },
+          "noteClass": "source-note"
+        },
+        {
+          "blockType": "vmwareCalculator",
+          "sectionKey": "rechner",
+          "anchorId": "rechner",
+          "variant": "default",
+          "heading": "Ihr 3-Jahres-Vergleich",
+          "labels": {
+            "hosts": "Anzahl Hosts",
+            "vms": "Anzahl VMs (ca.)",
+            "sockets": "Sockets pro Host",
+            "cores": "Kerne pro Socket",
+            "costLegend": "Aktuelle VMware-Kosten",
+            "costKnown": "Ich kenne meine Summe (vom Verlängerungsangebot)",
+            "costEstimate": "Bitte aus Listenpreisen schätzen",
+            "vmwareCost": "Ihre aktuelle oder angebotene VMware-Summe pro Jahr (€)",
+            "vmwareCostPlaceholder": "z. B. 12000",
+            "edition": "Aktuelle Edition",
+            "estimateHint": "Geschätzt mit gerundeten Listenpreisen pro Kern (Marktlage 2026) und dem 16-Kerne-pro-CPU-Minimum von Broadcom. Für Essentials und „weiß nicht\" gibt es keinen belastbaren Listenpreis, bitte dann die bekannte Summe eintragen.",
+            "proxmoxTier": "Proxmox-Support-Tier",
+            "contractEnd": "Vertragsende",
+            "monthAria": "Monat",
+            "yearAria": "Jahr",
+            "featuresLegend": "Genutzte Features (Mehrfachauswahl)",
+            "calculate": "Rechnen"
+          },
+          "editions": [
+            {
+              "value": "vsphere-standard",
+              "label": "vSphere Standard"
+            },
+            {
+              "value": "vvf",
+              "label": "vSphere Foundation (VVF)"
+            },
+            {
+              "value": "vcf",
+              "label": "VMware Cloud Foundation (VCF)"
+            },
+            {
+              "value": "enterprise-plus",
+              "label": "vSphere Enterprise Plus (alt)"
+            },
+            {
+              "value": "essentials",
+              "label": "Essentials / Essentials Plus"
+            },
+            {
+              "value": "unklar",
+              "label": "weiß nicht"
+            }
+          ],
+          "tiers": [
+            {
+              "value": "community",
+              "label": "Community (120 €/Sockel/Jahr)"
+            },
+            {
+              "value": "basic",
+              "label": "Basic (370 €)"
+            },
+            {
+              "value": "standard",
+              "label": "Standard (550 €)"
+            },
+            {
+              "value": "premium",
+              "label": "Premium (1.100 €)"
+            }
+          ],
+          "months": [
+            {
+              "value": "1",
+              "label": "Jan"
+            },
+            {
+              "value": "2",
+              "label": "Feb"
+            },
+            {
+              "value": "3",
+              "label": "Mär"
+            },
+            {
+              "value": "4",
+              "label": "Apr"
+            },
+            {
+              "value": "5",
+              "label": "Mai"
+            },
+            {
+              "value": "6",
+              "label": "Jun"
+            },
+            {
+              "value": "7",
+              "label": "Jul"
+            },
+            {
+              "value": "8",
+              "label": "Aug"
+            },
+            {
+              "value": "9",
+              "label": "Sep"
+            },
+            {
+              "value": "10",
+              "label": "Okt"
+            },
+            {
+              "value": "11",
+              "label": "Nov"
+            },
+            {
+              "value": "12",
+              "label": "Dez"
+            }
+          ],
+          "features": [
+            {
+              "value": "vmotion",
+              "label": "vMotion"
+            },
+            {
+              "value": "ha",
+              "label": "HA"
+            },
+            {
+              "value": "drs",
+              "label": "DRS"
+            },
+            {
+              "value": "vsan",
+              "label": "vSAN"
+            },
+            {
+              "value": "nsx",
+              "label": "NSX"
+            },
+            {
+              "value": "veeam",
+              "label": "Veeam-Backup"
+            }
+          ]
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "einwaende",
+          "variant": "objections",
+          "heading": "Die Fragen, die jetzt kommen",
+          "cards": [
+            {
+              "title": "„Ist Proxmox überhaupt reif für den Produktivbetrieb?\"",
+              "text": {
+                "$html": "<p>Proxmox VE läuft auf rund 1,5 Millionen Hosts und bringt Live-Migration, HA-Cluster, Snapshots, rollenbasierte Rechte und integriertes Backup mit. Die Frage ist längst nicht mehr ob, sondern ob es zu Ihrer Umgebung passt. Bei vSAN, NSX oder VMware-zertifizierter Branchensoftware sage ich Ihnen ehrlich, dass Sie bleiben sollten.</p>"
+              }
+            },
+            {
+              "title": "„Wir haben niemanden, der Linux kann.\"",
+              "text": {
+                "$html": "<p>Das ist der eigentliche Punkt. Der Hypervisor-Wechsel ist nicht das Ende des Projekts, sondern der Anfang vom neuen Betrieb. Deshalb gibt es Migration und laufenden Betrieb bei mir als Paket. Sie tauschen nicht eine Abhängigkeit gegen die nächste.</p>"
+              }
+            },
+            {
+              "title": "„Wie lange dauert das?\"",
+              "text": {
+                "$html": "<p>Bei 50 bis 200 VMs und strukturierter Planung typischerweise 8 bis 12 Wochen. Der größte Teil davon ist Planung, Test und Validierung, nicht das Kopieren.</p>"
+              }
+            },
+            {
+              "title": "„Und wenn etwas schiefgeht?\"",
+              "text": {
+                "$html": "<p>Migration in Wellen: erst unkritische Systeme, dann produktive. Rollback-Plan vor dem ersten Schnitt. Die alte Umgebung bleibt stehen, bis die neue nachweislich läuft.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "figure",
+          "sectionKey": "beleg",
+          "variant": "beleg",
+          "heading": "Das betreibe ich selbst",
+          "image": {
+            "$media": "/assets/img/pve-architektur-de.jpg"
+          },
+          "alt": "Architekturdiagramm eines Proxmox-VE-Clusters mit VMs, Containern und Firewall-Kaskade",
+          "caption": {
+            "$html": "<p>Ich betreibe selbst einen Proxmox-VE-Cluster mit 35+ VMs und rund 40 Containern, hinter einer mehrstufigen Firewall-Kaskade, mit verschlüsselten und auf Wiederherstellung getesteten Backups. Kein Testlabor, sondern meine Produktivumgebung. Was ich anbiete, betreibe ich selbst.</p>"
+          },
+          "note": {
+            "$html": "<p>Sobald die erste Kundenmigration abgeschlossen ist, steht hier der konkrete Fall: Ausgangslage, Lizenzkosten vorher, Dauer, Lizenzkosten nachher.</p>"
+          },
+          "noteClass": "r-hint"
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "buttonsFirst",
+          "text": {
+            "$html": "<p>Oder direkt sprechen: 30 Minuten, unverbindlich. Und wenn der Wechsel für Sie nicht sinnvoll ist, sage ich Ihnen das. Telefon <a href=\"tel:+491628213267\"><strong>0162 8213267</strong></a>, E-Mail <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a>.</p>"
+          },
+          "buttons": [
+            {
+              "label": "Kosten rechnen",
+              "href": "#rechner",
+              "style": "primaryBig"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

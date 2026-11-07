@@ -1,0 +1,158 @@
+{
+  "translationKey": "ueber-mich",
+  "slug": "ueber-mich",
+  "slugEn": "about",
+  "bilingual": true,
+  "noindex": false,
+  "minimalHeader": false,
+  "structuredData": "none",
+  "frame": "subpage",
+  "locales": {
+    "de": {
+      "title": "Über mich · Pascal Kozlowski · Kozlowski IT",
+      "description": "Pascal Kozlowski: seit über zehn Jahren Linux-Server aus Leidenschaft, heute ein eigenes Proxmox-Rechenzentrum im Kleinen. IT-Dienstleister und Entwickler im Landkreis Biberach. Was ich anbiete, betreibe ich selbst.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "Über mich",
+          "claim": {
+            "$html": "<p>Seit über zehn Jahren betreibe ich Linux-Server. Aus Leidenschaft wurde ein Beruf. Heute laufen bei mir über 35 virtuelle Maschinen und rund 40 Container auf einem eigenen Proxmox-Cluster, hinter einem mehrstufig segmentierten Netzwerk, mit verschlüsselten, getesteten Backups. Das ist mein eigenes „Rechenzentrum im Kleinen\", dokumentiert wie im Betrieb. Der einfachste Satz über meine Arbeit: <strong>was ich anbiete, betreibe ich selbst, jeden Tag.</strong></p>"
+          }
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "weg",
+          "variant": "default",
+          "heading": "Mein Weg",
+          "body": {
+            "$html": "<p>Angefangen hat alles mit Neugier, einem Server, den ich verstehen wollte, statt ihn nur zu benutzen. Aus dem Hobby wurden Jahre echter Praxis: Stationen bei IT-Dienstleistern und Systemhäusern, und parallel ein Eigenbetrieb, der mit jedem Jahr gewachsen ist. Ich lerne an echten Systemen, nicht an Folien.</p><p>Diesen Weg schließe ich gerade formal ab: <strong>IHK-Abschluss Fachinformatiker Systemintegration, voraussichtlich Dezember 2026.</strong> Ich sehe den Quereinstieg nicht als Lücke, sondern als Stärke. Ich habe die Systeme betrieben, bevor ich das Zertifikat dafür hatte, und weiß deshalb, wie es sich anfühlt, wenn nachts etwas nicht läuft.</p><ul>\n        <li><strong>10+ Jahre Linux-/Server-Praxis</strong>, 35+ VMs und ~40 Container im Eigenbetrieb</li>\n        <li>Praxiserfahrung bei IT-Dienstleistern und Systemhäusern</li>\n        <li>IHK-Abschluss Fachinformatiker <strong>Systemintegration</strong> (voraussichtlich Dezember 2026)</li>\n        <li>Standort: Ochsenhausen, Landkreis Biberach, für die Region vor Ort, international per Fernwartung</li>\n      </ul>"
+          },
+          "listClass": "facts"
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "haltung",
+          "variant": "fields",
+          "heading": "Wie ich arbeite",
+          "cards": [
+            {
+              "title": "Sie reden mit mir, ich hafte",
+              "text": {
+                "$html": "<p>Kein Callcenter, kein Ticket-Pingpong, kein „da muss ich rückfragen\". Sie haben einen Ansprechpartner, der die Entscheidung trifft und dafür geradesteht. Das ist der Vorteil, wenn IT-Betrieb und Entwicklung in einer Hand liegen: kein Schwarzer-Peter-Spiel zwischen Server und Code.</p>"
+              }
+            },
+            {
+              "title": "Dokumentiert, damit Sie unabhängig bleiben",
+              "text": {
+                "$html": "<p>Ich horte kein Wissen im Kopf. Alles wird so dokumentiert, dass im Ernstfall auch jemand anderes übernehmen kann. Ihr Betrieb hängt nicht an meiner Anwesenheit, sondern an einer nachvollziehbaren, wiederherstellbaren Lösung.</p>"
+              }
+            },
+            {
+              "title": "Kein Fachchinesisch",
+              "text": {
+                "$html": "<p>Ich erkläre, was ich tue, in normaler Sprache, schriftlich, damit Sie es an Ihr Team weitergeben können. Verstehen Sie, was passiert, treffen Sie bessere Entscheidungen.</p>"
+              }
+            },
+            {
+              "title": "Festpreise statt Stundenzählen",
+              "text": {
+                "$html": "<p>Sie wissen vorher, was etwas kostet. Keine offene Rechnung, die mit jeder Frage wächst. Ich überzeuge lieber durch Arbeit als durch Laufzeiten oder Kleingedrucktes.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "Klingt nach jemandem, mit dem Sie reden wollen?",
+          "text": {
+            "$html": "<p>Kostenloses Erstgespräch, 30 Minuten, unverbindlich.</p>"
+          },
+          "buttons": [
+            {
+              "label": "Kostenloses Erstgespräch →",
+              "href": "/#kontakt",
+              "style": "primaryBig"
+            }
+          ]
+        }
+      ]
+    },
+    "en": {
+      "title": "About · Pascal Kozlowski · Kozlowski IT",
+      "description": "Pascal Kozlowski: running Linux servers out of passion for over ten years, today a Proxmox 'data center in miniature' of my own. IT service provider and developer in the Biberach district, Germany. What I offer, I run myself.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "About me",
+          "claim": {
+            "$html": "<p>I've been running Linux servers for over ten years. A passion became a profession. Today 35+ virtual machines and around 40 containers run on my own Proxmox cluster, behind a multi-tier segmented network, with encrypted, restore-tested backups. That is my own \"data center in miniature\", documented like a production environment. The simplest sentence about my work: <strong>what I offer, I run myself, every day.</strong></p>"
+          }
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "weg",
+          "variant": "default",
+          "heading": "My path",
+          "body": {
+            "$html": "<p>It all started with curiosity, a server I wanted to understand rather than just use. The hobby turned into years of real practice: roles at IT service providers and system houses, and alongside them an operation of my own that has grown every year. I learn on real systems, not on slides.</p><p>I'm formally completing that path right now: <strong>IHK degree as IT specialist for systems integration, expected December 2026.</strong> I don't see the career switch as a gap but as a strength. I ran the systems before I held the certificate for them, and so I know how it feels when something breaks at night.</p><ul>\n        <li><strong>10+ years of hands-on Linux/server experience</strong>, 35+ VMs and ~40 containers in operation</li>\n        <li>Hands-on experience at IT service providers and system houses</li>\n        <li>IHK degree as IT specialist for <strong>systems integration</strong> (expected December 2026)</li>\n        <li>Based in Ochsenhausen, Biberach district, on site for the region, international via remote support</li>\n      </ul>"
+          },
+          "listClass": "facts"
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "haltung",
+          "variant": "fields",
+          "heading": "How I work",
+          "cards": [
+            {
+              "title": "You talk to me, and I'm accountable",
+              "text": {
+                "$html": "<p>No call center, no ticket ping-pong, no \"I'll have to check back\". You have one point of contact who makes the decision and stands behind it. That's the advantage when IT operations and development are in the same hands: no blame game between server and code.</p>"
+              }
+            },
+            {
+              "title": "Documented so you stay independent",
+              "text": {
+                "$html": "<p>I don't hoard knowledge in my head. Everything is documented so that someone else can take over in an emergency. Your operation doesn't depend on my presence, but on a traceable, recoverable setup.</p>"
+              }
+            },
+            {
+              "title": "No jargon",
+              "text": {
+                "$html": "<p>I explain what I do in plain language, in writing, so you can pass it on to your team. When you understand what's happening, you make better decisions.</p>"
+              }
+            },
+            {
+              "title": "Fixed prices, not counting hours",
+              "text": {
+                "$html": "<p>You know what something costs up front. No open tab that grows with every question. I'd rather convince through work than through contract terms or fine print.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "Sounds like someone you'd want to talk to?",
+          "text": {
+            "$html": "<p>Free initial consultation, 30 minutes, no strings attached.</p>"
+          },
+          "buttons": [
+            {
+              "label": "Free initial consultation →",
+              "href": "/en/#contact",
+              "style": "primaryBig"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

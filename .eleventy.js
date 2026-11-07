@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { contentDir, loadMedia } from "./lib/content.js";
@@ -71,18 +71,6 @@ export default function (eleventyConfig) {
       placed.add(dest);
     }
   });
-
-  // Nur für Tests (test/render.test.mjs): LEGACY_PAGES=off baut ausschließlich die
-  // CMS-Seiten, damit Fixture-Seiten wie / nicht mit src/index.njk kollidieren.
-  // Ohne die Variable bleibt alles wie bisher: doppelte Permalinks brechen den Build ab.
-  if (process.env.LEGACY_PAGES === "off") {
-    const keep = new Set(["cms-pages.njk", "404.njk", "robots.njk", "sitemap.njk"]);
-    for (const sub of ["", "en"]) {
-      for (const f of readdirSync(join("src", sub))) {
-        if (f.endsWith(".njk") && !keep.has(f)) eleventyConfig.ignores.add(join("src", sub, f));
-      }
-    }
-  }
 
   return {
     dir: {

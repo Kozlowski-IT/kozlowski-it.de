@@ -1,0 +1,242 @@
+{
+  "translationKey": "projekte",
+  "slug": "projekte",
+  "slugEn": "projects",
+  "bilingual": true,
+  "noindex": false,
+  "minimalHeader": false,
+  "structuredData": "none",
+  "frame": "subpageTabs",
+  "media": [
+    {
+      "publicPath": "/assets/img/netzplan-de.jpg",
+      "alt": {
+        "de": "Ausschnitt eines Netzwerk-Architekturdiagramms",
+        "en": "Ausschnitt eines Netzwerk-Architekturdiagramms"
+      }
+    },
+    {
+      "publicPath": "/assets/img/netzplan-en.jpg",
+      "alt": {
+        "de": "Snapshot of a network architecture diagram",
+        "en": "Snapshot of a network architecture diagram"
+      }
+    },
+    {
+      "publicPath": "/assets/img/pve-architektur-de.jpg",
+      "alt": {
+        "de": "Proxmox-Cluster-Architekturdiagramm",
+        "en": "Proxmox-Cluster-Architekturdiagramm"
+      }
+    },
+    {
+      "publicPath": "/assets/img/pve-architektur-en.jpg",
+      "alt": {
+        "de": "Proxmox cluster architecture diagram",
+        "en": "Proxmox cluster architecture diagram"
+      }
+    },
+    {
+      "publicPath": "/assets/img/saas-architektur-de.jpg",
+      "alt": {
+        "de": "SaaS-Backend-Architekturdiagramm",
+        "en": "SaaS-Backend-Architekturdiagramm"
+      }
+    },
+    {
+      "publicPath": "/assets/img/saas-architektur-en.jpg",
+      "alt": {
+        "de": "SaaS backend architecture diagram",
+        "en": "SaaS backend architecture diagram"
+      }
+    }
+  ],
+  "locales": {
+    "de": {
+      "title": "Projekte & Referenzaufbauten · Kozlowski IT",
+      "description": "Eigene Referenzaufbauten von Kozlowski IT, dokumentiert wie für Kunden: Proxmox-Virtualisierung, Netzwerk-Segmentierung mit Firewall und eine SaaS-Backend-Architektur. Mit Case Studies und Architektur-Diagrammen.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "Projekte & Case Studies",
+          "claim": {
+            "$html": "<p>Noch keine Kundenliste, aber mehr als Worte: eigene Infrastruktur, gebaut und dokumentiert wie ein Kundenprojekt. Jede Studie als PDF zum Nachlesen, mit Architektur-Diagramm.</p>"
+          }
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "list",
+          "variant": "projects",
+          "cards": [
+            {
+              "accent": "infra",
+              "image": {
+                "$media": "/assets/img/pve-architektur-de.jpg"
+              },
+              "tag": "Case Study · Infrastruktur",
+              "title": "Virtualisierungs-Plattform mit Proxmox",
+              "text": {
+                "$html": "<p>Eigene Server-Plattform mit über 35 VMs und Containern: Storage-Konzept, Ressourcen-Trennung und verschlüsselte Off-site-Backups mit dokumentiertem, getestetem Restore. Betrieben wie eine produktive Umgebung.</p>"
+              },
+              "buttons": [
+                {
+                  "label": "Case Study lesen (PDF)",
+                  "href": "/assets/docs/case-study-compute-proxmox.pdf",
+                  "style": "devlink",
+                  "newTab": true
+                }
+              ]
+            },
+            {
+              "accent": "infra",
+              "image": {
+                "$media": "/assets/img/netzplan-de.jpg"
+              },
+              "imageAlt": "Netzwerkplan mit VLAN-Segmentierung",
+              "tag": "Case Study · Netzwerk",
+              "title": "Netzwerk-Segmentierung & Firewall",
+              "text": {
+                "$html": "<p>Mehrstufig segmentiertes Netzwerk (VLANs) mit Firewall-Regelwerk und VPN-Zugängen für sicheres Homeoffice. Least-Privilege- und Segmentierungs-Prinzip: jedes Segment sieht nur, was es braucht. Geplant, umgesetzt, dokumentiert.</p>"
+              },
+              "buttons": [
+                {
+                  "label": "Case Study lesen (PDF)",
+                  "href": "/assets/docs/case-study-netzwerk-firewall.pdf",
+                  "style": "devlink",
+                  "newTab": true
+                }
+              ]
+            },
+            {
+              "accent": "dev",
+              "image": {
+                "$media": "/assets/img/saas-architektur-de.jpg"
+              },
+              "tag": "Architektur-Studie · Software",
+              "title": "SaaS-Backend-Architektur",
+              "text": {
+                "$html": "<p>Mandantenfähiges Backend mit Row-Level-Security in PostgreSQL, Domain-Driven Design und einer Event-Architektur. Zeigt, wie man mehrere Kunden sicher auf einer Plattform trennt. Anonymisierte Studie.</p>"
+              },
+              "buttons": [
+                {
+                  "label": "Architektur-Studie (PDF)",
+                  "href": "/assets/docs/saas-architektur-de.pdf",
+                  "style": "devlink",
+                  "newTab": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "So etwas für Ihren Betrieb?",
+          "buttons": [
+            {
+              "label": "Kostenloses Erstgespräch →",
+              "href": "/#kontakt",
+              "style": "primaryBig"
+            }
+          ]
+        }
+      ]
+    },
+    "en": {
+      "title": "Projects & Reference Builds · Kozlowski IT",
+      "description": "Self-built reference setups by Kozlowski IT, documented as if for clients: Proxmox virtualization, network segmentation with firewall, and a SaaS backend architecture. With case studies and architecture diagrams.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "Projects & Case Studies",
+          "claim": {
+            "$html": "<p>No client list yet, but more than words: my own infrastructure, built and documented like a client project. Each study is a PDF to read up on, with an architecture diagram.</p>"
+          }
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "list",
+          "variant": "projects",
+          "cards": [
+            {
+              "accent": "infra",
+              "image": {
+                "$media": "/assets/img/pve-architektur-en.jpg"
+              },
+              "tag": "Case study · Infrastructure",
+              "title": "Virtualization Platform on Proxmox",
+              "text": {
+                "$html": "<p>A self-hosted server platform with 35+ VMs and containers: storage design, resource isolation and encrypted off-site backups with a documented, tested restore. Operated like a production environment.</p>"
+              },
+              "buttons": [
+                {
+                  "label": "Read case study (PDF)",
+                  "href": "/assets/docs/case-study-compute-proxmox-en.pdf",
+                  "style": "devlink",
+                  "newTab": true
+                }
+              ]
+            },
+            {
+              "accent": "infra",
+              "image": {
+                "$media": "/assets/img/netzplan-en.jpg"
+              },
+              "imageAlt": "Network plan with VLAN segmentation",
+              "tag": "Case study · Network",
+              "title": "Network Segmentation & Firewall",
+              "text": {
+                "$html": "<p>A multi-tier segmented network (VLANs) with a firewall rule set and VPN access for secure remote work. Least-privilege and segmentation: each segment only sees what it needs. Planned, implemented, documented.</p>"
+              },
+              "buttons": [
+                {
+                  "label": "Read case study (PDF)",
+                  "href": "/assets/docs/case-study-netzwerk-firewall-en.pdf",
+                  "style": "devlink",
+                  "newTab": true
+                }
+              ]
+            },
+            {
+              "accent": "dev",
+              "image": {
+                "$media": "/assets/img/saas-architektur-en.jpg"
+              },
+              "tag": "Architecture study · Software",
+              "title": "SaaS Backend Architecture",
+              "text": {
+                "$html": "<p>A multi-tenant backend with row-level security in PostgreSQL, domain-driven design and an event architecture. Shows how to isolate several clients securely on one platform. Anonymized study.</p>"
+              },
+              "buttons": [
+                {
+                  "label": "Architecture study (PDF)",
+                  "href": "/assets/docs/saas-architektur-en.pdf",
+                  "style": "devlink",
+                  "newTab": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "Something like this for your business?",
+          "buttons": [
+            {
+              "label": "Free initial consultation →",
+              "href": "/en/#contact",
+              "style": "primaryBig"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

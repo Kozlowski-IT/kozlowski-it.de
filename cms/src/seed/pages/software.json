@@ -1,0 +1,214 @@
+{
+  "translationKey": "software",
+  "slug": "software",
+  "slugEn": "software",
+  "bilingual": true,
+  "noindex": false,
+  "minimalHeader": false,
+  "structuredData": "none",
+  "frame": "subpage",
+  "locales": {
+    "de": {
+      "title": "Softwareentwicklung nach Maß · Landkreis Biberach · Kozlowski IT",
+      "description": "Individualsoftware aus dem Landkreis Biberach: Web-Anwendungen, APIs und Workflow-Systeme (Angular, NestJS, PostgreSQL). Zum Ausprobieren statt Versprechen, mit Live-Demos und offenem Quellcode. Betrieb inklusive.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "Software, wenn kein Fertigprodukt passt",
+          "claim": {
+            "$html": "<p>Manche Abläufe lassen sich nicht in eine Standard-Software pressen: das Formular, das Ihre Freigaben abbildet, das interne Tool, das genau Ihren Prozess kennt. Ich baue diese Software nach Maß, modern, schnell und so, dass Sie sie danach verstehen und besitzen. Und weil ich die Server darunter selbst betreibe, entwickle ich nicht an Ihrer Infrastruktur vorbei.</p>"
+          }
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "leistungen",
+          "variant": "fields",
+          "heading": "Was ich baue",
+          "cards": [
+            {
+              "accent": "dev",
+              "title": "Web-Anwendungen",
+              "text": {
+                "$html": "<p>Modern und schnell, mit Angular-Frontend, barrierearm umgesetzt (WCAG-orientiert). Läuft im Browser, ohne Installation beim Nutzer.</p>"
+              }
+            },
+            {
+              "accent": "dev",
+              "title": "APIs & Backends",
+              "text": {
+                "$html": "<p>Sauber strukturiert mit NestJS und PostgreSQL. Die Basis, auf der Ihre Anwendung zuverlässig und erweiterbar läuft, kein Spaghetti, das beim ersten Wunsch zusammenbricht.</p>"
+              }
+            },
+            {
+              "accent": "dev",
+              "title": "Workflow- & Freigabe-Systeme",
+              "text": {
+                "$html": "<p>Anträge, Prüfprozesse, mehrstufige Genehmigungen, mit Rollen, serverseitig erzwungenen Regeln und lückenloser Historie. Genau die Art interner Software, die kein Fertigprodukt abbildet.</p>"
+              }
+            },
+            {
+              "accent": "dev",
+              "title": "Echtzeit & Betrieb inklusive",
+              "text": {
+                "$html": "<p>Änderungen erscheinen sofort, ohne Neuladen. Und der Betrieb gehört dazu: Docker, HTTPS, auf Ihrem Server oder von mir gehostet. Ich übergebe nicht nur Code, sondern eine laufende Anwendung.</p>"
+              }
+            },
+            {
+              "accent": "dev",
+              "title": "Desktop-Apps",
+              "text": {
+                "$html": "<p>Wenn eine Web-Anwendung nicht reicht: native Desktop-Programme für Windows, macOS und Linux mit Tauri. Schlank, ohne schweren Browser-Ballast, und mit Zugriff auf das Betriebssystem, wo es gebraucht wird.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "belege",
+          "variant": "default",
+          "heading": "Nicht glauben, selbst ausprobieren",
+          "lead": {
+            "$html": "<p>Keine Screenshots, keine Versprechen: echte, laufende Software mit offenem Quellcode. Die Zugangsdaten stehen jeweils direkt auf der Login-Seite, alle Daten sind frei erfunden.</p>"
+          },
+          "body": {
+            "$html": "<ul>\n        <li><strong>FlowGate</strong>, mehrstufiger Antrags- &amp; Freigabe-Workflow mit Rollen, erzwungener Status-Maschine und Echtzeit-Board (Angular, NestJS, PostgreSQL, WebSocket). <a href=\"https://flowgate.kozlowski-it.de\" target=\"_blank\" rel=\"noopener\">Demo öffnen</a> · <a href=\"https://github.com/Kozlowski-IT/flowgate\" target=\"_blank\" rel=\"noopener\">Quellcode</a></li>\n        <li><strong>Quellwerk</strong>, Dokumente in normaler Sprache fragen statt suchen; die Suche läuft komplett lokal, eine KI-Antwort ist zuschaltbar (Python, FastAPI, RAG/Embeddings). <a href=\"https://quellwerk.kozlowski-it.de\" target=\"_blank\" rel=\"noopener\">Demo öffnen</a> · <a href=\"https://github.com/Kozlowski-IT/quellwerk\" target=\"_blank\" rel=\"noopener\">Quellcode</a></li>\n        <li><strong>SaaS-Backend-Architektur</strong>, mandantenfähiges Backend mit Row-Level-Security, Domain-Driven Design und Event-Architektur; zeigt, wie man mehrere Kunden sicher auf einer Plattform trennt. <a href=\"/assets/docs/saas-architektur-de.pdf\" target=\"_blank\" rel=\"noopener\">Architektur-Studie (PDF)</a></li>\n      </ul>"
+          },
+          "listClass": "facts"
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "ki",
+          "variant": "default",
+          "heading": "Und die KI-Frage",
+          "lead": {
+            "$html": "<p>Ja, ich nutze KI als Werkzeug, so wie ein Tischler eine Maschine statt eines Handhobels nimmt. Sie nimmt mir Routine ab und macht mich schneller. Aber die Entscheidungen (wie etwas aufgebaut wird, was sicher ist, was zu Ihrem Ablauf passt) und die Verantwortung dafür bleiben bei mir. <strong>Ihre Daten landen dabei nicht in irgendeiner KI</strong>. Das Werkzeug hilft mir beim Code, nicht mit Ihren Inhalten. Und KI ist kein Knopf, der fertige Software ausspuckt: Anspruchsvolle Projekte brauchen weiter echte Zeit und Sorgfalt.</p>"
+          }
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "Eine Idee im Kopf?",
+          "text": {
+            "$html": "<p>Beschreiben Sie sie wie eine kleine Ausschreibung, je konkreter, desto besser kann ich sie einschätzen. Das Erstgespräch ist kostenlos und unverbindlich.</p>"
+          },
+          "buttons": [
+            {
+              "label": "Projekt besprechen →",
+              "href": "/#kontakt",
+              "style": "devBig"
+            },
+            {
+              "label": "Erst die Demos ansehen",
+              "href": "/demos/",
+              "style": "ghosted"
+            }
+          ]
+        }
+      ]
+    },
+    "en": {
+      "title": "Custom Software Development · Kozlowski IT",
+      "description": "Custom software from the Biberach district, Germany: web applications, APIs and workflow systems (Angular, NestJS, PostgreSQL). Try it instead of reading promises, live demos with open source. Operations included.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "Software when no off-the-shelf product fits",
+          "claim": {
+            "$html": "<p>Some workflows can't be forced into standard software: the form that mirrors your approvals, the internal tool that knows exactly your process. I build that software to measure, modern, fast, and in a way you understand and own afterwards. And because I run the servers underneath myself, I don't develop past your infrastructure.</p>"
+          }
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "leistungen",
+          "variant": "fields",
+          "heading": "What I build",
+          "cards": [
+            {
+              "accent": "dev",
+              "title": "Web applications",
+              "text": {
+                "$html": "<p>Modern and fast, with an Angular frontend, built accessibility-minded (WCAG-oriented). Runs in the browser, nothing to install for the user.</p>"
+              }
+            },
+            {
+              "accent": "dev",
+              "title": "APIs & backends",
+              "text": {
+                "$html": "<p>Cleanly structured with NestJS and PostgreSQL. The foundation your application runs on reliably and extensibly, no spaghetti that collapses at the first change request.</p>"
+              }
+            },
+            {
+              "accent": "dev",
+              "title": "Workflow & approval systems",
+              "text": {
+                "$html": "<p>Requests, reviews, multi-stage approvals, with roles, server-enforced rules and a complete history. Exactly the kind of internal software no off-the-shelf product covers.</p>"
+              }
+            },
+            {
+              "accent": "dev",
+              "title": "Real-time & operations included",
+              "text": {
+                "$html": "<p>Changes appear instantly, no reloading. And operations are part of the deal: Docker, HTTPS, on your server or hosted by me. I don't just hand over code, I hand over a running application.</p>"
+              }
+            },
+            {
+              "accent": "dev",
+              "title": "Desktop apps",
+              "text": {
+                "$html": "<p>When a web app isn't enough: native desktop programs for Windows, macOS and Linux with Tauri. Lightweight, without heavy browser baggage, and with access to the operating system where it's needed.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "belege",
+          "variant": "default",
+          "heading": "Don't take my word for it, try it",
+          "lead": {
+            "$html": "<p>No screenshots, no promises: real, running software with open source. The credentials are right on each login page, all data is made up.</p>"
+          },
+          "body": {
+            "$html": "<ul>\n        <li><strong>FlowGate</strong>, multi-stage request &amp; approval workflow with roles, an enforced state machine and a real-time board (Angular, NestJS, PostgreSQL, WebSocket). <a href=\"https://flowgate.kozlowski-it.de\" target=\"_blank\" rel=\"noopener\">Open demo</a> · <a href=\"https://github.com/Kozlowski-IT/flowgate\" target=\"_blank\" rel=\"noopener\">Source</a></li>\n        <li><strong>Quellwerk</strong>, ask documents in plain language instead of searching; the search runs entirely locally, an AI answer is optional (Python, FastAPI, RAG/embeddings). <a href=\"https://quellwerk.kozlowski-it.de\" target=\"_blank\" rel=\"noopener\">Open demo</a> · <a href=\"https://github.com/Kozlowski-IT/quellwerk\" target=\"_blank\" rel=\"noopener\">Source</a></li>\n        <li><strong>SaaS backend architecture</strong>, multi-tenant backend with row-level security, domain-driven design and an event architecture; shows how to separate multiple clients safely on one platform. <a href=\"/assets/docs/saas-architektur-de.pdf\" target=\"_blank\" rel=\"noopener\">Architecture study (PDF)</a></li>\n      </ul>"
+          },
+          "listClass": "facts"
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "ki",
+          "variant": "default",
+          "heading": "And the AI question",
+          "lead": {
+            "$html": "<p>Yes, I use AI as a tool, the way a carpenter reaches for a machine instead of a hand plane. It takes the routine off my plate and makes me faster. But the decisions (how something is built, what's secure, what fits your workflow) and the responsibility for them stay with me. <strong>Your data does not go into any AI</strong>. The tool helps me with code, not with your content. And AI is not a button that spits out finished software: demanding projects still take real time and care.</p>"
+          }
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "Got an idea in mind?",
+          "text": {
+            "$html": "<p>Describe it like a short brief, the more concrete, the better I can assess it. The initial consultation is free and without obligation.</p>"
+          },
+          "buttons": [
+            {
+              "label": "Discuss a project →",
+              "href": "/en/#contact",
+              "style": "devBig"
+            },
+            {
+              "label": "See the demos first",
+              "href": "/en/demos/",
+              "style": "ghosted"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

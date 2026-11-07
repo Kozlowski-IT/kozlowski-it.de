@@ -12,7 +12,7 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "test": "npm run test:int",
-    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/run.ts",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/run.ts --",
     "export": "cross-env NODE_OPTIONS=--no-deprecation tsx src/export/cli.ts"
   },
   "dependencies": {

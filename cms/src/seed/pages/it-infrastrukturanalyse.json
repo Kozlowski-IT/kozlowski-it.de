@@ -1,0 +1,132 @@
+{
+  "translationKey": "it-infrastrukturanalyse",
+  "slug": "it-infrastrukturanalyse",
+  "bilingual": false,
+  "noindex": false,
+  "minimalHeader": false,
+  "structuredData": "none",
+  "frame": "subpage",
+  "locales": {
+    "de": {
+      "title": "IT-Infrastrukturanalyse · Landkreis Biberach · Kozlowski IT",
+      "description": "Bezahlte, klar abgegrenzte IT-Infrastrukturanalyse zum Festpreis für den vereinbarten Prüfbereich: Ist-Zustand, Risiken und Abhängigkeiten sichtbar, priorisierte Maßnahmen und ein empfohlener Umsetzungsweg. Kein Audit, keine Zertifizierung.",
+      "ogTitle": "IT-Infrastrukturanalyse: erst verstehen, dann verbindlich planen",
+      "ogDescription": "Für unklare oder gewachsene IT-Umgebungen: Festpreis-Analyse mit priorisierten Maßnahmen und belastbarer Grundlage für ein Umsetzungsangebot.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "IT-Infrastrukturanalyse: Klarheit für die nächsten Schritte.",
+          "claim": {
+            "$html": "<p>Bevor Server, Netzwerk oder Sicherheitsmaßnahmen verändert werden, braucht es eine verlässliche Grundlage. Ich erfasse den vorher vereinbarten Bereich Ihrer IT, mache Risiken und Abhängigkeiten sichtbar und entwickle daraus einen nachvollziehbaren Maßnahmen- und Umsetzungsweg.</p>"
+          },
+          "noteIcon": "ℹ️",
+          "note": {
+            "$html": "<p>Die IT-Infrastrukturanalyse ist eine <strong>bezahlte, klar abgegrenzte Analyse- und Konzeptionsphase zum vorher vereinbarten Festpreis</strong>. Der Festpreis gilt ausschließlich für den vorher definierten Prüfbereich. Im kostenlosen Erstgespräch klären wir, ob eine Analyse nötig ist und welcher Prüfbereich sinnvoll ist.</p>"
+          }
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "betrachtet",
+          "variant": "default",
+          "heading": "Was wird betrachtet?",
+          "lead": {
+            "$html": "<p>Der genaue Prüfbereich wird vorab vereinbart. Je nach Ausgangslage können unter anderem folgende Bereiche enthalten sein:</p>"
+          },
+          "body": {
+            "$html": "<ul>\n        <li>Server, virtuelle Maschinen und zentrale Dienste</li>\n        <li>Netzwerk, Firewall, WLAN, VPN und Remote-Zugänge</li>\n        <li>Benutzerkonten, administrative Zugänge und Berechtigungen</li>\n        <li>Backup-Status und vereinbarte Wiederherstellungsprüfungen</li>\n        <li>Patch- und Update-Stand der vereinbarten Systeme</li>\n        <li>Microsoft 365 oder vergleichbare Cloud-Dienste, sofern vereinbart</li>\n        <li>Vorhandene Dokumentation, Lizenzen, Verträge und Abhängigkeiten</li>\n        <li>Erkennbare Sicherheits- und Betriebsrisiken im vereinbarten Bereich</li>\n      </ul>"
+          },
+          "listClass": "facts"
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "erhalten",
+          "variant": "default",
+          "heading": "Was Sie erhalten",
+          "note": {
+            "$html": "<p>Sie erhalten damit die notwendige technische Bewertung und Grobkonzeption. Eine zusätzliche, separate Planungsphase vor dem Umsetzungsangebot ist in der Regel nicht erforderlich. Das Ergebnis ist eine eigenständige, verwertbare Leistung, nicht nur ein Dokument, damit anschließend ein Angebot geschrieben werden kann.</p>"
+          },
+          "body": {
+            "$html": "<ul>\n        <li>Verständliche Übersicht über den betrachteten Ist-Zustand</li>\n        <li>Dokumentation der vereinbarten Systeme und relevanten Abhängigkeiten</li>\n        <li>Priorisierte Risiken, offene Punkte und Maßnahmen</li>\n        <li>Einordnung in „sofort\", „zeitnah\" und „geplant\"</li>\n        <li>Empfohlener Lösungs- und Umsetzungsweg</li>\n        <li>Abschlussgespräch zur Erläuterung der Ergebnisse</li>\n        <li>Grundlage für ein belastbares Umsetzungsangebot</li>\n      </ul>"
+          },
+          "listClass": "facts"
+        },
+        {
+          "blockType": "steps",
+          "sectionKey": "ablauf",
+          "variant": "fields",
+          "heading": "So läuft es",
+          "steps": [
+            {
+              "label": "1 · Kostenloses Erstgespräch",
+              "title": "Ziel und Ausgangslage verstehen",
+              "text": {
+                "$html": "<p>Wir klären Ziel, Problem und grobe Ausgangslage und ob Ziel und Umfang klar genug für ein direktes Projektangebot sind. Ohne kostenlose Detailanalyse oder vollständige Bestandsaufnahme.</p>"
+              }
+            },
+            {
+              "label": "2 · Direkter Weg oder Analyse",
+              "title": "Klar oder unklar?",
+              "text": {
+                "$html": "<p>Bei klar umrissenen Vorhaben (z. B. abgegrenzter Firewall-Tausch, definierter Server-Neuaufbau) erhalten Sie direkt ein Angebot. Bei unklaren oder gewachsenen Umgebungen folgt zuerst die IT-Infrastrukturanalyse zum Festpreis.</p>"
+              }
+            },
+            {
+              "label": "3 · Umsetzungsangebot",
+              "title": "Belastbar planen",
+              "text": {
+                "$html": "<p>Auf Grundlage der Analyse entsteht ein belastbares Angebot mit Umsetzungsumfang, Voraussetzungen, Ablauf, realistischem Terminplan und Festpreis oder klar definierten Umsetzungsphasen.</p>"
+              }
+            }
+          ],
+          "note": {
+            "$html": "<p>Auch wenn Sie Ihre Umgebung ausführlich beschreiben, muss der relevante Bereich technisch geprüft werden. Aussagen wie „Backups laufen\" oder „die Firewall ist eingerichtet\" ersetzen keine eigene Prüfung von Status, Konfiguration, Wiederherstellung und Abhängigkeiten.</p>"
+          }
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "festpreis",
+          "variant": "default",
+          "heading": "Festpreis für den vereinbarten Prüfbereich",
+          "note": {
+            "$html": "<p>Ist der tatsächliche Umfang größer als vereinbart, wird der Prüfumfang transparent erweitert und nachangeboten, oder es werden zuerst kritische Bereiche analysiert und weitere Bereiche als eigenständige Phase vereinbart. Keine unbegrenzte Mehrarbeit wird stillschweigend übernommen.</p>"
+          },
+          "lead": {
+            "$html": "<p>Weil Ablauf, Checklisten und Ergebnis standardisiert sind, lässt sich die Analyse zum Festpreis anbieten. Der Preis gilt ausschließlich für den vorher vereinbarten Prüfbereich, klar begrenzt zum Beispiel über:</p>"
+          },
+          "body": {
+            "$html": "<ul>\n        <li>Anzahl Standorte, Server und virtueller Maschinen</li>\n        <li>Anzahl Arbeitsplätze bzw. Benutzer und Cloud-Tenants</li>\n        <li>Anzahl Firewalls, Switches, WLANs oder VPN-Zugänge</li>\n        <li>Anzahl zentraler Anwendungen und Datenbanken</li>\n        <li>Sichtung vorhandener Dokumentation und vereinbarte Wiederherstellungsprüfung</li>\n        <li>Remote-Durchführung oder Vor-Ort-Termin</li>\n      </ul>"
+          },
+          "listClass": "facts"
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "nicht",
+          "variant": "default",
+          "heading": "Was nicht enthalten ist",
+          "body": {
+            "$html": "<ul>\n        <li>Keine vollständige Prüfung aller Systeme, Standorte oder Anwendungen ohne vorher vereinbarten Umfang</li>\n        <li>Keine ISO-27001-Zertifizierung und kein vollständiges ISMS</li>\n        <li>Keine rechtliche DSGVO-Beratung</li>\n        <li>Kein vollständiger Penetrationstest</li>\n        <li>Keine Garantie, dass jedes Risiko erkannt wird</li>\n        <li>Keine Umsetzung von Maßnahmen, sofern diese nicht separat vereinbart wird</li>\n      </ul>"
+          },
+          "listClass": "excl"
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "Unklare IT-Umgebung? Schaffen wir Klarheit.",
+          "text": {
+            "$html": "<p>Im kostenlosen Erstgespräch klären wir, ob eine Analyse sinnvoll ist und welcher Prüfbereich passt.</p>"
+          },
+          "buttons": [
+            {
+              "label": "Kostenloses Erstgespräch →",
+              "href": "/#kontakt",
+              "style": "primaryBig"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "translationKey": "impressum",
+  "slug": "impressum",
+  "bilingual": false,
+  "noindex": true,
+  "minimalHeader": false,
+  "structuredData": "none",
+  "frame": "legal",
+  "locales": {
+    "de": {
+      "title": "Impressum · Kozlowski IT",
+      "layout": [
+        {
+          "blockType": "text",
+          "sectionKey": "legal",
+          "variant": "legal",
+          "heading": "Impressum",
+          "headingLevel": "h1",
+          "body": {
+            "$html": "<p>Angaben gemäß § 5 DDG:</p><p>\n      Kozlowski IT, Inhaber: Pascal Kozlowski<br>\n      Abteistraße 30/6<br>\n      88416 Ochsenhausen<br>\n      Telefon: <a href=\"tel:+491628213267\">+49 162 8213267</a><br>\n      E-Mail: <a href=\"mailto:pk@kozlowski-it.de\">pk@kozlowski-it.de</a>\n    </p><p>Inhaltlich verantwortlich: Pascal Kozlowski (Anschrift wie oben).</p><p>Kleinunternehmer im Sinne von § 19 UStG: Umsatzsteuer wird nicht ausgewiesen.</p><h2>Haftung für Links</h2><p>Diese Seite enthält Links zu externen Websites Dritter, auf deren Inhalte ich keinen Einfluss habe. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter verantwortlich.</p><p><a href=\"/\">‹ Zurück zur Startseite</a></p>"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,271 @@
+{
+  "translationKey": "demos",
+  "slug": "demos",
+  "slugEn": "demos",
+  "bilingual": true,
+  "noindex": false,
+  "minimalHeader": false,
+  "structuredData": "none",
+  "frame": "subpageTabs",
+  "media": [
+    {
+      "publicPath": "/assets/img/flowgate-board.jpg",
+      "alt": {
+        "de": "Ausschnitt der FlowGate-Anwendung",
+        "en": "Snapshot of the FlowGate application"
+      }
+    },
+    {
+      "publicPath": "/assets/img/quellwerk.jpg",
+      "alt": {
+        "de": "Quellwerk: semantische Dokumentensuche mit markierten Fundstellen",
+        "en": "Quellwerk: semantische Dokumentensuche mit markierten Fundstellen"
+      }
+    }
+  ],
+  "locales": {
+    "de": {
+      "title": "Live-Demos · Kozlowski IT",
+      "description": "Anwendungen von Kozlowski IT zum direkten Ausprobieren: FlowGate (Antrags- & Freigabe-Workflow) und Quellwerk (semantische Dokumentensuche). Zugangsdaten stehen auf der jeweiligen Seite.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "Anwendungen zum Ausprobieren",
+          "claim": {
+            "$html": "<p>Keine Screenshots, keine Versprechen: echte, laufende Software. Die Zugangsdaten stehen jeweils direkt auf der Login-Seite. Alle Daten sind frei erfunden.</p>"
+          }
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "list",
+          "variant": "demos",
+          "cards": [
+            {
+              "image": {
+                "$media": "/assets/img/flowgate-board.jpg"
+              },
+              "imageAlt": "FlowGate: Board mit Antrags-Status-Spalten",
+              "title": "FlowGate",
+              "subtitle": "Antrags- & Freigabe-Workflow",
+              "text": {
+                "$html": "<p>Mehrstufiger Genehmigungsprozess mit Rollen (Antragsteller, Prüfer, Admin), serverseitig erzwungener Status-Maschine, lückenlosem Verlauf und einem Board, das sich in Echtzeit aktualisiert. Genau die Art interner Software, die kein Fertigprodukt abbildet.</p>"
+              },
+              "chips": [
+                {
+                  "label": "Angular"
+                },
+                {
+                  "label": "NestJS"
+                },
+                {
+                  "label": "PostgreSQL"
+                },
+                {
+                  "label": "WebSocket"
+                }
+              ],
+              "link": {
+                "href": "https://flowgate.kozlowski-it.de",
+                "newTab": true
+              },
+              "buttons": [
+                {
+                  "label": "Demo öffnen",
+                  "href": "https://flowgate.kozlowski-it.de",
+                  "style": "primary",
+                  "newTab": true
+                },
+                {
+                  "label": "Quellcode",
+                  "href": "https://github.com/Kozlowski-IT/flowgate",
+                  "style": "btn",
+                  "newTab": true
+                }
+              ]
+            },
+            {
+              "image": {
+                "$media": "/assets/img/quellwerk.jpg"
+              },
+              "title": "Quellwerk",
+              "badge": "Open Source",
+              "subtitle": "Dokumente fragen statt suchen",
+              "text": {
+                "$html": "<p>Stellen Sie eine Frage in normaler Sprache („Wie viele Urlaubstage habe ich?\"), und Sie bekommen die passenden Stellen aus dem Dokumentenbestand markiert, mit Quellenangabe. Die Suche läuft komplett lokal, eine KI-Antwort ist zuschaltbar.</p>"
+              },
+              "chips": [
+                {
+                  "label": "Python"
+                },
+                {
+                  "label": "FastAPI"
+                },
+                {
+                  "label": "TypeScript"
+                },
+                {
+                  "label": "RAG / Embeddings"
+                }
+              ],
+              "link": {
+                "href": "https://quellwerk.kozlowski-it.de",
+                "newTab": true
+              },
+              "buttons": [
+                {
+                  "label": "Demo öffnen",
+                  "href": "https://quellwerk.kozlowski-it.de",
+                  "style": "primary",
+                  "newTab": true
+                },
+                {
+                  "label": "Quellcode",
+                  "href": "https://github.com/Kozlowski-IT/quellwerk",
+                  "style": "btn",
+                  "newTab": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "So etwas für Ihren Betrieb?",
+          "buttons": [
+            {
+              "label": "Kostenloses Erstgespräch →",
+              "href": "/#kontakt",
+              "style": "primaryBig"
+            }
+          ]
+        }
+      ]
+    },
+    "en": {
+      "title": "Live demos · Kozlowski IT",
+      "description": "Applications by Kozlowski IT you can try right now: FlowGate (request & approval workflow) and Quellwerk (semantic document search). Credentials are on each page.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "intro",
+          "variant": "intro",
+          "h1": "Applications to try out",
+          "claim": {
+            "$html": "<p>No screenshots, no promises: real, running software. The login credentials are right on each page. All data is fictional.</p>"
+          }
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "list",
+          "variant": "demos",
+          "cards": [
+            {
+              "image": {
+                "$media": "/assets/img/flowgate-board.jpg"
+              },
+              "imageAlt": "FlowGate: board with request status columns",
+              "title": "FlowGate",
+              "subtitle": "Request & approval workflow",
+              "text": {
+                "$html": "<p>A multi-step approval process with roles (requester, reviewer, admin), a server-enforced state machine, a complete audit trail and a board that updates in real time. Exactly the kind of internal software no off-the-shelf product covers.</p>"
+              },
+              "chips": [
+                {
+                  "label": "Angular"
+                },
+                {
+                  "label": "NestJS"
+                },
+                {
+                  "label": "PostgreSQL"
+                },
+                {
+                  "label": "WebSocket"
+                }
+              ],
+              "link": {
+                "href": "https://flowgate.kozlowski-it.de",
+                "newTab": true
+              },
+              "buttons": [
+                {
+                  "label": "Open demo",
+                  "href": "https://flowgate.kozlowski-it.de",
+                  "style": "primary",
+                  "newTab": true
+                },
+                {
+                  "label": "Source code",
+                  "href": "https://github.com/Kozlowski-IT/flowgate",
+                  "style": "btn",
+                  "newTab": true
+                }
+              ]
+            },
+            {
+              "image": {
+                "$media": "/assets/img/quellwerk.jpg"
+              },
+              "imageAlt": "Quellwerk: semantic document search with highlighted passages",
+              "title": "Quellwerk",
+              "badge": "Open source",
+              "subtitle": "Ask your documents",
+              "text": {
+                "$html": "<p>Ask a question in plain language (\"How many vacation days do I have?\") and get the relevant passages from the document set highlighted and cited. Search runs fully local; an LLM answer can be switched on.</p>"
+              },
+              "chips": [
+                {
+                  "label": "Python"
+                },
+                {
+                  "label": "FastAPI"
+                },
+                {
+                  "label": "TypeScript"
+                },
+                {
+                  "label": "RAG / embeddings"
+                }
+              ],
+              "link": {
+                "href": "https://quellwerk.kozlowski-it.de",
+                "newTab": true
+              },
+              "buttons": [
+                {
+                  "label": "Open demo",
+                  "href": "https://quellwerk.kozlowski-it.de",
+                  "style": "primary",
+                  "newTab": true
+                },
+                {
+                  "label": "Source code",
+                  "href": "https://github.com/Kozlowski-IT/quellwerk",
+                  "style": "btn",
+                  "newTab": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "blockType": "ctaBar",
+          "sectionKey": "cta",
+          "variant": "default",
+          "heading": "Something like this for your business?",
+          "buttons": [
+            {
+              "label": "Free initial consultation →",
+              "href": "/en/#contact",
+              "style": "primaryBig"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

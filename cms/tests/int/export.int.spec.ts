@@ -10,7 +10,7 @@ import { exportContent } from '@/export/exportContent'
 
 let payload: Payload
 const mediaDir = path.resolve(__dirname, '../../media')
-const dataDir = path.resolve(__dirname, '../../../src/_data/legacy')
+const dataDir = path.resolve(__dirname, '../../src/seed/globals')
 const json = (p: string) => JSON.parse(fs.readFileSync(p, 'utf8'))
 
 const text = (t: string, format = 0, extra: object = {}) => ({
@@ -57,7 +57,7 @@ const mkPage = async (key: string, over: Record<string, unknown> = {}, h1 = 'Hal
 describe('exportContent', () => {
   beforeAll(async () => {
     payload = await getPayload({ config: await config })
-    await seedGlobals(payload)
+    await seedGlobals(payload, { force: true })
   })
   beforeEach(async () => {
     await payload.delete({ collection: 'pages', where: { id: { exists: true } } })
@@ -74,8 +74,8 @@ describe('exportContent', () => {
     await run(false)
     expect(json(path.join(out, 'site.json'))).toEqual(json(path.join(dataDir, 'site.json')))
     expect(json(path.join(out, 'chrome.json'))).toEqual({
-      de: json(path.join(dataDir, 'i18n/de.json')),
-      en: json(path.join(dataDir, 'i18n/en.json')),
+      de: json(path.join(dataDir, 'chrome.de.json')),
+      en: json(path.join(dataDir, 'chrome.en.json')),
     })
   })
 
