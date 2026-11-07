@@ -2,14 +2,16 @@
 // Echte Eleventy-Builds gegen die Root-Fixtures; Payload wird durch fakeExport ersetzt.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, readdirSync, readlinkSync, rmSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, readlinkSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { runBuild } from "../src/build.mjs";
 import { listReleases, prune, rollback } from "../src/releases.mjs";
 import { SITE_ROOT, fakeExport, tempWorkDir } from "./helpers.mjs";
 
-const currentTarget = (workDir) => readlinkSync(join(workDir, "current"));
-const currentRelease = (workDir) => currentTarget(workDir).split("/").pop();
+// Live-Zeiger liegt IN releases/ (nginx mountet releases/, root …/releases/current).
+const currentTarget = (workDir) => readlinkSync(join(workDir, "releases", "current"));
+const currentRelease = (workDir) => currentTarget(workDir);
+const live = (workDir, ...p) => join(workDir, "releases", "current", ...p);
 
 function walkHtml(dir) {
   return readdirSync(dir).flatMap((e) => {
@@ -33,13 +35,15 @@ test("(a) erfolgreicher Publish: current zeigt auf den neuen Release", async (t)
   const r = await publish(workDir, exportFn);
   assert.equal(r.ok, true, r.reason);
   assert.match(r.release, /^\d{4}-\d{2}-\d{2}_\d{6}$/);
-  assert.equal(currentTarget(workDir), `releases/${r.release}`, "relativer Symlink");
-  assert.ok(existsSync(join(workDir, "current", "index.html")));
-  assert.ok(existsSync(join(workDir, "current", "assets/media/fixture-portrait.png")), "Medium an publicPath");
+  assert.equal(currentTarget(workDir), r.release, "relativer Symlink auf Geschwister-Ordner");
+  assert.ok(!existsSync(join(workDir, "current")), "kein Zeiger mehr im workDir");
+  assert.ok(existsSync(live(workDir, "index.html")));
+  assert.ok(existsSync(live(workDir, "assets/media/fixture-portrait.png")), "Medium an publicPath");
   assert.deepEqual(exportFn.calls.map((c) => [c.outDir, c.drafts]), [[join(workDir, "content-publish"), false]]);
   // Live-HTML ohne Vorschau-noindex auf normalen Seiten
-  assert.doesNotMatch(readFileSync(join(workDir, "current", "it-betreuung/index.html"), "utf8"), /name="robots"/);
-  assert.ok(!existsSync(join(workDir, "current.tmp")));
+  assert.doesNotMatch(readFileSync(live(workDir, "it-betreuung/index.html"), "utf8"), /name="robots"/);
+  assert.ok(!existsSync(join(workDir, "releases", "current.tmp")));
+  assert.deepEqual(readdirSync(join(workDir, "releases")).sort(), ["current", r.release].sort(), "kein Staging-Rest");
 });
 
 test("(b) export.missing → ok:false mit Pfad im Grund, current unverändert, kein Release übrig", async (t) => {
@@ -130,7 +134,7 @@ test("(f) rollback auf älteren Release → current zeigt dorthin; fehlender Rel
   assert.equal(currentRelease(workDir), second.release);
   await rollback(workDir, first.release);
   assert.equal(currentRelease(workDir), first.release);
-  assert.ok(existsSync(join(workDir, "current", "index.html")));
+  assert.ok(existsSync(live(workDir, "index.html")));
   await assert.rejects(() => rollback(workDir, "2000-01-01_000000"), /fehlt/);
   await assert.rejects(() => rollback(workDir, "../preview"), /ungültig/);
   assert.equal(currentRelease(workDir), first.release, "Fehlschlag ändert current nicht");
@@ -173,7 +177,7 @@ test("Timeout bricht den Build ab, current unverändert", async (t) => {
   const good = await publish(workDir, fakeExport());
   const r = await publish(workDir, fakeExport(), { timeoutMs: 1 });
   assert.equal(r.ok, false);
-  assert.match(r.reason, /Timeout/);
+  assert.equal(r.reason, "timeout");
   assert.equal(currentRelease(workDir), good.release);
   assert.deepEqual(listReleases(workDir), [good.release]);
 });
@@ -187,4 +191,112 @@ test("Export wirft → ok:false, current unverändert", async (t) => {
   assert.equal(r.ok, false);
   assert.match(r.reason, /DB weg/);
   assert.equal(currentRelease(workDir), good.release);
+});
+
+// --- Fix-Runde 1: Gesamt-Deadline, Staging, Zeiger in releases/ ---
+
+test("Deadline: langsamer Export → timeout, current unverändert, nichts in releases/ dazu", async (t) => {
+  const workDir = tempWorkDir(t);
+  const good = await publish(workDir, fakeExport());
+  const fast = fakeExport();
+  let background;
+  const slow = (outDir, o) =>
+    (background = new Promise((r) => setTimeout(r, 2000)).then(() => fast(outDir, o)));
+  const t0 = Date.now();
+  const r = await publish(workDir, slow, { timeoutMs: 300 });
+  const elapsed = Date.now() - t0;
+  await background; // Export läuft im Hintergrund zu Ende; erst danach Temp-Ordner aufräumen
+  assert.ok(elapsed < 1500, `wartet nicht auf den Export (${elapsed} ms)`);
+  assert.deepEqual([r.ok, r.reason, r.phase], [false, "timeout", "export"]);
+  assert.equal(currentRelease(workDir), good.release);
+  assert.deepEqual(listReleases(workDir), [good.release]);
+});
+
+test("Deadline: Lauf überschreitet sie nach grünen Checks → kein Umschalten, Release verworfen", async (t) => {
+  const workDir = tempWorkDir(t);
+  const good = await publish(workDir, fakeExport());
+  let fake = 1_000_000;
+  const clock = () => fake;
+  let checked = false;
+  const checksFn = async () => {
+    checked = true;
+    fake += 200_000; // Checks waren „grün“, aber die Uhr steht jetzt hinter der Deadline
+    return [];
+  };
+  const r = await publish(workDir, fakeExport(), { clock, checksFn });
+  assert.ok(checked);
+  assert.deepEqual([r.ok, r.reason, r.phase], [false, "timeout", "switch"]);
+  assert.equal(currentRelease(workDir), good.release, "current NICHT umgeschaltet");
+  assert.deepEqual(listReleases(workDir), [good.release]);
+  assert.deepEqual(readdirSync(join(workDir, "releases")).sort(), ["current", good.release].sort());
+});
+
+test("Deadline: Kontrolle — gleiche Uhr ohne Überschreitung schaltet um", async (t) => {
+  const workDir = tempWorkDir(t);
+  let fake = 1_000_000;
+  const r = await publish(workDir, fakeExport(), { clock: () => fake, checksFn: async () => ((fake += 1000), []) });
+  assert.equal(r.ok, true, r.reason);
+  assert.equal(currentRelease(workDir), r.release);
+});
+
+test("Deadline: Eleventy über der Restzeit wird abgebrochen → timeout/build, current unverändert", async (t) => {
+  const workDir = tempWorkDir(t);
+  const good = await publish(workDir, fakeExport());
+  const t0 = Date.now();
+  const r = await publish(workDir, fakeExport(), { timeoutMs: 150 }); // Eleventy braucht ~0,7 s
+  const elapsed = Date.now() - t0;
+  assert.deepEqual([r.ok, r.reason, r.phase], [false, "timeout", "build"]);
+  // Restzeit an den Kindprozess: er wird bei der Deadline getötet, nicht erst nach 120 s / Build-Ende.
+  assert.ok(elapsed < 500, `Eleventy nicht bei der Deadline beendet (${elapsed} ms)`);
+  assert.equal(currentRelease(workDir), good.release);
+  assert.deepEqual(readdirSync(join(workDir, "releases")).sort(), ["current", good.release].sort());
+});
+
+test("AbortSignal bricht ab → aborted, current unverändert", async (t) => {
+  const workDir = tempWorkDir(t);
+  const good = await publish(workDir, fakeExport());
+  const ac = new AbortController();
+  const r = await publish(workDir, fakeExport(), { signal: ac.signal, checksFn: async () => (ac.abort(), []) });
+  assert.deepEqual([r.ok, r.reason], [false, "aborted"]);
+  assert.equal(currentRelease(workDir), good.release);
+  assert.deepEqual(listReleases(workDir), [good.release]);
+});
+
+test("Staging: Build läuft in releases/.staging-<name>, erst nach grünen Checks umbenannt", async (t) => {
+  const workDir = tempWorkDir(t);
+  let seen;
+  const checksFn = async (siteDir) => {
+    seen = siteDir;
+    assert.ok(existsSync(join(siteDir, "index.html")));
+    assert.deepEqual(listReleases(workDir), [], "Staging ist kein Release");
+    return [];
+  };
+  const r = await publish(workDir, fakeExport(), { checksFn });
+  assert.equal(r.ok, true, r.reason);
+  assert.equal(seen, join(workDir, "releases", `.staging-${r.release}`));
+  assert.ok(!existsSync(seen));
+  assert.ok(existsSync(join(workDir, "releases", r.release, "index.html")));
+});
+
+test("Staging: verwaiste .staging-* nicht gelistet, nicht rollback-fähig, von prune entfernt", async (t) => {
+  const workDir = tempWorkDir(t);
+  const good = await publish(workDir, fakeExport());
+  const orphan = join(workDir, "releases", ".staging-2026-01-01_000000");
+  mkdirSync(orphan);
+  writeFileSync(join(orphan, "index.html"), "halb");
+  assert.deepEqual(listReleases(workDir), [good.release]);
+  await assert.rejects(() => rollback(workDir, ".staging-2026-01-01_000000"), /ungültig/);
+  await assert.rejects(() => rollback(workDir, "current"), /ungültig/);
+  assert.equal(currentRelease(workDir), good.release);
+  await prune(workDir, 10);
+  assert.ok(!existsSync(orphan), "prune räumt Staging-Reste");
+  assert.equal(currentRelease(workDir), good.release);
+});
+
+test("Staging: Rest eines abgestürzten Laufs wird beim nächsten Publish entfernt", async (t) => {
+  const workDir = tempWorkDir(t);
+  mkdirSync(join(workDir, "releases", ".staging-2026-01-01_000000"), { recursive: true });
+  const r = await publish(workDir, fakeExport());
+  assert.equal(r.ok, true, r.reason);
+  assert.deepEqual(readdirSync(join(workDir, "releases")).sort(), ["current", r.release].sort());
 });

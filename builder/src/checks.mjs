@@ -10,8 +10,9 @@ const DEFAULT_SITE_ROOT = fileURLToPath(new URL("../../", import.meta.url));
  * Stderr eines Check-Skripts ("  ✗ meldung" + Folgezeilen) → eine Meldung pro ✗.
  * Ohne ✗-Zeile (Absturz, Timeout) wird die ganze Ausgabe eine Meldung.
  */
-function parseFailures(name, { status, stderr, stdout, timedOut }) {
+function parseFailures(name, { status, stderr, stdout, timedOut, aborted }) {
   if (timedOut) return [`${name}: Timeout`];
+  if (aborted) return [`${name}: abgebrochen`];
   if (status === 0) return [];
   const out = [];
   for (const line of stderr.split("\n")) {
@@ -27,11 +28,11 @@ function parseFailures(name, { status, stderr, stdout, timedOut }) {
  * Leeres Array = grün. Meldungen aus export.missing, check-parity und check-links
  * (beide gegen `siteDir`; Skripte aus <siteRoot>/scripts/).
  */
-export async function runChecks(siteDir, exportResult, { siteRoot = DEFAULT_SITE_ROOT, timeoutMs = 120_000 } = {}) {
+export async function runChecks(siteDir, exportResult, { siteRoot = DEFAULT_SITE_ROOT, timeoutMs = 120_000, signal } = {}) {
   const msgs = (exportResult?.missing ?? []).map((m) => `export: Pflichtangabe/Medium fehlt: ${m}`);
   const [parity, links] = await Promise.all(
     ["check-parity", "check-links"].map((s) =>
-      runNode([join(siteRoot, "scripts", `${s}.mjs`), siteDir], { cwd: siteRoot, timeoutMs }),
+      runNode([join(siteRoot, "scripts", `${s}.mjs`), siteDir], { cwd: siteRoot, timeoutMs, signal }),
     ),
   );
   msgs.push(...parseFailures("check-parity", parity), ...parseFailures("check-links", links));
