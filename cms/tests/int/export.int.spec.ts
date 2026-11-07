@@ -39,7 +39,7 @@ let out: string
 const run = async (drafts: boolean) => {
   out = fs.mkdtempSync(path.join(process.env.TMPDIR || os.tmpdir(), 'export-'))
   const res = await exportContent(payload, { outDir: out, drafts })
-  return { res, pages: json(path.join(out, 'pages.json')) as any[] }
+  return { res, pages: json(path.join(out, 'pages.json')).pages as any[] }
 }
 
 const mkPage = async (key: string, over: Record<string, unknown> = {}, h1 = 'Hallo', claim?: any) => {
@@ -72,11 +72,18 @@ describe('exportContent', () => {
 
   it('site.json und chrome.json haben exakt die Form der heutigen Daten', async () => {
     await run(false)
-    expect(json(path.join(out, 'site.json'))).toEqual(json(path.join(dataDir, 'site.json')))
+    expect(json(path.join(out, 'site.json'))).toEqual({ schemaVersion: 1, site: json(path.join(dataDir, 'site.json')) })
     expect(json(path.join(out, 'chrome.json'))).toEqual({
+      schemaVersion: 1,
       de: json(path.join(dataDir, 'chrome.de.json')),
       en: json(path.join(dataDir, 'chrome.en.json')),
     })
+  })
+
+  it('jede Datei trägt schemaVersion: 1 (Inhaltsformat v1)', async () => {
+    await run(false)
+    for (const f of ['site.json', 'chrome.json', 'pages.json', 'media/index.json'])
+      expect(json(path.join(out, f)).schemaVersion, f).toBe(1)
   })
 
   it('drafts:false exportiert den publizierten Text, drafts:true den Entwurf', async () => {
@@ -166,7 +173,10 @@ describe('exportContent', () => {
     expect(photo).toMatchObject({ publicPath: '/assets/img/t-exp-used.png', file: used.filename, alt: 'Porträt' })
     expect(fs.readdirSync(path.join(out, 'media')).sort()).toEqual([used.filename, 'index.json'].sort())
     expect(fs.readFileSync(path.join(out, 'media', used.filename!)).equals(fs.readFileSync(path.join(mediaDir, used.filename!)))).toBe(true)
-    expect(json(path.join(out, 'media/index.json'))).toEqual([{ file: used.filename, publicPath: '/assets/img/t-exp-used.png' }])
+    expect(json(path.join(out, 'media/index.json'))).toEqual({
+      schemaVersion: 1,
+      files: [{ file: used.filename, publicPath: '/assets/img/t-exp-used.png' }],
+    })
   })
 
   it('referenzierte, aber auf der Platte fehlende Mediendatei → missing', async () => {

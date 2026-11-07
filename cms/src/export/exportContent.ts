@@ -10,6 +10,9 @@ export type ExportResult = { pages: number; missing: string[] }
 /** Repo-Root unabhängig vom cwd (cms/src/export → ../../..). */
 export const defaultOutDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../content')
 
+/** Version des Inhaltsformats (docs/content-format-v1.md); jede Datei trägt sie als `schemaVersion`. */
+export const SCHEMA_VERSION = 1
+
 const LOCALES = ['de', 'en'] as const
 type Locale = (typeof LOCALES)[number]
 
@@ -191,15 +194,15 @@ export async function exportContent(payload: Payload, opts: ExportOptions): Prom
 
   // Ausgabe (media/ wird neu aufgebaut, damit keine Altlasten bleiben)
   fs.mkdirSync(outDir, { recursive: true })
-  writeJson(path.join(outDir, 'site.json'), site)
-  writeJson(path.join(outDir, 'chrome.json'), chrome)
-  writeJson(path.join(outDir, 'pages.json'), pages)
+  writeJson(path.join(outDir, 'site.json'), { schemaVersion: SCHEMA_VERSION, site })
+  writeJson(path.join(outDir, 'chrome.json'), { schemaVersion: SCHEMA_VERSION, ...chrome })
+  writeJson(path.join(outDir, 'pages.json'), { schemaVersion: SCHEMA_VERSION, pages })
   const mediaOut = path.join(outDir, 'media')
   fs.rmSync(mediaOut, { recursive: true, force: true })
   fs.mkdirSync(mediaOut, { recursive: true })
   const manifest = [...media.values()].sort((a, b) => a.file.localeCompare(b.file))
   for (const m of manifest) fs.copyFileSync(path.join(mediaSrc, m.file), path.join(mediaOut, m.file))
-  writeJson(path.join(mediaOut, 'index.json'), manifest)
+  writeJson(path.join(mediaOut, 'index.json'), { schemaVersion: SCHEMA_VERSION, files: manifest })
 
   return { pages: pages.length, missing: [...new Set(missing)] }
 }

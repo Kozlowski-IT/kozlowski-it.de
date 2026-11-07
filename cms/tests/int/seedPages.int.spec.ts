@@ -169,7 +169,7 @@ describe('seedPages (alle migrierten Seiten)', { timeout: 120_000 }, () => {
     const out = tmp()
     const res = await exportContent(payload, { outDir: out, drafts: false })
     expect(res.missing.filter((m: string) => allKeys.some((k) => m.startsWith(`${k}/`)))).toEqual([])
-    const pages = JSON.parse(fs.readFileSync(path.join(out, 'pages.json'), 'utf8'))
+    const pages = JSON.parse(fs.readFileSync(path.join(out, 'pages.json'), 'utf8')).pages
     const page = (key: string) => pages.find((p: any) => p.translationKey === key)
     const faq = page('home').locales.de.blocks.find((b: any) => b.blockType === 'faq')
     expect(faq.items[2].answer).toContain('<em>bevor</em>')

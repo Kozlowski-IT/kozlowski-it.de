@@ -54,9 +54,10 @@ export function fakeExport({ missing = [], mutate } = {}) {
     fn.calls.push({ outDir, ...opts });
     rmSync(outDir, { recursive: true, force: true });
     cpSync(FIXTURES, outDir, { recursive: true });
-    const pages = [...JSON.parse(readFileSync(join(outDir, "pages.json"), "utf8")), ...STUBS];
+    const doc = JSON.parse(readFileSync(join(outDir, "pages.json"), "utf8"));
+    const pages = [...doc.pages, ...STUBS];
     mutate?.(pages, outDir);
-    writeFileSync(join(outDir, "pages.json"), JSON.stringify(pages, null, 2));
+    writeFileSync(join(outDir, "pages.json"), JSON.stringify({ ...doc, pages }, null, 2));
     return { pages: pages.length, missing };
   };
   fn.calls = [];

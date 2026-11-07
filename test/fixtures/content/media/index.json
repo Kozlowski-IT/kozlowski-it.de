@@ -1,3 +1,9 @@
-[
-  { "file": "fixture-portrait-1.png", "publicPath": "/assets/media/fixture-portrait.png" }
-]
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "file": "fixture-portrait-1.png",
+      "publicPath": "/assets/media/fixture-portrait.png"
+    }
+  ]
+}

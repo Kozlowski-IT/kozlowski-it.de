@@ -248,7 +248,7 @@ function buildVariant(mutate, { prepareOut } = {}) {
   return r;
 }
 
-const setMedia = (entries) => (d) => writeFileSync(join(d, "media/index.json"), JSON.stringify(entries));
+const setMedia = (entries) => (d) => writeFileSync(join(d, "media/index.json"), JSON.stringify({ schemaVersion: 1, files: entries }));
 const failsWith = (r, re) => {
   r.cleanup();
   assert.notEqual(r.status, 0, `Build hätte scheitern müssen:\n${r.stdout}`);
@@ -321,9 +321,9 @@ for (const bad of ["javascript:alert(1)", "JavaScript:alert(1)", " javascript:al
   test(`Button-href ${JSON.stringify(bad)} bricht den Build ab`, () => {
     const r = buildVariant((d) => {
       const p = join(d, "pages.json");
-      const pages = JSON.parse(readFileSync(p, "utf8"));
-      pages.find((x) => x.translationKey === "it-betreuung").locales.de.blocks.at(-1).buttons[0].href = bad;
-      writeFileSync(p, JSON.stringify(pages));
+      const doc = JSON.parse(readFileSync(p, "utf8"));
+      doc.pages.find((x) => x.translationKey === "it-betreuung").locales.de.blocks.at(-1).buttons[0].href = bad;
+      writeFileSync(p, JSON.stringify(doc));
     });
     failsWith(r, /unerlaubtes Link-Ziel/);
   });
