@@ -94,7 +94,6 @@ services:
       BUILDER_GIT_REPO: /srv/repo
       BUILDER_GIT_NAME: kozlowski-it Builder
       BUILDER_GIT_EMAIL: builder@kozlowski-it.de
-      GIT_SSH_COMMAND: ssh -i /home/node/.ssh/id_ed25519 -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/node/.ssh/known_hosts -o StrictHostKeyChecking=yes
     volumes:
       # resolv-clean.conf ersetzt Dockers eingebetteten DNS (127.0.0.11); Dockers eigene /etc/hosts ist auf docker01
       # (Default-ACL) für uid 1000 unlesbar → eigene ./hosts mappt den Dienstnamen postgres auf die feste IP
@@ -102,7 +101,8 @@ services:
       - ./hosts:/etc/hosts:ro
       - /opt/docker-data/cms/work:/srv/work
       - /opt/docker-data/cms/repo:/srv/repo
-      - /opt/docker-data/cms/ssh:/home/node/.ssh:ro
+      # Abbild-Remote ist ein lokales Bare-Repo (GitHub-Org verbietet Deploy-Keys); Spiegelung nach GitHub später per GitHub App möglich
+      - /opt/docker-data/cms/snapshot.git:/srv/snapshot.git
       # gemeinsam mit payload (Carry g); rw, weil `npm run seed` hier Medien ablegt
       - /opt/docker-data/cms/media:/app/cms/media
     depends_on:

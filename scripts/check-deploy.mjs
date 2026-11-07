@@ -213,6 +213,9 @@ if (compose) {
     check(hasMount(pl, `${DATA}/media`, "/app/cms/media", false), `payload: Medien-Mount ${DATA}/media:/app/cms/media (rw) fehlt`);
   }
 
+  // kein Dienst mountet Schlüsselmaterial (Least Privilege; Abbild-Remote ist lokal)
+  for (const [n, sv] of Object.entries(services)) check(!volumesOf(sv).some((m) => m.src === `${DATA}/ssh`), `${n}: darf ${DATA}/ssh nicht mounten (kein SSH-Remote)`);
+
   // builder
   const bl = services.builder;
   if (check(bl, "builder-Dienst fehlt")) {
@@ -231,7 +234,13 @@ if (compose) {
     check(networksOf(bl).has(DB_NET), `builder: muss an ${DB_NET} hängen (Export liest die DB)`);
     check(hasMount(bl, `${DATA}/work`, "/srv/work", false), `builder: ${DATA}/work:/srv/work (rw) fehlt`);
     check(hasMount(bl, `${DATA}/repo`, "/srv/repo", false), `builder: ${DATA}/repo:/srv/repo (rw) fehlt`);
-    check(volumesOf(bl).some((m) => m.src === `${DATA}/ssh` && m.ro), `builder: SSH-Deploy-Key ${DATA}/ssh nur :ro mounten`);
+    check(hasMount(bl, `${DATA}/snapshot.git`, "/srv/snapshot.git", false), `builder: ${DATA}/snapshot.git:/srv/snapshot.git (rw, lokales Bare-Repo als Abbild-Remote) fehlt`);
+    check(!("GIT_SSH_COMMAND" in env), "builder: GIT_SSH_COMMAND darf nicht gesetzt sein (kein SSH-Remote mehr)");
+    // Mutation-Probe: ohne den Mount muss die Regel anschlagen; mit einem ssh-Mount muss die ssh-Regel anschlagen
+    const noSnap = { volumes: volumesOf(bl).filter((m) => m.dst !== "/srv/snapshot.git").map((m) => `${m.src}:${m.dst}`) };
+    check(!hasMount(noSnap, `${DATA}/snapshot.git`, "/srv/snapshot.git", false), "builder: Mutation-Probe — Regel erkennt fehlenden snapshot.git-Mount nicht");
+    const withSsh = { volumes: [...(bl.volumes ?? []), `${DATA}/ssh:/home/node/.ssh:ro`] };
+    check(volumesOf(withSsh).some((m) => m.src === `${DATA}/ssh`), "builder: Mutation-Probe — ssh-Mount-Regel erkennt Mount nicht");
     check(volumesOf(bl).some((m) => m.src === `${DATA}/media` && m.dst === "/app/cms/media"), `builder: Medien-Mount ${DATA}/media:/app/cms/media fehlt`);
     // gleiches Image wie payload (eine Image-Basis für beide)
     check(bl.image && bl.image === services.payload?.image, "builder: muss dasselbe Image wie payload nutzen");

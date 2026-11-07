@@ -1,6 +1,6 @@
 # CMS-Stack auf docker01
 
-Stack `/opt/docker/apps/cms/` (diese Dateien), Daten `/opt/docker-data/cms/{pgdata,media,work,repo,ssh,backup}`.
+Stack `/opt/docker/apps/cms/` (diese Dateien), Daten `/opt/docker-data/cms/{pgdata,media,work,repo,snapshot.git,backup}`.
 Netze: `dmz_cms` (macvlan, parent `ens20.85`, existiert schon), `cms_db` (bridge, `internal`, legt Compose an); `cms_db` hat festes Subnetz `172.31.85.0/28` (postgres `172.31.85.2`, dynamisch nur `.8/29`) — `payload`/`builder` lösen `postgres` über die eigene `hosts`-Datei (Bind-Mount auf `/etc/hosts`) auf, weil `resolv-clean.conf` Dockers DNS ersetzt.
 
 | Dienst | Adresse | Aufgabe |
@@ -37,13 +37,14 @@ install -m 600 deploy/cms/env.example /opt/docker/apps/cms/.env   # dann Werte s
 
 install -d -m 700 /opt/docker-data/cms/pgdata /opt/docker-data/cms/backup        # pgdata chownt der postgres-Entrypoint
 install -d -m 755 -o 1000 -g 1000 /opt/docker-data/cms/{media,work,repo}
-install -d -m 700 -o 1000 -g 1000 /opt/docker-data/cms/ssh
-# Deploy-Key (nur Push auf den Branch content-snapshot) + known_hosts des Git-Servers:
-#   /opt/docker-data/cms/ssh/id_ed25519 (600, 1000:1000), known_hosts (644, 1000:1000)
-# Repo-Klon für das Git-Abbild: als uid 1000 nach /opt/docker-data/cms/repo klonen
+# Git-Abbild: lokales Bare-Repo als origin (GitHub-Org verbietet Deploy-Keys; liegt im PBS-Backup-Set)
+install -d -o 1000 -g 1000 /opt/docker-data/cms/snapshot.git && sudo -u '#1000' git init -q --bare -b content-snapshot /opt/docker-data/cms/snapshot.git
+sudo -u '#1000' git -C /opt/docker-data/cms/repo init -q && sudo -u '#1000' git -C /opt/docker-data/cms/repo remote add origin /srv/snapshot.git
 ```
 
-Payload und builder laufen als uid 1000 (`node`); `media/`, `work/`, `repo/`, `ssh/` müssen ihm gehören.
+Verlauf des Abbilds auf dem Host ansehen: `git -C /opt/docker-data/cms/snapshot.git log --oneline content-snapshot`.
+
+Payload und builder laufen als uid 1000 (`node`); `media/`, `work/`, `repo/`, `snapshot.git/` müssen ihm gehören.
 Die `.env` (mode 600) enthält `CMS_IMAGE_TAG`, `POSTGRES_PASSWORD`, `PAYLOAD_SECRET`, `EDGE_SHARED_SECRET`,
 `BUILDER_TOKEN` — nie ins Repo. Der gleiche `EDGE_SHARED_SECRET` steht in der edge02-nginx-Config.
 
