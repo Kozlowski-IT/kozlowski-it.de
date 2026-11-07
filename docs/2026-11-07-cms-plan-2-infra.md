@@ -6,7 +6,7 @@
 
 **Architecture:** Ein Image (`kozlowski/pk-cms:<git-sha>`) enthält Payload, Builder und Eleventy; drei Dienste (payload, builder, preview-nginx) plus Postgres laufen als Stack `/opt/docker/apps/cms/` in einem neuen DMZ-VLAN 85. edge02 terminiert TLS, prüft Login + Rolle `cms-editor` per oauth2-proxy (Zitadel-OIDC) und reicht Identität per Header an Payload weiter; Payload vertraut dem Header nur mit gemeinsamem Edge-Secret. Die bestehende `landing`-nginx mountet danach `releases/` read-only.
 
-**Tech Stack:** Payload 3.93 / Next 16, Node ≥ 24.22.1, Postgres 18, Eleventy 3, nginx (alpine), oauth2-proxy 7.x (Binary + systemd auf edge02), Zitadel, pfSense pf03, Proxmox SDN.
+**Tech Stack:** Payload 3.93 / Next 16, Node ≥ 24.22.1, Postgres 18, Eleventy 3, nginx (alpine), oauth2-proxy 7.x (Binary + systemd auf edge02), Zitadel, pfSense pf03 (DMZ).
 
 **Spec:** `docs/2026-11-06-cms-design.md` (§3, §5, §6, §7, §8.3–8.4, §9 Schritt 4). Plan 1: `docs/2026-11-06-cms-plan-1-lokal.md`. Carries a–h: `.superpowers/sdd/2026-11-06-cms-plan-1-lokal/progress.md` (Zeile „PLAN-2-PFLICHT-CARRIES").
 
@@ -27,7 +27,7 @@
 
 | Ding | Wert |
 |---|---|
-| VLAN / SDN-VNet | `85` / `dmz85` (Alias `SVC_KI_CMS`, Zone `dmz`) |
+| VLAN | `85` — läuft über den bestehenden Trunk `dmz_vlan01` (vlan-aware, vids 2–4094), an dem pf03 (VM 103, net3) und docker01 (VM 2000, net2) ungetaggt hängen; **kein SDN-VNet nötig** (gemessen 2026-11-07) |
 | Netz | `10.30.85.0/29`, GW `10.30.85.1` (pf03) |
 | payload | `10.30.85.2:3000` |
 | preview (nginx) | `10.30.85.3:80` |
@@ -215,16 +215,15 @@ it('Gruppen-Header mit Leerzeichen "a, cms-editor" → erkannt', ...)
 
 ---
 
-### Task 5: Netz VLAN 85 (pf03 + SDN + docker01)
+### Task 5: Netz VLAN 85 (pf03 + docker01)
 
 Infra-Task, keine Repo-Änderung außer `deploy/cms/README.md` (Abschnitt „Netz"). Vorlage: VLANs 80–82 (Memory `project_kozlowski_portal_cockpit_staffshell_2026-06-19.md`, Task 1).
 
-- [ ] **Step 1: Vorab prüfen** — `pvesh get /cluster/sdn/vnets` enthält kein `dmz85`; pf03 hat kein Interface mit `10.30.85.1`; `docker network ls` auf docker01 ohne `dmz_cms`. Sonst STOP und Pascal fragen.
-- [ ] **Step 2: SDN** — `pvesh create /cluster/sdn/vnets --vnet dmz85 --zone dmz --tag 85 --alias SVC_KI_CMS` + `pvesh set /cluster/sdn`.
-- [ ] **Step 3: pf03** — VLAN 85 auf `vtnet3`, Interface `10.30.85.1/29` (pfSsh.php, `rc.filter_configure_sync`). Regeln in Reihenfolge: DNS→Firewall; `10.99.98.2 → 10.30.85.2:3000` und `→ 10.30.85.3:80` (auf `tun_wg1`/opt5); block RFC1918; Internet-Egress (für builder: GitHub-SSH 22 + HTTPS; payload: HTTPS).
-- [ ] **Step 4: docker01** — `docker network create -d macvlan --subnet 10.30.85.0/29 --gateway 10.30.85.1 -o parent=ens20.85 dmz_cms`.
-- [ ] **Step 5: Verifizieren** — Wegwerf-Container `--network dmz_cms --ip 10.30.85.6` mit resolv-clean: `curl -sI https://github.com` → 200/301; `curl -m3 http://10.0.36.2` → Timeout (RFC1918 geblockt); von edge02 `nc -zv 10.30.85.6 3000` nach kurzem `nc -l` im Container → nur für .2/.3 erlaubt (Gegenprobe .6 → Timeout). Container löschen.
-- [ ] **Step 6: Memory** — Abschnitt „CMS-Infra" in `project_cms_website.md` (VLAN, IPs, Regeln).
+- [ ] **Step 1: Vorab prüfen** — VLAN 85 auf pf03 unbenutzt (kein Interface `10.30.85.1`, kein VLAN-Tag 85 auf `vtnet3`); auf docker01 kein `ens20.85` und kein Netz `dmz_cms` (`docker network ls`). Sonst STOP und Pascal fragen. **Kein** SDN-Schritt: Trunk `dmz_vlan01` lässt 2–4094 durch.
+- [ ] **Step 2: pf03** — VLAN 85 auf `vtnet3`, Interface `10.30.85.1/29` (pfSsh.php, `rc.filter_configure_sync`). Regeln in Reihenfolge: DNS→Firewall; `10.99.98.2 → 10.30.85.2:3000` und `→ 10.30.85.3:80` (auf `tun_wg1`/opt5); block RFC1918; Internet-Egress (für builder: GitHub-SSH 22 + HTTPS; payload: HTTPS).
+- [ ] **Step 3: docker01** — `docker network create -d macvlan --subnet 10.30.85.0/29 --gateway 10.30.85.1 -o parent=ens20.85 dmz_cms`.
+- [ ] **Step 4: Verifizieren** — Wegwerf-Container `--network dmz_cms --ip 10.30.85.6` mit resolv-clean: `curl -sI https://github.com` → 200/301; `curl -m3 http://10.0.36.2` → Timeout (RFC1918 geblockt); von edge02 `nc -zv 10.30.85.6 3000` nach kurzem `nc -l` im Container → nur für .2/.3 erlaubt (Gegenprobe .6 → Timeout). Container löschen.
+- [ ] **Step 5: Memory** — Abschnitt „CMS-Infra" in `project_cms_website.md` (VLAN, IPs, Regeln).
 
 ---
 
