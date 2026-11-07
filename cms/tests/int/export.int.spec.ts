@@ -143,6 +143,27 @@ describe('exportContent', () => {
     )
   })
 
+  it('Link-Ziel mit Platzhalter bleibt {{site.…}} (auch wenn Payload es als %7B%7B…%7D%7D gespeichert hat)', async () => {
+    // Payloads Link-Hook (richtext-lexical, beforeChange) kodiert Nicht-URLs mit encodeURIComponent, wenn
+    // ein bestehender Link-Knoten gespeichert wird (Admin-Bearbeitung, seed --force). In der Dev-DB steht
+    // nach dem Seed z. B. "url": "%7B%7Bsite.telHref%7D%7D". Beide Formen müssen gleich exportiert werden.
+    await mkPage('k6', {}, 'H', rt(
+      text('Tel. '),
+      link('{{site.telDisplay}}', { url: '%7B%7Bsite.telHref%7D%7D' }),
+      text(' '),
+      link('m', { url: 'mailto:{{site.email}}' }),
+      text(' '),
+      link('b', { url: '{{site.booking}}' }),
+      text(' '),
+      link('kein Platzhalter', { url: 'https://x.de/%7B%7Bfoo%7D%7D' }),
+    ))
+    const { pages } = await run(false)
+    expect(pages[0].locales.de.blocks[0].claim).toBe(
+      '<p>Tel. <a href="{{site.telHref}}">{{site.telDisplay}}</a> <a href="mailto:{{site.email}}">m</a> <a href="{{site.booking}}">b</a> ' +
+        '<a href="https://x.de/%7B%7Bfoo%7D%7D">kein Platzhalter</a></p>',
+    )
+  })
+
   it('Blockform: ohne id/blockName, mit blockType/sectionKey/variant; Seitenfelder', async () => {
     await mkPage('k6', { frame: 'home', noindex: true, minimalHeader: true, structuredData: 'home', ogTitle: 'OG', description: 'D' })
     const { pages } = await run(false)

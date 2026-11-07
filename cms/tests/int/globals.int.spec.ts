@@ -48,7 +48,10 @@ describe('Globals site + chrome', () => {
     ['chrome home', () => payload.updateGlobal({ slug: 'chrome', locale: 'de', data: { home: 'javascript:alert(1)' } as any })],
     ['site booking', () => payload.updateGlobal({ slug: 'site', data: { booking: 'javascript:alert(1)' } as any })],
     ['site portal', () => payload.updateGlobal({ slug: 'site', data: { portal: ' JavaScript:alert(1)' } as any })],
-  ])('javascript: in %s wird abgelehnt', async (_label, save) => {
+    // Platzhalter nur in Seiteninhalten, nicht im Global site selbst (Inhaltsformat v1 §9)
+    ['site booking (Platzhalter)', () => payload.updateGlobal({ slug: 'site', data: { booking: '{{site.portal}}' } as any })],
+    ['chrome home (Platzhalter)', () => payload.updateGlobal({ slug: 'chrome', locale: 'de', data: { home: '{{site.domain}}' } as any })],
+  ])('javascript:/Platzhalter in %s wird abgelehnt', async (_label, save) => {
     const read = async () => [
       strip(await payload.findGlobal({ slug: 'site' })),
       strip(await payload.findGlobal({ slug: 'chrome', locale: 'de' })),

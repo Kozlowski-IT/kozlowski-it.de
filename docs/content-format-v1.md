@@ -349,8 +349,8 @@ VMware-Ausstiegsrechner. Nur die Texte stehen im Inhalt; Standardwerte und Reche
 
 Felder vom Typ `html` enthalten einen **HTML-Fragment-String** ohne umschließendes Element,
 UTF-8, Sonderzeichen in Text als Entities (`&amp;`, `&lt;`, `&gt;`, `&quot;`). Der Website-Build
-gibt ihn **unverändert** aus (ohne Bereinigung) und ergänzt nur CSS-Klassen. Der Erzeuger ist
-deshalb dafür verantwortlich, nur diese Teilmenge zu liefern:
+**prüft** jeden Rich-Text-String gegen die folgende Teilmenge, bevor er ihn ausgibt (`lib/richtext.js`,
+`sanitizeRichText`), und ergänzt danach nur CSS-Klassen:
 
 | Element | Attribute | Hinweis |
 |---|---|---|
@@ -362,13 +362,23 @@ deshalb dafür verantwortlich, nur diese Teilmenge zu liefern:
 | `hr` | – | Trennlinie |
 | `a` | `href` (Pflicht), `rel`, `target` | siehe Abschnitt 6; `target="_blank"` nur zusammen mit `rel="noopener"`; `rel="noopener nofollow"` für Quellenlinks |
 
-Nicht vorgesehen: `script`, `style`, `iframe`, Event-Attribute (`on…`), `style`-Attribute,
-eingebettete Bilder. Bilder gehören in Felder vom Typ `image`.
+Alles andere ist nicht erlaubt, z. B. `script`, `style`, `iframe`, `img`, `span`, `h1`, `blockquote`,
+Kommentare, Event-Attribute (`on…`), `style`-Attribute. Bilder gehören in Felder vom Typ `image`.
 
-Hinweis zur Ehrlichkeit des Formats: Die Einhaltung dieser Teilmenge wird beim **Erzeugen**
-sichergestellt (der heutige Exporter wandelt Editor-Zustand in diese Elemente um). Der
-Website-Build prüft den HTML-Inhalt nicht erneut. Ein Erzeuger, der freies HTML durchreicht,
-umgeht diese Garantie.
+**Prüfung im Build (Verstoß = Build-Fehler, es wird nichts still entfernt).** Die Meldung nennt Seite,
+Sprache und Feld (z. B. `cms: Rich-Text (home/de blocks[3].note): Tag <script> ist nicht erlaubt`).
+Geprüft wird:
+
+- nur Tags aus der Tabelle; jedes `<` im Text muss als `&lt;` stehen;
+- nur die genannten Attribute; Werte in `"…"` oder `'…'`; kein Attribut doppelt;
+- toleriert werden genau die Editor-Artefakte `ul`/`ol` mit `class="list-bullet"` bzw. `class="list-number"`
+  und `li` mit `class=""`, `style=""`, `value="<zahl>"` (der Renderer entfernt sie);
+- `a` braucht `href`; `href` muss nach dem Auflösen der Zeichenreferenzen die URL-Regeln aus Abschnitt 6
+  erfüllen. In `href` sind nur die Referenzen `&amp;` `&lt;` `&gt;` `&quot;` `&apos;` und numerische
+  (`&#47;`, `&#x2F;`) erlaubt; andere (z. B. `&sol;`, `&colon;`) und ein rohes `&` sind ein Fehler;
+- `rel` nur aus `noopener`, `noreferrer`, `nofollow`; `target` nur `_blank` und nur mit `rel="noopener"`.
+
+Nicht geprüft wird die Verschachtelung (z. B. ein nicht geschlossenes `<strong>`).
 
 ## 5. Bildobjekt (`image`)
 
@@ -411,8 +421,8 @@ Abgelehnt: alles andere (`javascript:`, `data:`, `vbscript:`, …), protokoll-re
 jedes Ziel mit Leer- oder Steuerzeichen im Inneren oder mit Backslash (`/\host`), leere Ziele.
 Die Prüfung steht in `lib/url.js` (`isSafeHref`).
 
-Für `href` in Rich-Text (`a`) gilt dieselbe Regel für Erzeuger. Der Build prüft Rich-Text-Links
-nicht erneut (Abschnitt 4).
+Für `href` in Rich-Text (`a`) gilt dieselbe Regel; der Build prüft auch sie (Abschnitt 4).
+Link-Ziele mit Platzhaltern werden erst aufgelöst und dann geprüft (Abschnitt 9).
 
 ## 7. `site.json` (Stammdaten)
 
@@ -443,8 +453,34 @@ Pro Sprache (`de`, `en`; beide Pflicht) ein Objekt gleichen Aufbaus. Alle Texte 
 `url`-Felder unterliegen der Allow-List (Abschnitt 6). Fehlt `subnav`, bricht der Build bei einer
 Seite mit Rahmen `subpage`/`subpageTabs` ab.
 
-## 9. Nicht Teil von Version 1
+## 9. Platzhalter (Stammdaten aus `site.json`)
 
-Platzhalter in Texten (z. B. Preise/Firmendaten, die an einer Stelle gepflegt und in mehrere Texte
-eingesetzt werden) sind **nicht** Teil von v1. Sie kommen mit einer späteren Version; bis dahin
-steht jeder Text ausgeschrieben im Inhalt.
+Kontaktdaten (Telefon, E-Mail, Adresse, Buchungs-URL …) werden einmal in `site.json` gepflegt und in
+Inhalten als Platzhalter eingesetzt. Ändert sich ein Wert in `site.json`, ändern sich alle Stellen.
+
+**Syntax:** `{{site.<schlüssel>}}`, z. B. `{{site.telDisplay}}`. `<schlüssel>` ist ein Feldname aus
+Abschnitt 7 (beginnt mit einem Buchstaben, dann Buchstaben, Ziffern, `_`). Leerraum innerhalb der
+Klammern ist erlaubt (`{{ site.email }}`). Andere `{{…}}` ohne `site` bleiben normaler Text.
+
+**Wo:** in allen Text- und Rich-Text-Werten einer Fassung (`title`, `description`, `og.*`, alle Felder
+der Bausteine einschließlich Link-Zielen), nicht in `slug`. Nicht in `site.json` und `chrome.json`.
+
+**Einsetzen je Kontext** (der Kontext ergibt sich aus dem Feldtyp in Abschnitt 3):
+
+| Kontext | Felder | Verhalten |
+|---|---|---|
+| Text | Typ `text` (außer Link-Zielen), Seitenfelder | Wert wird als Text eingesetzt und beim Ausgeben wie jeder Text maskiert (`<` erscheint als `&lt;`) |
+| Rich-Text | Typ `html` | Wert wird HTML-maskiert eingesetzt, auch innerhalb von Attributen (`<a href="{{site.telHref}}">{{site.telDisplay}}</a>`); danach gilt die Prüfung aus Abschnitt 4 |
+| Link-Ziel | Felder `…href` | Wert wird eingesetzt, das Ergebnis muss die URL-Regeln (Abschnitt 6, `safeHref`) erfüllen, z. B. `{{site.booking}}`, `mailto:{{site.email}}` |
+
+Eingesetzte Werte werden nicht erneut nach Platzhaltern durchsucht.
+
+**Fehler (Build-Abbruch mit Seite/Sprache/Feld):** unbekannter Schlüssel
+(`unbekannter Platzhalter {{site.gibtsnicht}} (danke/de blocks[0].body)`), leerer Wert, Syntax, die
+wie ein Platzhalter beginnt, aber keiner ist (`{{site.tel Display}}`, `{{site.}}`), sowie ein Link-Ziel,
+das nach dem Einsetzen gegen die URL-Regeln verstößt.
+
+## 10. Nicht Teil von Version 1
+
+Platzhalter aus anderen Quellen als `site.json` (z. B. Preise, die an einer Stelle gepflegt und in
+mehrere Texte eingesetzt werden) sind **nicht** Teil von v1; solche Texte stehen ausgeschrieben im Inhalt.

@@ -169,6 +169,24 @@ describe('Collection pages', () => {
     expect((doc.layout?.[0] as any).buttons.map((b: any) => b.href)).toEqual(hrefs)
   })
 
+  it('Platzhalter {{site.<schlüssel>}} in Link-Zielen (Inhaltsformat v1 §9): erlaubt, kaputte/unsichere abgelehnt', async () => {
+    const ok = ['{{site.booking}}', '{{ site.booking }}', 'mailto:{{site.email}}', '{{site.telHref}}', '/kontakt/?t={{site.tel}}']
+    const doc = await payload.create({
+      collection: 'pages', locale: 'de',
+      data: { ...basePage('t-href-ph', 'test-href-ph'), layout: [{ blockType: 'text', sectionKey: 's', buttons: ok.map((href) => ({ label: 'x', href })) }] },
+    })
+    expect((doc.layout?.[0] as any).buttons.map((b: any) => b.href)).toEqual(ok)
+    for (const bad of ['javascript:{{site.booking}}', '{{site.tel Display}}', '{{site.}}', '//{{site.booking}}', 'x{{site.booking}}']) {
+      const err = await payload
+        .create({
+          collection: 'pages', locale: 'de',
+          data: { ...basePage('t-href-ph-bad', 'test-href-ph-bad'), layout: [{ blockType: 'ctaBar', sectionKey: 'cta', buttons: [{ label: 'x', href: bad }] }] },
+        })
+        .catch((e) => e)
+      expect(err, bad).toBeInstanceOf(ValidationError)
+    }
+  })
+
   it('(c) Karten-Text mit 200 Zeichen speichert (lengthHint ist nur Warnung)', async () => {
     const long = 'x'.repeat(200)
     const page = await payload.create({

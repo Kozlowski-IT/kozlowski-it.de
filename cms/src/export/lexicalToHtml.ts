@@ -5,6 +5,18 @@ import type { HTMLConverters } from '@payloadcms/richtext-lexical/html'
 const escapeHTML = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
 
+/**
+ * Payloads Link-Feld kodiert beim Speichern URLs, die es nicht als URL erkennt, mit encodeURIComponent
+ * (beforeChange-Hook in richtext-lexical). Ein Link-Ziel `{{site.booking}}` (Platzhalter, Inhaltsformat
+ * v1 Abschnitt 9) käme so als `%7B%7Bsite.booking%7D%7D` an. Hier wird genau diese Form zurückgewandelt;
+ * aufgelöst und geprüft wird der Platzhalter erst im Website-Build.
+ */
+export function decodeLinkPlaceholders(url: string): string {
+  return url.replace(/%7B%7B((?:%20)*site\.[A-Za-z][A-Za-z0-9_]*(?:%20)*)%7D%7D/gi, (_, inner: string) =>
+    `{{${decodeURIComponent(inner)}}}`,
+  )
+}
+
 type LinkNode = { fields?: { url?: string; linkType?: string; newTab?: boolean; nofollow?: boolean } }
 
 /** rel/target nach Site-Konvention: newTab → target=_blank + noopener, nofollow → "noopener nofollow". */
@@ -12,7 +24,7 @@ function anchor(node: LinkNode, href: string, children: string, style: string): 
   const rel = [node.fields?.newTab ? 'noopener' : '', node.fields?.nofollow ? 'nofollow' : ''].filter(Boolean)
   const attrs =
     (rel.length ? ` rel="${rel.join(' ')}"` : '') + (node.fields?.newTab ? ' target="_blank"' : '')
-  return `<a${style} href="${escapeHTML(sanitizeUrl(href))}"${attrs}>${children}</a>`
+  return `<a${style} href="${escapeHTML(sanitizeUrl(decodeLinkPlaceholders(href)))}"${attrs}>${children}</a>`
 }
 
 /**

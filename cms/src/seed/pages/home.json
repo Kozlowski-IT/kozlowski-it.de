@@ -139,7 +139,7 @@
             "$html": "<p>Angefangen hat alles mit Neugier, mit einem Server, den ich verstehen wollte, statt ihn nur zu benutzen. Aus dem Hobby wurden Jahre echter Praxis, mit Stationen bei IT-Dienstleistern und Systemhäusern und einem Eigenbetrieb, der jedes Jahr gewachsen ist.</p><p>Seit über zehn Jahren arbeite ich mit Linux, Servern und Virtualisierung, anfangs für mich selbst, inzwischen als das, was ich hauptberuflich mache. Diesen Weg schließe ich gerade formal ab: IHK-Abschluss Fachinformatiker Systemintegration, voraussichtlich Dezember 2026.</p><p>Was mich an dem Beruf interessiert, ist der Teil, den die meisten überspringen: dass eine Anlage nicht nur läuft, sondern dass jemand nachvollziehen kann, warum sie läuft. Deshalb dokumentiere ich alles, was ich anfasse, für Sie, und damit im Ernstfall auch ein anderer übernehmen könnte.</p>"
           },
           "note": {
-            "$html": "<p>Sie erreichen mich direkt: Telefon <a href=\"tel:+491628213267\"><strong>0162 8213267</strong></a> · E-Mail <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a></p>"
+            "$html": "<p>Sie erreichen mich direkt: Telefon <a href=\"{{site.telHref}}\"><strong>{{site.telDisplay}}</strong></a> · E-Mail <a href=\"mailto:{{site.email}}\"><strong>{{site.email}}</strong></a></p>"
           },
           "noteClass": "plain-mail",
           "buttons": [
@@ -332,7 +332,7 @@
           ],
           "messages": {
             "error": "Bitte E-Mail oder Telefon angeben, damit ich antworten kann.",
-            "fallback": "Ihr E-Mail-Programm sollte sich öffnen. Falls nicht: Text kopieren und an pk@kozlowski-it.de schicken oder 0162 8213267 anrufen.",
+            "fallback": "Ihr E-Mail-Programm sollte sich öffnen. Falls nicht: Text kopieren und an {{site.email}} schicken oder {{site.telDisplay}} anrufen.",
             "copyLabel": "Text kopieren",
             "copiedLabel": "Kopiert ✓"
           },
@@ -403,7 +403,7 @@
             "hint": "Freien Slot fürs kostenlose Erstgespräch wählen, Sie sehen meine echten freien Zeiten."
           },
           "note": {
-            "$html": "<p>Lieber direkt? Telefon <a href=\"tel:+491628213267\"><strong>0162 8213267</strong></a> · E-Mail <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a></p>"
+            "$html": "<p>Lieber direkt? Telefon <a href=\"{{site.telHref}}\"><strong>{{site.telDisplay}}</strong></a> · E-Mail <a href=\"mailto:{{site.email}}\"><strong>{{site.email}}</strong></a></p>"
           },
           "noteClass": "plain-mail"
         }
@@ -510,7 +510,7 @@
             "$html": "<p>It all started with curiosity, with a server I wanted to understand rather than just use. The hobby turned into years of real practice, with stints at IT service providers and system houses and an own operation that has grown every year.</p><p>For over ten years I've worked with Linux, servers and virtualization, at first for myself, now as what I do for a living. I'm currently completing that path formally: IHK degree as IT specialist for systems integration, expected December 2026.</p><p>What interests me about this job is the part most people skip: that a system doesn't just run, but that someone can understand why it runs. That's why I document everything I touch, for you, and so that in an emergency someone else could take over.</p>"
           },
           "note": {
-            "$html": "<p>You can reach me directly: Phone <a href=\"tel:+491628213267\"><strong>+49 162 8213267</strong></a> · Email <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a></p>"
+            "$html": "<p>You can reach me directly: Phone <a href=\"{{site.telHref}}\"><strong>{{site.tel}}</strong></a> · Email <a href=\"mailto:{{site.email}}\"><strong>{{site.email}}</strong></a></p>"
           },
           "noteClass": "plain-mail",
           "buttons": [
@@ -703,7 +703,7 @@
           ],
           "messages": {
             "error": "Please provide an email or phone number so I can reply.",
-            "fallback": "Your email program should open. If not: copy the text and send it to pk@kozlowski-it.de or call +49 162 8213267.",
+            "fallback": "Your email program should open. If not: copy the text and send it to {{site.email}} or call {{site.tel}}.",
             "copyLabel": "Copy text",
             "copiedLabel": "Copied ✓"
           },
@@ -774,7 +774,7 @@
             "hint": "Pick a free slot for the free initial consultation, you'll see my real availability."
           },
           "note": {
-            "$html": "<p>Prefer to talk directly? Phone <a href=\"tel:+491628213267\"><strong>+49 162 8213267</strong></a> · Email <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a></p>"
+            "$html": "<p>Prefer to talk directly? Phone <a href=\"{{site.telHref}}\"><strong>{{site.tel}}</strong></a> · Email <a href=\"mailto:{{site.email}}\"><strong>{{site.email}}</strong></a></p>"
           },
           "noteClass": "plain-mail"
         }

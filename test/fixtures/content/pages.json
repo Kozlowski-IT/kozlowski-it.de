@@ -300,7 +300,7 @@
                 "icon": "📅",
                 "hint": "Freien Slot wählen."
               },
-              "note": "<p>Lieber direkt? <a href=\"tel:+491628213267\"><strong>0162 8213267</strong></a></p>",
+              "note": "<p>Lieber direkt? <a href=\"{{site.telHref}}\"><strong>{{site.telDisplay}}</strong></a></p>",
               "noteClass": "plain-mail"
             }
           ]

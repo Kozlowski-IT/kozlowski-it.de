@@ -242,7 +242,7 @@
           "sectionKey": "cta",
           "variant": "buttonsFirst",
           "text": {
-            "$html": "<p>Oder direkt sprechen: 30 Minuten, unverbindlich. Und wenn der Wechsel für Sie nicht sinnvoll ist, sage ich Ihnen das. Telefon <a href=\"tel:+491628213267\"><strong>0162 8213267</strong></a>, E-Mail <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a>.</p>"
+            "$html": "<p>Oder direkt sprechen: 30 Minuten, unverbindlich. Und wenn der Wechsel für Sie nicht sinnvoll ist, sage ich Ihnen das. Telefon <a href=\"{{site.telHref}}\"><strong>{{site.telDisplay}}</strong></a>, E-Mail <a href=\"mailto:{{site.email}}\"><strong>{{site.email}}</strong></a>.</p>"
           },
           "buttons": [
             {

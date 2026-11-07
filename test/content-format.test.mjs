@@ -14,6 +14,8 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } 
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
+import { HTML_FIELDS } from "../lib/placeholders.js";
+import { ALLOWED_TAGS } from "../lib/richtext.js";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const FIXTURES = join(ROOT, "test/fixtures/content");
@@ -96,6 +98,31 @@ test("jedes Feld jedes Bausteins steht in der Doku (und umgekehrt), mit Typ, lok
     }
   }
   assert.deepEqual(errors, []);
+});
+
+test("Renderer kennt jedes Rich-Text-Feld des Katalogs (Platzhalter-Kontext html + Prüfung der Teilmenge)", () => {
+  const cat = catalog();
+  const want = Object.fromEntries(Object.entries(cat).map(([slug, fs]) => [slug, fs.filter((f) => f.type === "richText").map((f) => f.path).sort()]));
+  const have = Object.fromEntries(Object.entries(HTML_FIELDS).map(([slug, ps]) => [slug, ps.slice().sort()]));
+  assert.deepEqual(have, want, "lib/placeholders.js HTML_FIELDS ≠ richText-Felder im Katalog");
+});
+
+test("Doku-Tabelle der Rich-Text-Teilmenge == Tags, die der Renderer erlaubt", () => {
+  const sec = DOC.slice(DOC.indexOf("## 4. Rich-Text"), DOC.indexOf("## 5."));
+  const tags = new Set();
+  for (const line of sec.split("\n")) {
+    const cells = line.split("|").slice(1, -1).map((c) => c.trim());
+    if (cells.length < 2) continue;
+    for (const m of cells[0].matchAll(/`([a-z0-9]+)`/g)) tags.add(m[1]);
+  }
+  assert.deepEqual([...tags].sort(), [...ALLOWED_TAGS].sort());
+});
+
+test("Doku beschreibt Platzhalter (Syntax, Kontexte, Fehler)", () => {
+  for (const s of ["{{site.<schlüssel>}}", "{{site.telDisplay}}", "unbekannter Platzhalter", "safeHref"]) {
+    assert.ok(DOC.includes(s), `Doku erwähnt ${s} nicht`);
+  }
+  assert.ok(!/Platzhalter[^\n]*\*\*nicht\*\* Teil von v1/.test(DOC), "Doku sagt noch, Platzhalter seien nicht Teil von v1");
 });
 
 test("Doku nennt jede Datei, das URL-Regelwerk und die Versionsprüfung", () => {

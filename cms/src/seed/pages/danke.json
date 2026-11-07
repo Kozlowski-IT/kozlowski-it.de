@@ -29,7 +29,7 @@
             "$html": "<p>Ihre Nachricht ist bei mir eingegangen. Ich melde mich in der Regel innerhalb eines Werktags persönlich bei Ihnen.</p>"
           },
           "body": {
-            "$html": "<p>Falls es eilt, erreichen Sie mich direkt: Telefon <a href=\"tel:+491628213267\">0162 8213267</a> oder E-Mail <a href=\"mailto:pk@kozlowski-it.de\">pk@kozlowski-it.de</a>.</p><p>Lieber gleich einen Termin? <a href=\"https://cal.kozlowski-it.de/erstgespraech\">Freien Slot für das kostenlose Erstgespräch wählen</a>.</p>"
+            "$html": "<p>Falls es eilt, erreichen Sie mich direkt: Telefon <a href=\"{{site.telHref}}\">{{site.telDisplay}}</a> oder E-Mail <a href=\"mailto:{{site.email}}\">{{site.email}}</a>.</p><p>Lieber gleich einen Termin? <a href=\"{{site.booking}}\">Freien Slot für das kostenlose Erstgespräch wählen</a>.</p>"
           }
         }
       ]

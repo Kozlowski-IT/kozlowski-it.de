@@ -179,7 +179,12 @@ describe('seedPages (alle migrierten Seiten)', { timeout: 120_000 }, () => {
       'href="https://www.proxmox.com/en/products/proxmox-virtual-environment/pricing" rel="noopener nofollow" target="_blank"',
     )
     // <br> aus dem Seed-HTML bleibt ein Zeilenumbruch
-    expect(page('impressum').locales.de.blocks[0].body).toContain('Pascal Kozlowski<br />Abteistraße 30/6<br />')
+    expect(page('impressum').locales.de.blocks[0].body).toContain('Pascal Kozlowski<br />{{site.street}}<br />')
+    // Kontaktdaten als Platzhalter (Task 13): danke hängt wieder am Global site
+    expect(page('danke').locales.de.blocks[0].body).toBe(
+      '<p>Falls es eilt, erreichen Sie mich direkt: Telefon <a href="{{site.telHref}}">{{site.telDisplay}}</a> oder E-Mail <a href="mailto:{{site.email}}">{{site.email}}</a>.</p>' +
+        '<p>Lieber gleich einen Termin? <a href="{{site.booking}}">Freien Slot für das kostenlose Erstgespräch wählen</a>.</p>',
+    )
     // nur DE: kein EN-Eintrag
     expect(page('impressum').locales.en).toBeUndefined()
     fs.rmSync(out, { recursive: true, force: true })
