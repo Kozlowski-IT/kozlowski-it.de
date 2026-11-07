@@ -32,7 +32,7 @@ export async function seedGlobals(payload: Payload, opts: SeedOptions = {}): Pro
   const site = await payload.findGlobal({ slug: 'site', depth: 0 })
   if (hasValue(site) && !opts.force) log('seed: Global site übersprungen (existiert)')
   else {
-    await payload.updateGlobal({ slug: 'site', data: readJson('site.json') })
+    await payload.updateGlobal({ slug: 'site', data: readJson('site.json'), context: { skipBuild: true } })
     written.push('site')
   }
 
@@ -42,7 +42,7 @@ export async function seedGlobals(payload: Payload, opts: SeedOptions = {}): Pro
   if (chrome.some(hasValue) && !opts.force) log('seed: Global chrome übersprungen (existiert)')
   else {
     for (const locale of ['de', 'en'] as const) {
-      await payload.updateGlobal({ slug: 'chrome', locale, data: readJson(`chrome.${locale}.json`) })
+      await payload.updateGlobal({ slug: 'chrome', locale, data: readJson(`chrome.${locale}.json`), context: { skipBuild: true } })
     }
     written.push('chrome')
   }

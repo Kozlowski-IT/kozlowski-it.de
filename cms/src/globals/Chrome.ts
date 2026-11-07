@@ -1,5 +1,6 @@
 import type { Field, GlobalConfig } from 'payload'
 import { validateHref } from '../fields/url'
+import { globalAfterChange } from '../hooks/triggerBuild'
 
 const t = (name: string, required = true): Field => ({
   name,
@@ -23,6 +24,7 @@ export const Chrome: GlobalConfig = {
   slug: 'chrome',
   label: 'Chrome (Navigation, Footer, UI-Texte)',
   access: { read: () => true },
+  hooks: { afterChange: [globalAfterChange] }, // Speichern → veröffentlichen
   fields: [
     t('skip'),
     u('home'),

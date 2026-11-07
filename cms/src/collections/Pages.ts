@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { blocks } from '../blocks'
+import { pagesAfterChange, pagesAfterDelete, pagesBeforeChange } from '../hooks/triggerBuild'
+import { previewUrl } from '../lib/previewUrl'
 
 /**
  * Seiten. `layout` ist bewusst NICHT lokalisiert: DE und EN teilen Bausteinliste und
@@ -10,6 +12,14 @@ export const Pages: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'translationKey', '_status', 'updatedAt'],
+    // „Vorschau“-Knopf (neuer Tab); die Live-Vorschau steht in payload.config (admin.livePreview)
+    preview: (doc, { locale }) => previewUrl(doc as any, locale),
+  },
+  // Entwurf → Vorschau, Veröffentlichen/Zurückziehen/Löschen → Publish (s. hooks/triggerBuild.ts)
+  hooks: {
+    beforeChange: [pagesBeforeChange],
+    afterChange: [pagesAfterChange],
+    afterDelete: [pagesAfterDelete],
   },
   access: {
     read: ({ req }) => (req.user ? true : { _status: { equals: 'published' } }),

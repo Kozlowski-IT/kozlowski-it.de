@@ -92,10 +92,12 @@ export interface Config {
   globals: {
     site: Site;
     chrome: Chrome;
+    publishStatus: PublishStatus;
   };
   globalsSelect: {
     site: SiteSelect<false> | SiteSelect<true>;
     chrome: ChromeSelect<false> | ChromeSelect<true>;
+    publishStatus: PublishStatusSelect<false> | PublishStatusSelect<true>;
   };
   locale: 'de' | 'en';
   widgets: {
@@ -1657,6 +1659,21 @@ export interface Chrome {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "publishStatus".
+ */
+export interface PublishStatus {
+  id: number;
+  state?: ('running' | 'live' | 'failed') | null;
+  action?: ('publish' | 'rollback') | null;
+  at?: string | null;
+  release?: string | null;
+  reason?: string | null;
+  warning?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site_select".
  */
 export interface SiteSelect<T extends boolean = true> {
@@ -1740,6 +1757,21 @@ export interface ChromeSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "publishStatus_select".
+ */
+export interface PublishStatusSelect<T extends boolean = true> {
+  state?: T;
+  action?: T;
+  at?: T;
+  release?: T;
+  reason?: T;
+  warning?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -23,6 +23,7 @@ import { createServer } from "node:http";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { BUILD_TIMEOUT_MS, runBuild } from "./build.mjs";
+import { gitSnapshot } from "./gitSnapshot.mjs";
 import { createQueue } from "./queue.mjs";
 import { currentRelease, isReleaseName, listReleases, rollback } from "./releases.mjs";
 
@@ -91,6 +92,9 @@ function parseJson(text) {
  * @param {typeof runBuild} [o.buildFn]  Test-Naht
  * @param {number} [o.maxBodyBytes]
  * @param {{log: Function, error: Function}} [o.log]
+ * @param {(release: string, contentDir: string) => Promise<{ok: boolean, warning?: string, reason?: string}>} [o.afterPublish]
+ *        läuft nach erfolgreichem Publish noch IN der Warteschlange (content-publish/ ist stabil),
+ *        z. B. das Git-Abbild. Fehler/Warnungen landen in `warnings`, der Publish bleibt gültig.
  */
 export function createBuilderServer({
   token,
@@ -101,6 +105,7 @@ export function createBuilderServer({
   buildFn = runBuild,
   maxBodyBytes = MAX_BODY_BYTES,
   log = console,
+  afterPublish,
 }) {
   if (typeof token !== "string" || token.length < MIN_TOKEN_LENGTH) {
     throw new Error(`BUILDER_TOKEN fehlt oder ist kürzer als ${MIN_TOKEN_LENGTH} Zeichen — Start verweigert`);
@@ -158,6 +163,16 @@ export function createBuilderServer({
         result = await buildFn({ mode: kind, siteRoot, workDir, exportFn: fencedExport(run), timeoutMs });
       } finally {
         run.finished = true;
+      }
+      if (kind === "publish" && result.ok && afterPublish) {
+        let extra;
+        try {
+          const r = await afterPublish(result.release, join(workDir, "content-publish"));
+          extra = r?.warning ?? (r?.ok === false ? r.reason : undefined);
+        } catch (err) {
+          extra = `Git-Abbild fehlgeschlagen: ${err?.message ?? err}`;
+        }
+        if (extra) result = { ...result, warnings: [...(result.warnings ?? []), extra] };
       }
     }
     log.log(`[builder] ${kind} ${result.ok ? "ok" : "FEHLER"} in ${Date.now() - t0} ms${result.ok ? "" : `: ${String(result.reason).split("\n")[0]}`}`);
@@ -256,7 +271,8 @@ export function createBuilderServer({
 // BUILDER_EXPORT_MODULE: ES-Modul, dessen default-Export (oder `exportFn`) die Signatur
 // exportFn(outDir, { drafts }) hat (Anbindung an Payload: Task 11).
 // Optional: BUILDER_HOST (Default 127.0.0.1), BUILDER_PORT (Default 4100),
-// BUILDER_SITE_ROOT (Default Repo-Root), BUILDER_TIMEOUT_MS (Default 120000).
+// BUILDER_SITE_ROOT (Default Repo-Root), BUILDER_TIMEOUT_MS (Default 120000),
+// BUILDER_GIT_REPO (Klon des Site-Repos für das Git-Abbild; leer = kein Abbild).
 export async function main(env = process.env) {
   const need = (k) => {
     if (!env[k]) throw new Error(`${k} fehlt — Start verweigert`);
@@ -269,6 +285,7 @@ export async function main(env = process.env) {
     workDir: need("BUILDER_WORKDIR"),
     exportFn: mod.default ?? mod.exportFn,
     timeoutMs: env.BUILDER_TIMEOUT_MS ? Number(env.BUILDER_TIMEOUT_MS) : BUILD_TIMEOUT_MS,
+    afterPublish: env.BUILDER_GIT_REPO ? (release, dir) => gitSnapshot(resolve(env.BUILDER_GIT_REPO), dir, release) : undefined,
   });
   const { host, port } = await svc.listen(Number(env.BUILDER_PORT || 4100), env.BUILDER_HOST || "127.0.0.1");
   console.log(`[builder] lauscht auf http://${host}:${port}`);

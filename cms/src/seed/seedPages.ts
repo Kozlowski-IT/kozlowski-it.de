@@ -215,10 +215,10 @@ export async function seedPages(
       data = resolve(data, { media, editorConfig, where: `${file}:${locale}` }) as Record<string, unknown>
       const full = { ...root, ...data, _status: 'published' as const }
       if (id == null) {
-        const doc = await payload.create({ collection: 'pages', locale, data: full as any })
+        const doc = await payload.create({ collection: 'pages', locale, data: full as any, context: { skipBuild: true } })
         id = doc.id
       } else {
-        await payload.update({ collection: 'pages', id, locale, data: full as any })
+        await payload.update({ collection: 'pages', id, locale, data: full as any, context: { skipBuild: true } })
       }
     }
     log(`seed: Seite ${seed.translationKey} ${existing.docs[0] ? 'überschrieben (--force)' : 'angelegt'}`)

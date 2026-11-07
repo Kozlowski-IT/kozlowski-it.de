@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { validateHref } from '../fields/url'
+import { globalAfterChange } from '../hooks/triggerBuild'
 
 const text = (name: string, required = true) => ({ name, type: 'text' as const, required })
 // Link-/Asset-Ziele (Allow-List, s. fields/url.ts)
@@ -9,6 +10,7 @@ export const Site: GlobalConfig = {
   slug: 'site',
   label: 'Site (Stammdaten)',
   access: { read: () => true },
+  hooks: { afterChange: [globalAfterChange] }, // Speichern → veröffentlichen
   fields: [
     text('name'),
     text('owner'),

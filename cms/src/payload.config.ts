@@ -10,6 +10,9 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Site } from './globals/Site'
 import { Chrome } from './globals/Chrome'
+import { PublishStatus } from './globals/PublishStatus'
+import { releasesEndpoint, rollbackEndpoint } from './endpoints/rollback'
+import { previewUrl } from './lib/previewUrl'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,9 +23,16 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // Live-Vorschau = statische Vorschau des Builders: ${PREVIEW_URL}<permalink> je Locale
+    livePreview: {
+      collections: ['pages'],
+      url: ({ data, locale }) => previewUrl(data, locale?.code),
+    },
   },
+  // Release-Liste/Zurückschalten im Admin (Builder wird nur serverseitig gerufen)
+  endpoints: [releasesEndpoint, rollbackEndpoint],
   collections: [Users, Media, Pages],
-  globals: [Site, Chrome],
+  globals: [Site, Chrome, PublishStatus],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures.filter((f) => f.key !== 'link'),
