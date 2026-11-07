@@ -99,8 +99,11 @@ export function currentRelease(workDir) {
   return readlinkSync(currentLink(workDir));
 }
 
+/** Gültiger Release-Name (YYYY-MM-DD_HHmmss[-n])? Schließt current, .staging-* und Pfade aus. */
+export const isReleaseName = (release) => typeof release === "string" && NAME.test(release);
+
 function assertName(release) {
-  if (typeof release !== "string" || !NAME.test(release)) {
+  if (!isReleaseName(release)) {
     throw new Error(`Release-Name ungültig: ${JSON.stringify(release)}`);
   }
 }
