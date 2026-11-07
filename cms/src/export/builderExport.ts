@@ -10,10 +10,11 @@ import { getPayload, type Payload } from 'payload'
 import config from '@/payload.config'
 import { exportContent, type ExportResult } from './exportContent'
 
+// disableOnInit: onInit (initBuilder/reconcilePublishStatus) gehört dem CMS-Prozess, nicht dem Export
 let instance: Promise<Payload> | undefined
 
 export default async function exportFn(outDir: string, opts: { drafts: boolean }): Promise<ExportResult> {
-  instance ??= getPayload({ config: await config }).catch((err) => {
+  instance ??= getPayload({ config: await config, disableOnInit: true }).catch((err) => {
     instance = undefined // nächster Lauf versucht es neu
     throw err
   })

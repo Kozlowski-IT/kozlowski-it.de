@@ -8,7 +8,7 @@ const drafts = args.includes('--drafts')
 const outIdx = args.indexOf('--out')
 const outDir = outIdx >= 0 ? args[outIdx + 1] : undefined
 
-const payload = await getPayload({ config: await config })
+const payload = await getPayload({ config: await config, disableOnInit: true })
 const res = await exportContent(payload, { drafts, ...(outDir ? { outDir } : {}) })
 payload.logger.info(`export: ${res.pages} Seiten (${drafts ? 'Entwürfe' : 'veröffentlicht'}), ${res.missing.length} fehlend`)
 for (const m of res.missing) payload.logger.warn(`missing: ${m}`)
