@@ -65,7 +65,7 @@ das Export-Modul `cms/src/export/builderExport.ts` ist TypeScript mit `@/`-Pfade
 
 ## Vorschau / Landing
 
-- preview-nginx mountet den **ganzen** `work/` read-only (`preview` → `.previews/<id>` ist ein relativer
+- preview-nginx lässt nur edge02 (`allow 10.99.98.2; deny all;`) zu und mountet den **ganzen** `work/` read-only (`preview` → `.previews/<id>` ist ein relativer
   Symlink), `root /srv/work/preview`, `X-Robots-Tag: noindex, nofollow`, `frame-ancestors https://cms.kozlowski-it.de`.
 - Landing (`deploy/landing/`) mountet `work/releases` read-only, `root /srv/releases/current` —
   nie den Symlink `current` selbst mounten. Umschaltung erst nach grünem Gleichheitstest (eigener Task).

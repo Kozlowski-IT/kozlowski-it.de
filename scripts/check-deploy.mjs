@@ -9,9 +9,10 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 
-const ROOT = new URL("..", import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const CMS = "deploy/cms";
 const LANDING = "deploy/landing";
 
@@ -90,6 +91,21 @@ function networksOf(svc) {
 const cmdOf = (svc) => (Array.isArray(svc?.command) ? svc.command.map(String) : svc?.command ? String(svc.command).split(/\s+/) : []);
 
 const hasMount = (svc, src, dst, ro) => volumesOf(svc).some((m) => m.src === src && m.dst === dst && (ro === undefined || m.ro === ro));
+
+/** nginx-Container wie landing gehärtet: read_only, cap_drop ALL + genau 4 cap_add, tmpfs für Laufzeitordner */
+const NGINX_CAPS = ["CHOWN", "NET_BIND_SERVICE", "SETGID", "SETUID"];
+const NGINX_TMPFS = ["/tmp", "/var/cache/nginx", "/var/run"];
+function checkNginxHardening(label, svc) {
+  check(/^nginx:alpine/.test(svc.image ?? ""), `${label}: Image nginx:alpine erwartet`);
+  check(svc.read_only === true, `${label}: read_only: true fehlt`);
+  check((svc.security_opt ?? []).includes("no-new-privileges:true"), `${label}: security_opt no-new-privileges:true fehlt`);
+  check(svc.restart === "unless-stopped", `${label}: restart: unless-stopped fehlt`);
+  check(JSON.stringify(svc.cap_drop ?? []) === JSON.stringify(["ALL"]), `${label}: cap_drop muss genau [ALL] sein`);
+  const caps = [...(svc.cap_add ?? [])].map(String).sort();
+  check(JSON.stringify(caps) === JSON.stringify(NGINX_CAPS), `${label}: cap_add muss genau ${NGINX_CAPS.join("/")} sein (ist: ${caps.join("/") || "—"})`);
+  const tmpfs = [svc.tmpfs ?? []].flat().map((t) => String(t).split(":")[0]).sort();
+  check(JSON.stringify(tmpfs) === JSON.stringify(NGINX_TMPFS), `${label}: tmpfs muss genau ${NGINX_TMPFS.join(" ")} sein (ist: ${tmpfs.join(" ") || "—"})`);
+}
 
 const isSecretRef = (v) => typeof v === "string" && /^\$\{[A-Z0-9_]+(:\?[^}]*)?\}$/.test(v);
 
@@ -207,8 +223,7 @@ if (compose) {
   // preview
   const pv = services.preview;
   if (check(pv, "preview-Dienst fehlt")) {
-    check(/^nginx:alpine/.test(pv.image ?? ""), "preview: Image nginx:alpine erwartet");
-    check(pv.read_only === true, "preview: read_only: true fehlt");
+    checkNginxHardening("preview", pv);
     check(hasMount(pv, `${DATA}/work`, "/srv/work", true), `preview: ganzen workDir ${DATA}/work:/srv/work:ro mounten (preview → .previews/<id>)`);
     check(hasMount(pv, "./preview-nginx.conf", "/etc/nginx/conf.d/default.conf", true), "preview: ./preview-nginx.conf:/etc/nginx/conf.d/default.conf:ro fehlt");
     for (const m of volumesOf(pv)) check(m.ro, `preview: Mount ${m.src} muss :ro sein`);
@@ -244,6 +259,16 @@ if (pconf !== null) {
   check(!/X-Frame-Options/i.test(pconf), "preview-nginx.conf: kein X-Frame-Options (bricht die Live-Vorschau im Admin)");
   // add_header in einem location-Block würde die server-Header still verwerfen (nginx-Vererbung)
   check(!/location[^{]*\{[^}]*add_header/s.test(pconf), "preview-nginx.conf: kein add_header in location-Blöcken (verdrängt noindex/CSP)");
+  // R8: eigenes Tor — nur edge02 (WG-IP) darf lesen, sonst sähe jeder Container in VLAN 85 Entwürfe.
+  // Auf server-Ebene, genau diese zwei Regeln in dieser Reihenfolge; keine allow/deny in location-Blöcken.
+  const noComments = pconf.replace(/#[^\n]*/g, "");
+  const serverLevel = noComments.replace(/location[^{]*\{[^}]*\}/gs, "");
+  const acl = [...serverLevel.matchAll(/^\s*(allow|deny)\s+([^;]+);/gm)].map((m) => `${m[1]} ${m[2].trim()}`);
+  check(
+    JSON.stringify(acl) === JSON.stringify(["allow 10.99.98.2", "deny all"]),
+    `preview-nginx.conf: auf server-Ebene genau "allow 10.99.98.2; deny all;" (ist: ${acl.join("; ") || "—"})`,
+  );
+  check(!/location[^{]*\{[^}]*\b(allow|deny)\b/s.test(noComments), "preview-nginx.conf: keine allow/deny in location-Blöcken (würden das Tor überschreiben)");
 }
 
 // env.example: nur Platzhalter, deckt alle ${VAR} der Compose-Datei ab
@@ -311,9 +336,9 @@ if (lc) {
   const svcs = Object.entries(lc.services ?? {});
   check(svcs.length === 1, "landing-Compose: genau ein Dienst erwartet");
   for (const [name, svc] of svcs) {
-    check(/^nginx:alpine/.test(svc.image ?? ""), `landing/${name}: nginx:alpine erwartet`);
-    check(svc.read_only === true, `landing/${name}: read_only: true fehlt`);
-    check((svc.cap_drop ?? []).includes("ALL"), `landing/${name}: cap_drop: [ALL] fehlt`);
+    checkNginxHardening(`landing/${name}`, svc);
+    check(svc.container_name === "landing", `landing/${name}: container_name: landing fehlt`);
+    check(!svc.ports && !svc.privileged && !svc.network_mode, `landing/${name}: keine ports/privileged/network_mode`);
     check(networksOf(svc).get("macvlan78")?.ipv4_address === "10.30.78.2", `landing/${name}: macvlan78 / 10.30.78.2 fehlt`);
     check(hasMount(svc, `${DATA}/work/releases`, "/srv/releases", true), `landing/${name}: ${DATA}/work/releases:/srv/releases:ro fehlt`);
     for (const m of volumesOf(svc)) {
