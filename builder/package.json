@@ -1,0 +1,13 @@
+{
+  "name": "pk-landing-builder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Builder: CMS-Export -> Eleventy-Build in neuen Release-Ordner -> Checks -> atomarer current-Symlink",
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.mjs\""
+  }
+}

@@ -10,13 +10,17 @@
 //
 // Pages marked data-bilingual="false" (German-only legal pages) are exempt
 // from the pendant requirement. Exit 1 on any divergence.
+//
+//   node scripts/check-parity.mjs [siteDir]     (Default: _site — so `npm run parity`)
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as cheerio from "cheerio";
 
-const SITE_DIR = fileURLToPath(new URL("../_site", import.meta.url));
+const SITE_DIR = process.argv[2]
+  ? resolve(process.argv[2])
+  : fileURLToPath(new URL("../_site", import.meta.url));
 
 function walkHtml(dir) {
   const out = [];
@@ -34,7 +38,7 @@ function relUrl(file) {
 
 const files = walkHtml(SITE_DIR);
 if (files.length === 0) {
-  console.error("check-parity: no HTML found in _site/ — run the build first.");
+  console.error(`check-parity: no HTML found in ${SITE_DIR} — run the build first.`);
   process.exit(1);
 }
 
