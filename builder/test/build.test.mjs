@@ -2,7 +2,7 @@
 // Echte Eleventy-Builds gegen die Root-Fixtures; Payload wird durch fakeExport ersetzt.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, readFileSync, readdirSync, readlinkSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { runBuild } from "../src/build.mjs";
 import { BUILD_ID_FILE, RELOAD_JS, RELOAD_SCRIPT, injectReload, injectReloadDir } from "../src/checks.mjs";
@@ -148,7 +148,7 @@ test("(g) Preview schreibt nur nach preview/, jede Seite hat noindex, Drafts-Exp
   assert.equal(r.ok, true, r.reason);
   assert.equal(r.release, undefined);
   assert.deepEqual(exportFn.calls.map((c) => [c.outDir, c.drafts]), [[join(workDir, "content-preview"), true]]);
-  assert.deepEqual(readdirSync(workDir).sort(), ["content-preview", "preview"]);
+  assert.deepEqual(readdirSync(workDir).sort(), [".previews", "content-preview", "preview"]);
   const pages = walkHtml(join(workDir, "preview"));
   assert.ok(pages.length >= 8, `zu wenig Seiten: ${pages.length}`);
   for (const f of pages) {
@@ -359,4 +359,56 @@ test("__reload.js: lädt neu, sobald __build.txt eine andere ID liefert (no-stor
   await step();
   assert.equal(reloads, 1);
   assert.deepEqual(fetched[0], ["/__build.txt", "no-store"]);
+});
+
+// --- Härtung: Vorschau als Symlink auf .previews/<id> ---
+const previewRun = (workDir, exportFn) => runBuild({ mode: "preview", siteRoot: SITE_ROOT, workDir, exportFn });
+
+test("preview ist Symlink und wird atomar ersetzt", async (t) => {
+  const workDir = tempWorkDir(t);
+  const seen = [];
+  for (let i = 0; i < 3; i++) {
+    const r = await previewRun(workDir, fakeExport());
+    assert.equal(r.ok, true, r.reason);
+    const link = join(workDir, "preview");
+    assert.ok(lstatSync(link).isSymbolicLink(), "preview ist Symlink");
+    const target = readlinkSync(link);
+    assert.match(target, /^\.previews\/[^/]+$/, "relatives Ziel");
+    assert.equal(readFileSync(join(link, BUILD_ID_FILE), "utf8").trim(), r.buildId);
+    seen.push(target);
+    assert.ok(readdirSync(join(workDir, ".previews")).length <= 2, "höchstens aktuell + vorheriger");
+  }
+  assert.equal(new Set(seen).size, 3);
+  assert.deepEqual(
+    readdirSync(join(workDir, ".previews")).sort(),
+    seen.slice(1).map((s) => s.slice(".previews/".length)).sort(),
+  );
+  assert.ok(!existsSync(join(workDir, "preview.tmp")) && !readdirSync(workDir).some((n) => n.endsWith(".tmp")));
+});
+
+test("fehlgeschlagene Vorschau lässt alte Vorschau stehen", async (t) => {
+  const workDir = tempWorkDir(t);
+  assert.equal((await previewRun(workDir, fakeExport())).ok, true);
+  const before = readlinkSync(join(workDir, "preview"));
+  const bad = fakeExport({
+    mutate: (_p, outDir) => writeFileSync(join(outDir, "site.json"), "{ kaputt"),
+  });
+  const r = await previewRun(workDir, bad);
+  assert.equal(r.ok, false);
+  assert.equal(readlinkSync(join(workDir, "preview")), before);
+  assert.deepEqual(readdirSync(join(workDir, ".previews")), [before.slice(".previews/".length)], "halber Build aufgeräumt");
+  assert.ok(existsSync(join(workDir, "preview", "index.html")));
+});
+
+test("Ordner preview/ aus Plan 1 wird beim ersten Lauf nach .previews/legacy verschoben", async (t) => {
+  const workDir = tempWorkDir(t);
+  mkdirSync(join(workDir, "preview"));
+  writeFileSync(join(workDir, "preview", "alt.txt"), "alt");
+  const r = await previewRun(workDir, fakeExport());
+  assert.equal(r.ok, true, r.reason);
+  assert.ok(lstatSync(join(workDir, "preview")).isSymbolicLink());
+  assert.equal(readFileSync(join(workDir, ".previews/legacy/alt.txt"), "utf8"), "alt");
+  assert.equal(readdirSync(join(workDir, ".previews")).length, 2, "neu + legacy (vorheriger Stand)");
+  assert.equal((await previewRun(workDir, fakeExport())).ok, true);
+  assert.ok(!existsSync(join(workDir, ".previews/legacy")), "beim zweiten Lauf aufgeräumt");
 });

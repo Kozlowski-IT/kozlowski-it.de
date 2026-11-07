@@ -119,12 +119,21 @@ export async function switchCurrent(workDir, release) {
   if (!existsSync(target) || !statSync(target).isDirectory()) {
     throw new Error(`Release ${release} fehlt unter ${releasesDir(workDir)}`);
   }
-  const tmp = join(releasesDir(workDir), "current.tmp");
+  await atomicSymlink(currentLink(workDir), release);
+}
+
+/**
+ * Symlink `link` → `target` (relatives Ziel) atomar setzen bzw. ersetzen: erst <link>.tmp
+ * anlegen, dann rename(2) — es gibt keinen Moment ohne Link. Gemeinsame Mechanik für
+ * releases/current und preview.
+ */
+export async function atomicSymlink(link, target) {
+  const tmp = `${link}.tmp`;
   await unlink(tmp).catch((err) => {
     if (err.code !== "ENOENT") throw err;
   });
-  await symlink(release, tmp);
-  await rename(tmp, currentLink(workDir));
+  await symlink(target, tmp);
+  await rename(tmp, link);
 }
 
 /** Zurück auf einen vorhandenen Release (kein Build). Fehler, wenn er fehlt; current bleibt dann. */

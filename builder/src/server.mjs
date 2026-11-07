@@ -273,6 +273,21 @@ export function createBuilderServer({
 // Optional: BUILDER_HOST (Default 127.0.0.1), BUILDER_PORT (Default 4100),
 // BUILDER_SITE_ROOT (Default Repo-Root), BUILDER_TIMEOUT_MS (Default 120000),
 // BUILDER_GIT_REPO (Klon des Site-Repos für das Git-Abbild; leer = kein Abbild).
+export const MIN_TIMEOUT_MS = 10_000;
+export const MAX_TIMEOUT_MS = 600_000;
+
+/** BUILDER_TIMEOUT_MS prüfen: nur Ganzzahl-Strings, 10 000–600 000; nicht gesetzt → Default. Sonst Start verweigert. */
+export function parseTimeout(raw) {
+  if (raw === undefined) return BUILD_TIMEOUT_MS;
+  const n = /^\d+$/.test(raw) ? Number(raw) : NaN;
+  if (!Number.isSafeInteger(n) || n < MIN_TIMEOUT_MS || n > MAX_TIMEOUT_MS) {
+    throw new Error(
+      `BUILDER_TIMEOUT_MS ungültig: ${JSON.stringify(raw)} (Ganzzahl ${MIN_TIMEOUT_MS}–${MAX_TIMEOUT_MS} erwartet) — Start verweigert`,
+    );
+  }
+  return n;
+}
+
 export async function main(env = process.env) {
   const need = (k) => {
     if (!env[k]) throw new Error(`${k} fehlt — Start verweigert`);
@@ -284,7 +299,7 @@ export async function main(env = process.env) {
     siteRoot: env.BUILDER_SITE_ROOT || new URL("../../", import.meta.url).pathname,
     workDir: need("BUILDER_WORKDIR"),
     exportFn: mod.default ?? mod.exportFn,
-    timeoutMs: env.BUILDER_TIMEOUT_MS ? Number(env.BUILDER_TIMEOUT_MS) : BUILD_TIMEOUT_MS,
+    timeoutMs: parseTimeout(env.BUILDER_TIMEOUT_MS),
     afterPublish: env.BUILDER_GIT_REPO ? (release, dir) => gitSnapshot(resolve(env.BUILDER_GIT_REPO), dir, release) : undefined,
   });
   const { host, port } = await svc.listen(Number(env.BUILDER_PORT || 4100), env.BUILDER_HOST || "127.0.0.1");

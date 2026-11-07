@@ -8,7 +8,7 @@ import { request } from "node:http";
 import { join, resolve } from "node:path";
 import { runBuild } from "../src/build.mjs";
 import { createQueue } from "../src/queue.mjs";
-import { createBuilderServer } from "../src/server.mjs";
+import { createBuilderServer, parseTimeout } from "../src/server.mjs";
 import { SITE_ROOT, fakeExport, tempWorkDir } from "./helpers.mjs";
 
 const TOKEN = "t".repeat(40);
@@ -365,3 +365,15 @@ test("echt: Zaun — ein zu spät fertiger Export schreibt nie in den content-Or
     "der verworfene Export räumt seinen eigenen Ordner weg",
   );
 });
+
+// --- parseTimeout ---
+test("parseTimeout: nicht gesetzt → 120000", () => assert.equal(parseTimeout(undefined), 120_000));
+test("parseTimeout: gültig", () => assert.equal(parseTimeout("90000"), 90_000));
+test("parseTimeout: Grenzen 10000 und 600000 gültig", () => {
+  assert.equal(parseTimeout("10000"), 10_000);
+  assert.equal(parseTimeout("600000"), 600_000);
+});
+for (const bad of ["abc", "NaN", "0", "-5", "9999", "600001", "1.5e5x", "", " 90000", "9e4"]) {
+  test(`parseTimeout: ${JSON.stringify(bad)} → Start verweigert`, () =>
+    assert.throws(() => parseTimeout(bad), /BUILDER_TIMEOUT_MS/));
+}

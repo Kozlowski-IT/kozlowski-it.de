@@ -2,12 +2,20 @@
 // liefert Exit-Status und Ausgabe, wirft nie.
 import { spawn } from "node:child_process";
 
+// Nur diese Variablen erbt der Kindprozess (Eleventy braucht keine Secrets des Builders:
+// kein DATABASE_URL, PAYLOAD_SECRET, BUILDER_TOKEN …); alles Weitere nur über `env`.
+const ENV_ALLOWLIST = ["PATH", "HOME", "LANG", "TZ", "NODE_ENV"];
+const childEnv = (extra) => ({
+  ...Object.fromEntries(ENV_ALLOWLIST.filter((k) => process.env[k] !== undefined).map((k) => [k, process.env[k]])),
+  ...extra,
+});
+
 export function runNode(args, { cwd, env, timeoutMs = 120_000, signal } = {}) {
   return new Promise((resolve) => {
     if (timeoutMs <= 0 || signal?.aborted) {
       return resolve({ status: null, stdout: "", stderr: "", timedOut: !signal?.aborted, aborted: !!signal?.aborted });
     }
-    const child = spawn(process.execPath, args, { cwd, env: { ...process.env, ...env }, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(process.execPath, args, { cwd, env: childEnv(env), stdio: ["ignore", "pipe", "pipe"] });
     let stdout = "";
     let stderr = "";
     let timedOut = false;

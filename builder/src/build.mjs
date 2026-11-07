@@ -3,7 +3,9 @@
 // Arbeitsordner (workDir):
 //   content-preview/   Export mit Entwürfen (nur Vorschau)
 //   content-publish/   Export nur veröffentlichter Stände
-//   preview/           Vorschau-Site (jede Seite noindex + Auto-Reload über __build.txt); pro Lauf neu gebaut
+//   .previews/<id>/    Vorschau-Builds (jede Seite noindex + Auto-Reload über __build.txt); pro Lauf neu,
+//                      nur aktueller + vorheriger Stand bleiben
+//   preview → .previews/<id>   Vorschau-Zeiger (Symlink, RELATIVES Ziel, atomar umgebogen wie releases/current)
 //   releases/.staging-<name>/   Build in Arbeit; erst nach grünen Checks → releases/<name>/
 //   releases/<name>/   veröffentlichte Stände (die 10 neuesten + der aktuelle bleiben)
 //   releases/current → <name>   Live-Zeiger (Symlink, relatives Ziel)
@@ -24,12 +26,12 @@
 //
 // Der Builder importiert kein Payload: exportFn(outDir, { drafts }) wird injiziert
 // (produktiv: (dir, o) => exportContent(payload, { outDir: dir, drafts: o.drafts })).
-import { mkdirSync, rmSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, readdirSync, readlinkSync, renameSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { injectNoindexDir, injectReloadDir, markBuild, runChecks } from "./checks.mjs";
 import { randomBytes } from "node:crypto";
 import { runNode } from "./proc.mjs";
-import { cleanStaging, createStagingDir, promoteRelease, prune, switchCurrent } from "./releases.mjs";
+import { atomicSymlink, cleanStaging, createStagingDir, promoteRelease, prune, switchCurrent } from "./releases.mjs";
 
 export const BUILD_TIMEOUT_MS = 120_000;
 export const KEEP_RELEASES = 10;
@@ -65,6 +67,29 @@ async function runExport(exportFn, contentDir, drafts) {
   const result = await exportFn(contentDir, { drafts });
   if (!result || !Array.isArray(result.missing)) throw new Error("exportFn lieferte kein { pages, missing }");
   return result;
+}
+
+const PREVIEWS = ".previews";
+
+/** Ordner preview/ aus Plan 1 (kein Symlink) → .previews/legacy, damit preview/ Symlink werden kann. */
+function adoptLegacyPreview(workDir) {
+  const link = join(workDir, "preview");
+  let st;
+  try {
+    st = lstatSync(link);
+  } catch {
+    return;
+  }
+  if (st.isSymbolicLink()) return;
+  const legacy = join(workDir, PREVIEWS, "legacy");
+  rmSync(legacy, { recursive: true, force: true });
+  renameSync(link, legacy);
+}
+
+/** Alles in .previews/ außer den genannten Ständen löschen. */
+function prunePreviews(workDir, keep) {
+  const dir = join(workDir, PREVIEWS);
+  for (const n of readdirSync(dir)) if (!keep.includes(n)) rmSync(join(dir, n), { recursive: true, force: true });
 }
 
 const STOP = Symbol("stop");
@@ -131,20 +156,39 @@ export async function runBuild({
 
   if (mode === "preview") {
     // Vorschau: Entwürfe dürfen unvollständig sein → missing/Checks sind Hinweise, kein Abbruch.
-    const output = join(workDir, "preview");
-    rmSync(output, { recursive: true, force: true });
-    const fail = await eleventy({ siteRoot, contentDir, output, timeoutMs: left(), signal });
-    if (stopped()) return { ok: false, reason: stopped(), phase: "build" };
-    if (fail) return { ok: false, reason: fail };
-    injectNoindexDir(output);
-    // Auto-Reload der offenen Vorschau (nur hier, nie im Publish): Tag + Skript jetzt,
-    // __build.txt erst nach den Checks → Seiten laden erst neu, wenn die Vorschau fertig ist.
+    // Gebaut wird in .previews/<id>; erst nach den Checks wird preview → .previews/<id> umgebogen.
+    // Ein fehlgeschlagener/abgebrochener Lauf löscht seinen Ordner, die alte Vorschau bleibt stehen.
     const buildId = `${Date.now().toString(36)}-${randomBytes(4).toString("hex")}`;
-    injectReloadDir(output, buildId);
-    const warnings = await checksFn(output, exported, { siteRoot, timeoutMs: left(), signal });
-    if (stopped()) return { ok: false, reason: stopped(), phase: "checks" };
-    markBuild(output, buildId);
-    return { ok: true, warnings, buildId };
+    const output = join(workDir, PREVIEWS, buildId);
+    const discard = (r) => {
+      rmSync(output, { recursive: true, force: true });
+      return r;
+    };
+    mkdirSync(join(workDir, PREVIEWS), { recursive: true });
+    try {
+      const fail = await eleventy({ siteRoot, contentDir, output, timeoutMs: left(), signal });
+      if (stopped()) return discard({ ok: false, reason: stopped(), phase: "build" });
+      if (fail) return discard({ ok: false, reason: fail });
+      injectNoindexDir(output);
+      // Auto-Reload der offenen Vorschau (nur hier, nie im Publish): Tag + Skript jetzt,
+      // __build.txt erst nach den Checks → Seiten laden erst neu, wenn die Vorschau fertig ist.
+      injectReloadDir(output, buildId);
+      const warnings = await checksFn(output, exported, { siteRoot, timeoutMs: left(), signal });
+      if (stopped()) return discard({ ok: false, reason: stopped(), phase: "checks" });
+      markBuild(output, buildId);
+      adoptLegacyPreview(workDir);
+      const link = join(workDir, "preview");
+      const previous = existsSync(link) && lstatSync(link).isSymbolicLink() ? readlinkSync(link).slice(PREVIEWS.length + 1) : null;
+      await atomicSymlink(link, `${PREVIEWS}/${buildId}`);
+      try {
+        prunePreviews(workDir, [buildId, previous ?? (existsSync(join(workDir, PREVIEWS, "legacy")) ? "legacy" : "")]);
+      } catch (err) {
+        warnings.push(`Aufräumen der Vorschauen fehlgeschlagen: ${err?.message ?? err}`);
+      }
+      return { ok: true, warnings, buildId };
+    } catch (err) {
+      return discard({ ok: false, reason: `Vorschau fehlgeschlagen: ${err?.message ?? err}` });
+    }
   }
 
   // Publish: missing vor dem Build abfangen (spart den Build, Grund ist eindeutig).
