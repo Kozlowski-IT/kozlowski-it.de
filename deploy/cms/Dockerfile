@@ -15,8 +15,11 @@ FROM node:24.22.1-bookworm-slim@sha256:be8204d4bd327363357f532187b752ff62759c31b
 RUN node -e 'const m="24.22.1".split(".").map(Number),v=process.versions.node.split(".").map(Number);const ok=v[0]!==m[0]?v[0]>m[0]:v[1]!==m[1]?v[1]>m[1]:v[2]>=m[2];console.log("node "+process.versions.node+(ok?" ok":" < 24.22.1"));process.exit(ok?0:1)'
 
 # git + ssh: Builder-Git-Abbild (Push des Branches content-snapshot per Deploy-Key)
-RUN apt-get update \
- && apt-get install -y --no-install-recommends git openssh-client ca-certificates \
+# apt als root statt _apt: BuildKit legt /etc/resolv.conf im Build mit Modus 640 + ACL an
+# (Default-ACLs auf dem Docker-Datenverzeichnis von docker01); _apt kann sie nicht lesen,
+# DNS schlägt fehl. Pakete bleiben signaturgeprüft.
+RUN apt-get -o APT::Sandbox::User=root update \
+ && apt-get -o APT::Sandbox::User=root install -y --no-install-recommends git openssh-client ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
 ENV NEXT_TELEMETRY_DISABLED=1 \
