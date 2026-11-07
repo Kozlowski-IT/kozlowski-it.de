@@ -1,7 +1,7 @@
 import { getPayload, type Payload } from 'payload'
 import config from '@/payload.config'
 
-import { describe, it, beforeAll, expect } from 'vitest'
+import { describe, it, beforeAll, expect, vi } from 'vitest'
 
 let payload: Payload
 
@@ -36,6 +36,27 @@ describe('Payload-Grundgerüst', () => {
       expect(found.docs.map((d) => d.id)).toContain(created.id)
     } finally {
       await payload.delete({ collection: 'users', id: created.id })
+    }
+  })
+
+  it('ohne PAYLOAD_PUBLIC_SERVER_URL: serverURL/csrf auf Payload-Default, cors leer', () => {
+    expect(process.env.PAYLOAD_PUBLIC_SERVER_URL ?? '').toBe('')
+    expect(payload.config.serverURL).toBe('')
+    expect(payload.config.csrf).toEqual([])
+    expect(payload.config.cors).toEqual([])
+  })
+
+  it('mit PAYLOAD_PUBLIC_SERVER_URL: serverURL gesetzt, csrf nur diese Origin', async () => {
+    process.env.PAYLOAD_PUBLIC_SERVER_URL = 'https://cms.kozlowski-it.de'
+    try {
+      vi.resetModules()
+      const c = await (await import('@/payload.config')).default
+      expect(c.serverURL).toBe('https://cms.kozlowski-it.de')
+      expect([...new Set(c.csrf)]).toEqual(['https://cms.kozlowski-it.de'])
+      expect(c.cors).toEqual([])
+    } finally {
+      delete process.env.PAYLOAD_PUBLIC_SERVER_URL
+      vi.resetModules()
     }
   })
 })

@@ -5,7 +5,7 @@
   "description": "Builder: CMS-Export -> Eleventy-Build in neuen Release-Ordner -> Checks -> atomarer current-Symlink",
   "type": "module",
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=24.22.1 <25"
   },
   "scripts": {
     "test": "node --test \"test/**/*.test.mjs\""
