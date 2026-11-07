@@ -348,10 +348,14 @@ test("ohne content/: Legacy-Seiten bauen weiter (site/i18n aus legacy/), CMS-Pag
   const out = join(TMP, `cms-legacy-${process.pid}`);
   const r = eleventy(out, { CONTENT_DIR: join(TMP, "gibt-es-nicht") });
   assert.equal(r.status, 0, `${r.stdout}\n${r.stderr}`);
-  const d = cheerio.load(readFileSync(join(out, "index.html"), "utf8"));
+  // Startseite ist seit Task 7 nur noch CMS: ohne content/ gibt es sie nicht (Pagination erzeugt nichts).
+  assert.ok(!existsSync(join(out, "index.html")), "index.html ohne content/ erzeugt");
+  assert.ok(!existsSync(join(out, "en/index.html")), "en/index.html ohne content/ erzeugt");
+  // noch nicht migrierte Legacy-Seiten bauen weiter
+  const d = cheerio.load(readFileSync(join(out, "it-betreuung/index.html"), "utf8"));
   assert.equal(d("html").attr("lang"), "de");
   assert.equal(d("a.skip").text(), "Zum Inhalt springen");
-  assert.equal(d('meta[property="og:url"]').attr("content"), `${DOMAIN}/`);
-  assert.equal(cheerio.load(readFileSync(join(out, "en/index.html"), "utf8"))("a.lang").attr("href"), "/");
+  assert.equal(d('meta[property="og:url"]').attr("content"), `${DOMAIN}/it-betreuung/`);
+  assert.equal(cheerio.load(readFileSync(join(out, "en/it-care/index.html"), "utf8"))("a.lang").attr("href"), "/it-betreuung/");
   rmSync(out, { recursive: true, force: true });
 });

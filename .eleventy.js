@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import { contentDir, loadMedia } from "./lib/content.js";
 import { buttonClass, rich, richA, richNote, richP, richUl } from "./lib/richtext.js";
 import { safeHref } from "./lib/url.js";
+import { sitemapOrder } from "./lib/sitemap.js";
 
 // kozlowski-it.de — Eleventy v3 config (ESM).
 // dir.input = "src" is LOAD-BEARING: without it, 11ty would render docs/*.md
@@ -39,6 +40,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter("buttonClass", buttonClass);
   // Link-Ziele aus Inhalten (CMS/Globals): nur /pfad, #anker, http(s)://, mailto:, tel: — sonst Build-Abbruch.
   eleventyConfig.addFilter("safeHref", safeHref);
+  // Sitemap: feste Reihenfolge nach URL statt Datei-Zeitstempel (CMS-Seiten teilen eine Vorlage).
+  eleventyConfig.addFilter("sitemapOrder", sitemapOrder);
 
   // CMS-Medien: content/media/<file> landet in der Ausgabe unter seinem publicPath
   // (content/media/index.json). publicPath wird vor dem Build erneut geprüft

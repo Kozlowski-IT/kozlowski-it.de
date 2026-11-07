@@ -1,0 +1,784 @@
+{
+  "translationKey": "home",
+  "slug": "index",
+  "slugEn": "index",
+  "bilingual": true,
+  "noindex": false,
+  "minimalHeader": false,
+  "structuredData": "home",
+  "frame": "home",
+  "media": [
+    {
+      "publicPath": "/assets/img/avatar2.webp",
+      "alt": {
+        "de": "Porträt von Pascal Kozlowski",
+        "en": "Portrait of Pascal Kozlowski"
+      }
+    },
+    {
+      "publicPath": "/assets/img/flowgate-board.jpg",
+      "alt": {
+        "de": "Ausschnitt der FlowGate-Anwendung",
+        "en": "Snapshot of the FlowGate application"
+      }
+    },
+    {
+      "publicPath": "/assets/img/netzplan-de.jpg",
+      "alt": {
+        "de": "Ausschnitt eines Netzwerk-Architekturdiagramms",
+        "en": "Ausschnitt eines Netzwerk-Architekturdiagramms"
+      }
+    },
+    {
+      "publicPath": "/assets/img/netzplan-en.jpg",
+      "alt": {
+        "de": "Snapshot of a network architecture diagram",
+        "en": "Snapshot of a network architecture diagram"
+      }
+    }
+  ],
+  "locales": {
+    "de": {
+      "title": "Kozlowski IT · IT-Betreuung, Server & Netzwerk im Landkreis Biberach",
+      "description": "IT-Betreuung, Server, Netzwerk und geprüfte Datensicherung für Betriebe im Landkreis Biberach und Umgebung. Mit sauberer Dokumentation, damit Sie im Ernstfall zeigen können, dass vorgesorgt war.",
+      "ogTitle": "Kozlowski IT · IT-Betreuung, Infrastruktur & Dokumentation",
+      "ogDescription": "Ihre IT läuft. Auch wenn etwas ausfällt. Betreuung, Server und Netzwerk für Betriebe in der Region, mit nachweisbarer Dokumentation.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "hero",
+          "variant": "home",
+          "eyebrow": "IT-Betreuung · Server · Netzwerk · Landkreis Biberach",
+          "h1": "Ihre IT läuft. Auch wenn etwas ausfällt.",
+          "claim": {
+            "$html": "<p>Betreuung, Server und Netzwerk für Betriebe in Biberach, Laupheim, Ochsenhausen, Riedlingen, Ulm und Umgebung. Mit sauberer Dokumentation, damit Sie im Ernstfall nicht hoffen müssen, sondern zeigen können, dass vorgesorgt war.</p>"
+          },
+          "trustPoints": [
+            {
+              "text": "Ein Ansprechpartner, der entscheidet und dafür geradesteht"
+            },
+            {
+              "text": "Antwort in der Regel innerhalb eines Werktags"
+            },
+            {
+              "text": "Geprüfte Backups: Wiederherstellung getestet, nicht nur behauptet"
+            }
+          ],
+          "buttons": [
+            {
+              "label": "Mit dem Sicherheitscheck starten",
+              "href": "#sicherheitscheck",
+              "style": "primaryBig"
+            }
+          ],
+          "photo": {
+            "$media": "/assets/img/avatar2.webp"
+          }
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "sicherheitscheck",
+          "anchorId": "sicherheitscheck",
+          "variant": "callout",
+          "eyebrow": "Der erste Schritt",
+          "heading": "Der Sicherheitscheck: Wo stehen Sie wirklich?",
+          "sub": "Ein abgeschlossener kleiner erster Schritt, kein offener Beratungstermin.",
+          "lead": {
+            "$html": "<p>Ich komme zu Ihnen und sehe mir an, was Sie haben, also Server, Netzwerk, Zugänge und Sicherungen, und prüfe, ob es hält, was Sie annehmen. Ohne Eingriff in Ihren laufenden Betrieb.</p>"
+          },
+          "body": {
+            "$html": "<p>Was Sie danach wissen:</p><ul><li><strong>Ob Ihre Sicherungen im Ernstfall tragen.</strong> Ich spiele eine davon stellvertretend tatsächlich zurück, in einer abgeschotteten Umgebung. Geprüft, nicht behauptet.</li><li><strong>Welche Systeme gar nicht gesichert werden.</strong> Das ist häufiger, als man denkt.</li><li><strong>Wo Zugänge offen sind,</strong> die es nicht sein sollten.</li><li><strong>Was zuerst dran sollte,</strong> was warten kann und was es ungefähr kostet.</li></ul>"
+          },
+          "listClass": "why-points",
+          "note": {
+            "$html": "<p>Der Umfang ist klein und klar umrissen. Sie erhalten vorab ein festes Angebot, keine offene Rechnung und keine Folgeverpflichtung. Die schriftliche Auswertung gehört Ihnen; Sie können sie auch einem anderen Dienstleister vorlegen.</p>"
+          },
+          "noteClass": "callout-note",
+          "buttons": [
+            {
+              "label": "Sicherheitscheck anfragen",
+              "href": "#kontakt",
+              "style": "primaryBig"
+            }
+          ]
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "leistungen",
+          "anchorId": "leistungen",
+          "variant": "why",
+          "eyebrow": "Leistungen",
+          "heading": "Zwei Dinge, die ich für Ihren Betrieb übernehme.",
+          "cards": [
+            {
+              "title": "Laufende IT-Betreuung",
+              "text": {
+                "$html": "<p>Ich kümmere mich um das, was jeden Tag laufen muss: Arbeitsplätze, Updates, Zugriffsrechte, Sicherungen. Und ich schreibe auf, was ich tue.</p><p>Das klingt selbstverständlich, ist aber der Punkt, an dem die meisten Betriebe auffliegen. Wenn nach einem Vorfall die Versicherung fragt, wann zuletzt eine Sicherung zurückgespielt wurde, oder ein Großkunde einen Nachweis über Ihre Zugriffskontrolle verlangt, brauchen Sie mehr als ein gutes Gefühl. Sie brauchen ein Protokoll.</p><p>Bei Ihnen läuft das automatisch mit. Einmal im Monat bekommen Sie eine Übersicht, die Sie vorlegen können: Sicherungsläufe, Aktualisierungsstand, offene Punkte.</p>"
+              }
+            },
+            {
+              "title": "Server, Netzwerk und Virtualisierung",
+              "text": {
+                "$html": "<p>Wenn der Server in die Jahre kommt, das Netzwerk historisch gewachsen ist oder die VMware-Rechnung plötzlich anders aussieht als früher: Das ist mein Kerngebiet. Linux und Virtualisierung mache ich seit über zehn Jahren. Meine eigene Produktivumgebung läuft auf Proxmox, mit über 35 virtuellen Maschinen und rund 40 Containern, die ich selbst aufgesetzt habe und selbst betreue. Was ich Ihnen empfehle, setze ich zuerst bei mir ein.</p><p><strong>VMware-Ausstieg:</strong> Für vSphere 8 endet der reguläre Support am 11. Oktober 2027. Eine Umstellung auf Proxmox dauert bei mittelgroßen Umgebungen ein bis zwei Jahre, wer 2027 handeln will, sollte jetzt rechnen. Ich sage Ihnen ehrlich, ob sich der Wechsel für Sie lohnt oder ob Sie besser bleiben. <a href=\"/vmware-ausstieg/\">VMware-Kosten prüfen →</a></p><p><strong>Netzwerk, das trennt statt nur verbindet:</strong> Produktion, Büro und Gäste gehören nicht ins selbe Netz, und Fernzugriff gehört abgesichert. Das ist keine Kür mehr, es steht so in den Bedingungen jeder Cyberversicherung.</p><p><strong>Wo Handarbeit unnötig ist, automatisiere ich sie.</strong> Auswertungen, die sich jemand monatlich aus drei Systemen zusammensucht. Freigaben, die per Zuruf laufen. Nachweise, die jemand von Hand zusammenstellt. Dafür baue ich Ihnen ein kleines Werkzeug, kein Großprojekt, sondern die Lösung für genau den einen Ablauf, der Sie Zeit kostet. <a href=\"/demos/\">Beispiele als Live-Demo ansehen →</a></p>"
+              }
+            }
+          ],
+          "note": {
+            "$html": "<p>Monatspakete für laufende Betreuung · Festpreise für umrissene Projekte · Dokumentation, die bei Ihnen bleibt</p>"
+          },
+          "noteClass": "trust-bar"
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "ueber",
+          "anchorId": "ueber",
+          "variant": "about",
+          "eyebrow": "Wer dahintersteht",
+          "heading": "Pascal Kozlowski",
+          "body": {
+            "$html": "<p>Angefangen hat alles mit Neugier, mit einem Server, den ich verstehen wollte, statt ihn nur zu benutzen. Aus dem Hobby wurden Jahre echter Praxis, mit Stationen bei IT-Dienstleistern und Systemhäusern und einem Eigenbetrieb, der jedes Jahr gewachsen ist.</p><p>Seit über zehn Jahren arbeite ich mit Linux, Servern und Virtualisierung, anfangs für mich selbst, inzwischen als das, was ich hauptberuflich mache. Diesen Weg schließe ich gerade formal ab: IHK-Abschluss Fachinformatiker Systemintegration, voraussichtlich Dezember 2026.</p><p>Was mich an dem Beruf interessiert, ist der Teil, den die meisten überspringen: dass eine Anlage nicht nur läuft, sondern dass jemand nachvollziehen kann, warum sie läuft. Deshalb dokumentiere ich alles, was ich anfasse, für Sie, und damit im Ernstfall auch ein anderer übernehmen könnte.</p>"
+          },
+          "note": {
+            "$html": "<p>Sie erreichen mich direkt: Telefon <a href=\"tel:+491628213267\"><strong>0162 8213267</strong></a> · E-Mail <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a></p>"
+          },
+          "noteClass": "plain-mail",
+          "buttons": [
+            {
+              "label": "Mehr über mich →",
+              "href": "/ueber-mich/",
+              "style": "ghosted"
+            }
+          ]
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "ablauf",
+          "anchorId": "ablauf",
+          "variant": "why",
+          "heading": "Wie die Zusammenarbeit läuft",
+          "body": {
+            "$html": "<ul><li><strong>Sie erklären Ihre Anlage nie zweimal.</strong> Was bei Ihnen steht, wie es zusammenhängt und was zuletzt daran getan wurde, ist dokumentiert, nicht im Kopf eines Einzelnen. Wer auch immer bei Ihnen aufschlägt, ist im Bilde, bevor er anfängt.</li><li><strong>Alles läuft geordnet, nicht zwischen Tür und Angel.</strong> Termine buchen Sie online, die Dokumentation Ihrer Anlage liegt bereit, und jede Anfrage samt Lösungsweg wird protokolliert. Genau diese Protokolle brauchen Sie, wenn Versicherung oder Prüfer später wissen wollen, was wann getan wurde.</li><li><strong>Termine sind bewusst begrenzt.</strong> Wer von Termin zu Termin hetzt, macht Fehler, und Fehler an Ihrer IT können Sie sich nicht leisten. Lieber ein Tag später und richtig.</li><li><strong>Steht Ihr Betrieb still, rufen Sie an.</strong> Für echte Notfälle gilt die Telefonnummer, nicht das Portal.</li></ul>"
+          },
+          "listClass": "why-points"
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "beispiele",
+          "anchorId": "beispiele",
+          "variant": "default",
+          "eyebrow": "Für wen das passt",
+          "heading": "Passt zu Ihnen, wenn…",
+          "body": {
+            "$html": "<ul><li>…Sie keine eigene IT-Abteilung haben und der Chef, der Bürokaufmann oder der Sohn vom Chef sich nebenbei kümmert.</li><li>…Sie nicht sicher sind, ob Ihre Sicherung im Ernstfall wirklich funktioniert.</li><li>…Ihr Server älter ist als der letzte Anbau und niemand weiß, was passiert, wenn er ausfällt.</li><li>…Ihre Cyberversicherung Nachweise verlangt, die Sie so nicht liefern können.</li><li>…Ihr letzter Dienstleister nicht mehr erreichbar ist oder Sie sich fragen, wofür Sie ihn eigentlich bezahlen.</li></ul>"
+          },
+          "listClass": "examples",
+          "buttons": [
+            {
+              "label": "Situation besprechen",
+              "href": "#kontakt",
+              "style": "ghosted"
+            }
+          ]
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "projekte",
+          "anchorId": "projekte",
+          "variant": "explore",
+          "eyebrow": "Ansehen statt nur versprechen",
+          "heading": "Laufende Anwendungen und dokumentierte Referenzaufbauten.",
+          "cards": [
+            {
+              "accent": "live",
+              "image": {
+                "$media": "/assets/img/flowgate-board.jpg"
+              },
+              "tag": "Live-Demos",
+              "title": "Live-Demos",
+              "text": {
+                "$html": "<p>FlowGate und Quellwerk direkt im Browser testen. Die Zugangsdaten stehen auf der jeweiligen Seite.</p>"
+              },
+              "link": {
+                "href": "/demos/",
+                "label": "Live-Demos ansehen →"
+              }
+            },
+            {
+              "accent": "infra",
+              "image": {
+                "$media": "/assets/img/netzplan-de.jpg"
+              },
+              "tag": "Referenzaufbauten",
+              "title": "Referenzaufbauten",
+              "text": {
+                "$html": "<p>Proxmox, Netzwerksegmentierung und SaaS-Architektur, technisch nachvollziehbar dokumentiert. Kein Kundenprojekt, sondern eigene Infrastruktur.</p>"
+              },
+              "link": {
+                "href": "/projekte/",
+                "label": "Referenzaufbauten ansehen →"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "analyse",
+          "anchorId": "analyse",
+          "variant": "callout",
+          "eyebrow": "Wenn es tiefer gehen muss",
+          "heading": "IT-Infrastrukturanalyse: erst verstehen, dann verbindlich planen.",
+          "sub": "Für gewachsene oder unklare Umgebungen, wenn der Sicherheitscheck zeigt, dass mehr Tiefe nötig ist.",
+          "lead": {
+            "$html": "<p>Bei unklaren oder gewachsenen IT-Umgebungen starten wir mit einer IT-Infrastrukturanalyse zum festen Preis. Sie erhalten eine verständliche Übersicht, priorisierte Maßnahmen und einen empfohlenen Umsetzungsweg, als belastbare Grundlage für einen konkreten Umsetzungsumfang, Terminplan und Projektangebot.</p>"
+          },
+          "body": {
+            "$html": "<ul><li>Eng abgegrenzter Prüfbereich und vorher vereinbarter Preis</li><li>Priorisierte Maßnahmen statt einer unübersichtlichen Mängelliste</li><li>Grundlage für ein belastbares Umsetzungsangebot</li></ul>"
+          },
+          "listClass": "why-points",
+          "note": {
+            "$html": "<p>Im kostenlosen Erstgespräch klären wir, ob eine Analyse nötig ist und welcher Prüfbereich sinnvoll ist.</p>"
+          },
+          "noteClass": "callout-note",
+          "buttons": [
+            {
+              "label": "IT-Infrastrukturanalyse besprechen",
+              "href": "#kontakt",
+              "style": "primary"
+            },
+            {
+              "label": "Was die Analyse umfasst →",
+              "href": "/it-infrastrukturanalyse/",
+              "style": "cardLink"
+            }
+          ]
+        },
+        {
+          "blockType": "faq",
+          "sectionKey": "faq",
+          "anchorId": "faq",
+          "variant": "default",
+          "heading": "Häufige Fragen",
+          "items": [
+            {
+              "question": "Was kostet das?",
+              "answer": {
+                "$html": "<p>Laufende Betreuung rechne ich als Monatspaket ab, dessen Umfang wir vorab verbindlich festlegen, zum Beispiel für einen Server und Ihre Arbeitsplätze. Für einmalige, abgegrenzte Projekte erhalten Sie nach dem Erstgespräch ein Festpreis-Angebot mit Umfang, Preis und Ablauf. Bei unklaren oder gewachsenen Umgebungen starten wir mit einer IT-Infrastrukturanalyse zum vorher vereinbarten Festpreis, bevor ein Umsetzungsangebot entsteht. Größere Softwarevorhaben teilen wir bei Bedarf in nachvollziehbare Phasen auf.</p>"
+              }
+            },
+            {
+              "question": "Bin ich an einen Vertrag gebunden?",
+              "answer": {
+                "$html": "<p>Reine Projekte sind einmalige Aufträge mit fest vereinbartem Umfang. Die laufende Betreuung ist kündbar. Ich möchte durch verlässliche Arbeit überzeugen, nicht durch unnötig lange Vertragslaufzeiten.</p>"
+              }
+            },
+            {
+              "question": "Was passiert bei einer Störung oder Datenverlust?",
+              "answer": {
+                "$html": "<p>Bei akuten Störungen erreichen Sie mich direkt per Telefon, und ich kümmere mich vorrangig darum. Für Wartungskunden lässt sich eine feste Reaktionszeit vereinbaren, die zum jeweiligen Paket passt. Vorbeugend ist die geprüfte Datensicherung da: Wir testen die Wiederherstellung, <em>bevor</em> der Ernstfall kommt, und dokumentieren, wie sie abläuft.</p>"
+              }
+            },
+            {
+              "question": "Sie sind allein, was passiert bei Ausfall?",
+              "answer": {
+                "$html": "<p>Berechtigte Frage. Ich dokumentiere Systeme und Zugänge so, dass sie übergabefähig sind und im Ernstfall jemand anderes übernehmen kann, statt Wissen in meinem Kopf zu horten. Dazu kommen die geprüften, außer Haus gelagerten Backups mit getesteter Wiederherstellung. Ihr Betrieb hängt damit nicht an meiner Anwesenheit, und Sie werden nicht künstlich abhängig gemacht.</p>"
+              }
+            },
+            {
+              "question": "Wie steht es um Datenschutz und DSGVO?",
+              "answer": {
+                "$html": "<p>Der Auftragsverarbeitungsvertrag (<a href=\"/avv/\">AVV, Muster ansehen</a>) gehört bei mir zum Auftrag. Auf der von mir betriebenen Infrastruktur liegen die Daten in deutschen Rechenzentren; nutzen Sie zusätzlich Cloud-Dienste wie Microsoft 365, richtet sich der Speicherort nach deren Vorgaben. Backups sind verschlüsselt, Zugriffsrechte sind eindeutig geregelt. Ich arbeite BSI-IT-Grundschutz-orientiert, das ist eine Arbeitsweise, keine Zertifizierung.</p>"
+              }
+            },
+            {
+              "question": "Sehen Sie bei der Betreuung unsere Daten?",
+              "answer": {
+                "$html": "<p>Für die Betreuung brauche ich Zugang zu Systemen, nicht zu Ihren Inhalten. Ich arbeite an Konfiguration, Struktur und Skripten. Ihre eigentlichen Daten (Datenbank-Inhalte, Dokumente, E-Mails) bleiben auf Ihren Systemen. Muss ich für eine konkrete Aufgabe doch an echte Daten, geschieht das nur nach Absprache, dokumentiert und im Rahmen des AVV.</p>"
+              }
+            },
+            {
+              "question": "Verstehe ich, was gemacht wird?",
+              "answer": {
+                "$html": "<p>Ja, das ist Teil der Arbeit. Kein Fachchinesisch, alles schriftlich dokumentiert und so erklärt, dass Sie es Ihrem Team weitergeben können.</p>"
+              }
+            },
+            {
+              "question": "Nutzen Sie KI bei der Entwicklung?",
+              "answer": {
+                "$html": "<p>Ja, als Werkzeug für Routineaufgaben. Architektur, Sicherheit, Prüfung und Verantwortung bleiben bei mir. Ihre vertraulichen Inhalte werden nicht einfach in öffentliche KI-Dienste eingegeben.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "contactForm",
+          "sectionKey": "kontakt",
+          "anchorId": "kontakt",
+          "variant": "default",
+          "eyebrow": "Unverbindlich starten",
+          "heading": "Lassen Sie uns Ihre Situation kurz besprechen.",
+          "lead": {
+            "$html": "<p>In einem kostenlosen Erstgespräch klären wir, was Sie brauchen und welcher nächste Schritt sinnvoll ist. Ohne Verkaufsdruck und ohne technische Vorkenntnisse.</p>"
+          },
+          "hints": [
+            {
+              "text": "Ca. 30 Minuten"
+            },
+            {
+              "text": "Antwort in der Regel innerhalb eines Werktags"
+            },
+            {
+              "text": "Klarer nächster Schritt statt Verkaufsdruck"
+            }
+          ],
+          "messages": {
+            "error": "Bitte E-Mail oder Telefon angeben, damit ich antworten kann.",
+            "fallback": "Ihr E-Mail-Programm sollte sich öffnen. Falls nicht: Text kopieren und an pk@kozlowski-it.de schicken oder 0162 8213267 anrufen.",
+            "copyLabel": "Text kopieren",
+            "copiedLabel": "Kopiert ✓"
+          },
+          "name": {
+            "label": "Name",
+            "dataLabel": "Name"
+          },
+          "email": {
+            "label": "E-Mail",
+            "dataLabel": "E-Mail"
+          },
+          "phone": {
+            "label": "Telefon",
+            "dataLabel": "Telefon"
+          },
+          "message": {
+            "label": "Was hakt, was wünschen Sie sich?",
+            "dataLabel": "Anliegen",
+            "placeholder": "Beschreiben Sie kurz Ihre Situation: Was läuft nicht, oder was möchten Sie verbessern?"
+          },
+          "moreSummary": "Weitere Angaben (optional)",
+          "company": {
+            "label": "Firma",
+            "dataLabel": "Firma"
+          },
+          "requestType": {
+            "label": "Worum geht's?",
+            "dataLabel": "Art der Anfrage",
+            "options": [
+              {
+                "label": "Sicherheitscheck"
+              },
+              {
+                "label": "IT-Betreuung & Sicherheit"
+              },
+              {
+                "label": "Server, Netzwerk & Virtualisierung"
+              },
+              {
+                "label": "Weiß ich noch nicht genau"
+              }
+            ]
+          },
+          "urgency": {
+            "label": "Wie dringend?",
+            "dataLabel": "Dringlichkeit",
+            "options": [
+              {
+                "label": "Unverbindliche Anfrage"
+              },
+              {
+                "label": "In den nächsten Wochen"
+              },
+              {
+                "label": "Diese Woche"
+              },
+              {
+                "label": "Akute Störung"
+              }
+            ]
+          },
+          "formHint": "Mindestens E-Mail oder Telefon angeben. Ihre Angaben gehen direkt an mich, ohne Zwischendienste.",
+          "submit": "Kostenloses Erstgespräch anfragen",
+          "booking": {
+            "or": "oder",
+            "icon": "📅",
+            "button": "Direkt einen Termin buchen",
+            "hint": "Freien Slot fürs kostenlose Erstgespräch wählen, Sie sehen meine echten freien Zeiten."
+          },
+          "note": {
+            "$html": "<p>Lieber direkt? Telefon <a href=\"tel:+491628213267\"><strong>0162 8213267</strong></a> · E-Mail <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a></p>"
+          },
+          "noteClass": "plain-mail"
+        }
+      ]
+    },
+    "en": {
+      "title": "Kozlowski IT · IT Care, Servers & Network in the Biberach district",
+      "description": "IT care, servers, network and tested backups for businesses in the Biberach district, Germany, and the surrounding area. With clean documentation, so that in an emergency you can show you were prepared.",
+      "ogTitle": "Kozlowski IT · IT Care, Infrastructure & Documentation",
+      "ogDescription": "Your IT runs. Even when something fails. Care, servers and network for businesses in the region, with provable documentation.",
+      "layout": [
+        {
+          "blockType": "hero",
+          "sectionKey": "hero",
+          "variant": "home",
+          "eyebrow": "IT Care · Servers · Network · Biberach district, Germany",
+          "h1": "Your IT runs. Even when something fails.",
+          "claim": {
+            "$html": "<p>Care, servers and network for businesses in Biberach, Laupheim, Ochsenhausen, Riedlingen, Ulm and the surrounding area. With clean documentation, so that in an emergency you don't have to hope, but can show that you were prepared.</p>"
+          },
+          "trustPoints": [
+            {
+              "text": "One point of contact who decides and stands behind it"
+            },
+            {
+              "text": "Reply usually within one business day"
+            },
+            {
+              "text": "Tested backups: recovery verified, not just claimed"
+            }
+          ],
+          "buttons": [
+            {
+              "label": "Start with the security check",
+              "href": "#security-check",
+              "style": "primaryBig"
+            }
+          ],
+          "photo": {
+            "$media": "/assets/img/avatar2.webp"
+          }
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "sicherheitscheck",
+          "anchorId": "security-check",
+          "variant": "callout",
+          "eyebrow": "The first step",
+          "heading": "The security check: where do you really stand?",
+          "sub": "A complete small first step, not an open-ended consulting appointment.",
+          "lead": {
+            "$html": "<p>I come to you and look at what you have, that is servers, network, access and backups, and check whether it holds up to what you assume. Without interfering with your running operations.</p>"
+          },
+          "body": {
+            "$html": "<p>What you know afterwards:</p><ul><li><strong>Whether your backups hold in an emergency.</strong> I actually restore one of them, on your behalf, in an isolated environment. Verified, not claimed.</li><li><strong>Which systems aren't backed up at all.</strong> That's more common than people think.</li><li><strong>Where access is open</strong> that shouldn't be.</li><li><strong>What should come first,</strong> what can wait, and roughly what it costs.</li></ul>"
+          },
+          "listClass": "why-points",
+          "note": {
+            "$html": "<p>The scope is small and clearly defined. You get a fixed offer in advance, no open-ended invoice and no follow-up obligation. The written report is yours; you can also present it to another provider.</p>"
+          },
+          "noteClass": "callout-note",
+          "buttons": [
+            {
+              "label": "Request the security check",
+              "href": "#contact",
+              "style": "primaryBig"
+            }
+          ]
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "leistungen",
+          "anchorId": "services",
+          "variant": "why",
+          "eyebrow": "Services",
+          "heading": "Two things I take off your hands.",
+          "cards": [
+            {
+              "title": "Ongoing IT care",
+              "text": {
+                "$html": "<p>I take care of what has to run every day: workstations, updates, access rights, backups. And I write down what I do.</p><p>That sounds obvious, but it's exactly where most businesses come unstuck. When, after an incident, the insurer asks when a backup was last restored, or a major client demands proof of your access control, you need more than a good feeling. You need a record.</p><p>With you, that runs automatically. Once a month you get an overview you can present: backup runs, patch status, open items.</p>"
+              }
+            },
+            {
+              "title": "Servers, network and virtualization",
+              "text": {
+                "$html": "<p>When the server is getting on in years, the network has grown historically, or the VMware bill suddenly looks different than before: that's my core area. I've done Linux and virtualization for over ten years. My own production environment runs on Proxmox, with over 35 virtual machines and around 40 containers that I set up and run myself. What I recommend to you, I run myself first.</p><p><strong>Leaving VMware:</strong> regular support for vSphere 8 ends on 11 October 2027. Migrating to Proxmox takes one to two years for mid-sized environments, so if you want to act in 2027, you should do the math now. I'll tell you honestly whether the switch is worth it for you or whether you're better off staying. <a href=\"/vmware-ausstieg/\">Check VMware cost →</a></p><p><strong>A network that separates instead of just connecting:</strong> production, office and guests don't belong on the same network, and remote access needs to be secured. That's no longer optional, it's written into the terms of every cyber-insurance policy.</p><p><strong>Where manual work is unnecessary, I automate it.</strong> Reports someone pulls together from three systems every month. Approvals that run by word of mouth. Records someone compiles by hand. For that I build you a small tool, not a big project, but the solution for exactly the one workflow that's costing you time. <a href=\"/en/demos/\">See examples as a live demo →</a></p>"
+              }
+            }
+          ],
+          "note": {
+            "$html": "<p>Monthly packages for ongoing care · Fixed prices for scoped projects · Documentation that stays with you</p>"
+          },
+          "noteClass": "trust-bar"
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "ueber",
+          "anchorId": "about",
+          "variant": "about",
+          "eyebrow": "Who's behind this",
+          "heading": "Pascal Kozlowski",
+          "body": {
+            "$html": "<p>It all started with curiosity, with a server I wanted to understand rather than just use. The hobby turned into years of real practice, with stints at IT service providers and system houses and an own operation that has grown every year.</p><p>For over ten years I've worked with Linux, servers and virtualization, at first for myself, now as what I do for a living. I'm currently completing that path formally: IHK degree as IT specialist for systems integration, expected December 2026.</p><p>What interests me about this job is the part most people skip: that a system doesn't just run, but that someone can understand why it runs. That's why I document everything I touch, for you, and so that in an emergency someone else could take over.</p>"
+          },
+          "note": {
+            "$html": "<p>You can reach me directly: Phone <a href=\"tel:+491628213267\"><strong>+49 162 8213267</strong></a> · Email <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a></p>"
+          },
+          "noteClass": "plain-mail",
+          "buttons": [
+            {
+              "label": "More about me →",
+              "href": "/en/about/",
+              "style": "ghosted"
+            }
+          ]
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "ablauf",
+          "anchorId": "working",
+          "variant": "why",
+          "heading": "How working together works",
+          "body": {
+            "$html": "<ul><li><strong>You never explain your setup twice.</strong> What you have, how it fits together and what was last done to it is documented, not in one person's head. Whoever shows up at your place is up to speed before they start.</li><li><strong>Everything runs in an orderly way, not on the fly.</strong> You book appointments online, the documentation of your setup is ready, and every request along with its solution is logged. Those exact logs are what you need when an insurer or auditor later wants to know what was done and when.</li><li><strong>Appointments are deliberately limited.</strong> Whoever rushes from appointment to appointment makes mistakes, and mistakes on your IT are something you can't afford. Better a day later and done right.</li><li><strong>If your business is at a standstill, call.</strong> For real emergencies the phone number applies, not the portal.</li></ul>"
+          },
+          "listClass": "why-points"
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "beispiele",
+          "anchorId": "who",
+          "variant": "default",
+          "eyebrow": "Who it's for",
+          "heading": "This fits you if…",
+          "body": {
+            "$html": "<ul><li>…you don't have your own IT department and the boss, the office clerk or the boss's son takes care of it on the side.</li><li>…you're not sure whether your backup really works in an emergency.</li><li>…your server is older than the last extension and nobody knows what happens if it fails.</li><li>…your cyber-insurance demands proof you can't currently provide.</li><li>…your last provider is no longer reachable, or you wonder what you're actually paying them for.</li></ul>"
+          },
+          "listClass": "examples",
+          "buttons": [
+            {
+              "label": "Discuss your situation",
+              "href": "#contact",
+              "style": "ghosted"
+            }
+          ]
+        },
+        {
+          "blockType": "cards",
+          "sectionKey": "projekte",
+          "anchorId": "projects",
+          "variant": "explore",
+          "eyebrow": "See for yourself instead of reading promises",
+          "heading": "Running applications and documented reference builds.",
+          "cards": [
+            {
+              "accent": "live",
+              "image": {
+                "$media": "/assets/img/flowgate-board.jpg"
+              },
+              "tag": "Live demos",
+              "title": "Live demos",
+              "text": {
+                "$html": "<p>Test FlowGate and Quellwerk right in the browser. The credentials are on each page.</p>"
+              },
+              "link": {
+                "href": "/en/demos/",
+                "label": "View live demos →"
+              }
+            },
+            {
+              "accent": "infra",
+              "image": {
+                "$media": "/assets/img/netzplan-en.jpg"
+              },
+              "tag": "Reference builds",
+              "title": "Reference builds",
+              "text": {
+                "$html": "<p>Proxmox, network segmentation and SaaS architecture: documented so you can follow the technical decisions. Not a client project, but my own infrastructure.</p>"
+              },
+              "link": {
+                "href": "/en/projects/",
+                "label": "View reference builds →"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "text",
+          "sectionKey": "analyse",
+          "anchorId": "analysis",
+          "variant": "callout",
+          "eyebrow": "When it needs to go deeper",
+          "heading": "IT infrastructure analysis: understand first, then commit to a plan.",
+          "sub": "For grown or unclear environments, when the security check shows more depth is needed.",
+          "lead": {
+            "$html": "<p>For unclear or grown IT environments we start with an IT infrastructure analysis at a fixed price. You get an understandable overview, prioritized measures and a recommended path to implementation, as a solid basis for a concrete implementation scope, schedule and project offer.</p>"
+          },
+          "body": {
+            "$html": "<ul><li>A tightly bounded review scope and a price agreed in advance</li><li>Prioritized measures instead of a confusing list of defects</li><li>A basis for a solid implementation offer</li></ul>"
+          },
+          "listClass": "why-points",
+          "note": {
+            "$html": "<p>In the free initial consultation we clarify whether an analysis is needed and which review scope makes sense.</p>"
+          },
+          "noteClass": "callout-note",
+          "buttons": [
+            {
+              "label": "Discuss an IT infrastructure analysis",
+              "href": "#contact",
+              "style": "primary"
+            },
+            {
+              "label": "What the analysis covers →",
+              "href": "/it-infrastrukturanalyse/",
+              "style": "cardLink"
+            }
+          ]
+        },
+        {
+          "blockType": "faq",
+          "sectionKey": "faq",
+          "anchorId": "faq",
+          "variant": "default",
+          "heading": "Frequently asked questions",
+          "items": [
+            {
+              "question": "What does it cost?",
+              "answer": {
+                "$html": "<p>Ongoing care is billed as a monthly package whose scope we agree in advance, for example one server and your workstations. For one-off, well-scoped projects you get a fixed-price offer with scope, price and process after the initial consultation. For unclear or grown environments we start with an IT infrastructure analysis at a price agreed in advance, before an implementation offer is made. Larger software undertakings are split into traceable phases where needed.</p>"
+              }
+            },
+            {
+              "question": "Am I locked into a contract?",
+              "answer": {
+                "$html": "<p>Pure projects are one-off engagements with a firmly agreed scope. Ongoing care can be cancelled. I want to convince through reliable work, not through unnecessarily long contract terms.</p>"
+              }
+            },
+            {
+              "question": "What happens in an outage or data loss?",
+              "answer": {
+                "$html": "<p>For acute issues you reach me directly by phone and I deal with it as a priority. For maintenance clients a fixed response time can be agreed to match the package. As a precaution, tested backups are in place: we verify restores <em>before</em> the emergency and document how they work.</p>"
+              }
+            },
+            {
+              "question": "You work alone, what happens if you're unavailable?",
+              "answer": {
+                "$html": "<p>Fair question. I document systems and access so they're ready to hand over and someone else can take over in an emergency, instead of hoarding knowledge in my head. On top of that come the tested, off-site backups with verified recovery. So your operation doesn't depend on my presence, and you aren't made artificially dependent.</p>"
+              }
+            },
+            {
+              "question": "How do you handle data protection and GDPR?",
+              "answer": {
+                "$html": "<p>A data processing agreement (DPA) is part of every engagement. On the infrastructure I run, data is held in German data centers; if you also use cloud services such as Microsoft 365, the storage location follows their terms. Backups are encrypted, access rights are strictly controlled. I work aligned with the German BSI baseline-protection methodology, which is a way of working, not a certification.</p>"
+              }
+            },
+            {
+              "question": "Do you see our data when maintaining our systems?",
+              "answer": {
+                "$html": "<p>To maintain your IT I need access to systems, not to your content. I work on configuration, structure and scripts. Your actual data (database contents, documents, emails) stays on your systems. If a specific task genuinely requires real data, it only happens by arrangement, documented, and under the data processing agreement.</p>"
+              }
+            },
+            {
+              "question": "Will I understand what's being done?",
+              "answer": {
+                "$html": "<p>Yes, that's part of the job. No jargon, everything documented in writing and explained so you can pass it on to your team.</p>"
+              }
+            },
+            {
+              "question": "Do you use AI for development?",
+              "answer": {
+                "$html": "<p>Yes, as a tool for routine work. Architecture, security, review and responsibility stay with me. Your confidential content is not simply fed into public AI services.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "blockType": "contactForm",
+          "sectionKey": "kontakt",
+          "anchorId": "contact",
+          "variant": "default",
+          "eyebrow": "Start without obligation",
+          "heading": "Let's talk through your situation briefly.",
+          "lead": {
+            "$html": "<p>In a free initial consultation we work out what you need and which next step makes sense. Without sales pressure and without technical knowledge on your side.</p>"
+          },
+          "hints": [
+            {
+              "text": "About 30 minutes"
+            },
+            {
+              "text": "Reply usually within one business day"
+            },
+            {
+              "text": "A clear next step instead of sales pressure"
+            }
+          ],
+          "messages": {
+            "error": "Please provide an email or phone number so I can reply.",
+            "fallback": "Your email program should open. If not: copy the text and send it to pk@kozlowski-it.de or call +49 162 8213267.",
+            "copyLabel": "Copy text",
+            "copiedLabel": "Copied ✓"
+          },
+          "name": {
+            "label": "Name",
+            "dataLabel": "Name"
+          },
+          "email": {
+            "label": "Email",
+            "dataLabel": "Email"
+          },
+          "phone": {
+            "label": "Phone",
+            "dataLabel": "Phone"
+          },
+          "message": {
+            "label": "What's not working, or what would you like?",
+            "dataLabel": "Message",
+            "placeholder": "Briefly describe your situation: what's not working, or what would you like to improve?"
+          },
+          "moreSummary": "More details (optional)",
+          "company": {
+            "label": "Company",
+            "dataLabel": "Company"
+          },
+          "requestType": {
+            "label": "What's it about?",
+            "dataLabel": "Request type",
+            "options": [
+              {
+                "label": "Security check"
+              },
+              {
+                "label": "IT care & security"
+              },
+              {
+                "label": "Servers, network & virtualization"
+              },
+              {
+                "label": "Not sure yet"
+              }
+            ]
+          },
+          "urgency": {
+            "label": "How urgent?",
+            "dataLabel": "Urgency",
+            "options": [
+              {
+                "label": "Just an enquiry"
+              },
+              {
+                "label": "Within the next weeks"
+              },
+              {
+                "label": "This week"
+              },
+              {
+                "label": "Acute incident"
+              }
+            ]
+          },
+          "formHint": "Provide at least an email or phone number. Your details go straight to me, with no intermediary services.",
+          "submit": "Request a free consultation",
+          "booking": {
+            "or": "or",
+            "icon": "📅",
+            "button": "Book an appointment directly",
+            "hint": "Pick a free slot for the free initial consultation, you'll see my real availability."
+          },
+          "note": {
+            "$html": "<p>Prefer to talk directly? Phone <a href=\"tel:+491628213267\"><strong>+49 162 8213267</strong></a> · Email <a href=\"mailto:pk@kozlowski-it.de\"><strong>pk@kozlowski-it.de</strong></a></p>"
+          },
+          "noteClass": "plain-mail"
+        }
+      ]
+    }
+  }
+}
