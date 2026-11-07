@@ -382,6 +382,13 @@ if (lconf !== null) {
   check(/^\s*root\s+\/srv\/releases\/current\s*;/m.test(lconf), "landing nginx: root /srv/releases/current; fehlt");
   check(/^\s*index\s+index\.html\s*;/m.test(lconf), "landing nginx: index index.html; fehlt");
   check(/^\s*error_page\s+404\s+\/404\.html\s*;/m.test(lconf), "landing nginx: error_page 404 /404.html; fehlt");
+  // Direktaufruf /404.html muss 404 liefern (wie live): internal-Location ohne eigenes root
+  const INTERNAL_404 = /location\s*=\s*\/404\.html\s*\{\s*internal\s*;\s*\}/;
+  const hasInternal404 = (conf) => INTERNAL_404.test(conf);
+  check(hasInternal404(lconf), "landing nginx: location = /404.html { internal; } fehlt (direkter Aufruf würde 200 liefern)");
+  // Mutation-Probe: ohne den Block muss die Regel anschlagen, sonst prüft sie nichts
+  const withoutInternal404 = lconf.replace(/\s*location\s*=\s*\/404\.html\s*\{[^}]*\}/, "");
+  check(withoutInternal404 !== lconf && !hasInternal404(withoutInternal404), "landing nginx: Mutation-Probe — Regel erkennt fehlenden internal-404-Block nicht");
 }
 
 // ------------------------------------------------------------------ docker compose config
