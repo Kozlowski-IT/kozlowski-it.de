@@ -141,14 +141,15 @@ if (compose) {
 
   for (const [name, svc] of Object.entries(services)) {
     const sn = networksOf(svc);
-    // resolv-clean ersetzt Dockers DNS → auf cms_db muss postgres per extra_hosts auflösbar sein
+    // resolv-clean ersetzt Dockers DNS; Dockers eigene /etc/hosts ist auf docker01 für uid 1000 unlesbar
+    // → auf cms_db muss die eigene ./hosts als /etc/hosts gemountet sein (postgres → feste IP)
     if (sn.has(DB_NET) && hasMount(svc, "./resolv-clean.conf", "/etc/resolv.conf")) {
-      const eh = Array.isArray(svc.extra_hosts) ? svc.extra_hosts.map(String) : Object.entries(svc.extra_hosts ?? {}).map(([k, v]) => `${k}:${v}`);
       check(
-        eh.some((e) => /^postgres[:=]/.test(e) && e.slice("postgres".length + 1) === PG_IP),
-        `${name}: resolv-clean.conf ersetzt Dockers DNS → extra_hosts "postgres:${PG_IP}" fehlt`,
+        hasMount(svc, "./hosts", "/etc/hosts", true),
+        `${name}: resolv-clean.conf ersetzt Dockers DNS → ./hosts:/etc/hosts:ro fehlt (Dockers eigene hosts ist für uid 1000 unlesbar, extra_hosts hilft nicht)`,
       );
     }
+    check(!svc.extra_hosts, `${name}: kein extra_hosts (Dockers generierte /etc/hosts ist auf docker01 unlesbar) — ./hosts mounten`);
     check(!svc.ports, `${name}: keine ports: (Zugriff nur über macvlan-IP bzw. internes Netz)`);
     check(!svc.network_mode, `${name}: kein network_mode`);
     check(!svc.privileged, `${name}: nicht privileged`);
@@ -264,6 +265,18 @@ const resolv = read(`${CMS}/resolv-clean.conf`);
 if (resolv !== null) {
   const lines = resolv.split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
   check(JSON.stringify(lines) === JSON.stringify(["nameserver 9.9.9.9"]), "resolv-clean.conf: genau `nameserver 9.9.9.9` (kein search/ndots)");
+}
+
+// hosts: postgres → feste IP aus der Compose-Datei (kein hart kodiertes Duplikat), plus localhost
+const hostsSrc = read(`${CMS}/hosts`);
+if (hostsSrc !== null) {
+  const entries = hostsSrc.split("\n").map((l) => l.replace(/#.*/, "").trim().split(/\s+/).filter(Boolean)).filter((f) => f.length >= 2);
+  const pgIp = networksOf(services.postgres).get(DB_NET)?.ipv4_address;
+  if (check(pgIp, `hosts: postgres hat in ${DB_NET} keine ipv4_address in der Compose-Datei`)) {
+    const pgLines = entries.filter((f) => f.slice(1).includes("postgres"));
+    check(pgLines.length === 1 && pgLines[0][0] === pgIp, `hosts: postgres muss auf ${pgIp} (ipv4_address aus der Compose-Datei) zeigen (ist: ${pgLines.map((f) => f[0]).join(", ") || "—"})`);
+  }
+  check(entries.some((f) => f[0] === "127.0.0.1" && f.slice(1).includes("localhost")), "hosts: Zeile `127.0.0.1 localhost` fehlt");
 }
 
 // preview-nginx.conf

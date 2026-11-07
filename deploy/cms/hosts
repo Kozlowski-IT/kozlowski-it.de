@@ -1,0 +1,4 @@
+# Eigene /etc/hosts: Dockers generierte Datei ist auf docker01 wegen Default-ACL für uid 1000 unlesbar; Dienstname postgres → feste IP
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+172.31.85.2	postgres

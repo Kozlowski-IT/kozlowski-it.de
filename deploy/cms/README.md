@@ -1,7 +1,7 @@
 # CMS-Stack auf docker01
 
 Stack `/opt/docker/apps/cms/` (diese Dateien), Daten `/opt/docker-data/cms/{pgdata,media,work,repo,ssh,backup}`.
-Netze: `dmz_cms` (macvlan, parent `ens20.85`, existiert schon), `cms_db` (bridge, `internal`, legt Compose an); `cms_db` hat festes Subnetz `172.31.85.0/28` (postgres `172.31.85.2`, dynamisch nur `.8/29`) — `payload`/`builder` lösen `postgres` per `extra_hosts` auf, weil `resolv-clean.conf` Dockers DNS ersetzt.
+Netze: `dmz_cms` (macvlan, parent `ens20.85`, existiert schon), `cms_db` (bridge, `internal`, legt Compose an); `cms_db` hat festes Subnetz `172.31.85.0/28` (postgres `172.31.85.2`, dynamisch nur `.8/29`) — `payload`/`builder` lösen `postgres` über die eigene `hosts`-Datei (Bind-Mount auf `/etc/hosts`) auf, weil `resolv-clean.conf` Dockers DNS ersetzt.
 
 | Dienst | Adresse | Aufgabe |
 |---|---|---|
@@ -31,7 +31,8 @@ Tag + Digest im Dockerfile gemeinsam ändern. Postgres analog (`postgres:18.6@sh
 
 ```sh
 install -d -m 755 /opt/docker/apps/cms
-cp deploy/cms/{docker-compose.yml,preview-nginx.conf,resolv-clean.conf,backup.sh} /opt/docker/apps/cms/
+cp deploy/cms/{docker-compose.yml,preview-nginx.conf,resolv-clean.conf,hosts,backup.sh} /opt/docker/apps/cms/
+# hosts: eigene /etc/hosts, weil Dockers generierte Datei auf docker01 (Default-ACL auf data-root) für uid 1000 unlesbar ist
 install -m 600 deploy/cms/env.example /opt/docker/apps/cms/.env   # dann Werte setzen: openssl rand -hex 32
 
 install -d -m 700 /opt/docker-data/cms/pgdata /opt/docker-data/cms/backup        # pgdata chownt der postgres-Entrypoint
