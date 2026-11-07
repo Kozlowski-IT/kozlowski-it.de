@@ -225,6 +225,19 @@
 - [ ] **Step 2:** → FAIL. **Step 3:** implementieren + Dokument schreiben. **Step 4:** → PASS; `npm test`, `cd cms && npm run test:int` grün; Gleichheitstest (`npm run equal`) weiter 0.
 - [ ] **Step 5:** Commit `feat(content): Inhaltsformat v1 dokumentiert + schemaVersion`.
 
+### Task 13: Kontaktdaten-Platzhalter (einmal im Global `site` pflegen)
+
+**Files:**
+- Create: `lib/placeholders.js`, `test/placeholders.test.mjs`
+- Modify: Renderer (`lib/richtext.js` bzw. Block-Partials/Filter), Seeds in `cms/src/seed/pages/*.json` (Telefon, E-Mail, Adresse, Buchungs-URL → Platzhalter), `docs/content-format-v1.md` falls schon vorhanden
+
+**Interfaces:**
+- Produces: Platzhalter-Syntax `{{site.<schlüssel>}}` in Text- und Rich-Text-Feldern (auch in Link-Zielen, z. B. `tel:`/`mailto:`/Buchungs-URL); `resolvePlaceholders(text, site, { context: 'text'|'html'|'href' }): string` — nur Schlüssel aus `site`, Wert wird kontextgerecht escaped, aufgelöste hrefs laufen weiter durch `safeHref`; unbekannter Schlüssel → Build-Fehler mit Seite/Feld.
+
+- [ ] **Step 1:** Tests: `{{site.telDisplay}}` im Text → Wert escaped; in href → `safeHref`-geprüft; `{{site.gibtsnicht}}` → Build-Fehler; Wert mit `<script>` bleibt escaped; Änderung im Fixture-`site.json` ändert alle Stellen.
+- [ ] **Step 2:** → FAIL. **Step 3:** implementieren, alle Seeds auf Platzhalter umstellen (grep nach Telefon, E-Mail, Adresse, Buchungs-URL in `cms/src/seed/pages/`), danke-Seite wieder an `site` koppeln. **Step 4:** → PASS; `cd cms && npm run seed -- --force && npm run export`, Root `rm -rf _site && npm run build && npm run equal` → 0; `npm test`, `cd cms && npm run test:int` grün.
+- [ ] **Step 5:** Commit `feat(content): Kontaktdaten-Platzhalter aus Global site`.
+
 ---
 
 **Danach:** Plan 2 (Infra + Umschaltung live) und Plan 3 (KI-Knopf `claude-sonnet-5-5` + Bausteine `caseStudy`, `stats`, `logos`, `testimonials`) werden auf Basis des dann vorhandenen Codes geschrieben.
