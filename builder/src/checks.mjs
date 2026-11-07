@@ -68,3 +68,50 @@ export function injectNoindexDir(dir) {
   }
   return n;
 }
+
+// ---------------------------------------------------------------- Vorschau-Reload
+//
+// Nur die Vorschau: jede Seite bekommt <script src="/__reload.js" data-build="<id>" defer>.
+// Das Skript fragt alle 1,5 s /__build.txt ab (cache: no-store) und lädt neu, sobald dort eine
+// andere Build-ID steht. Externe Datei vom selben Ursprung → passt zu script-src/connect-src 'self'.
+// Die Live-Ausgabe (Publish) bekommt das nie.
+export const RELOAD_SCRIPT = "__reload.js";
+export const BUILD_ID_FILE = "__build.txt";
+export const RELOAD_JS = `(function () {
+  var s = document.currentScript, mine = s && s.getAttribute("data-build");
+  if (!mine || !window.fetch) return;
+  setInterval(function () {
+    fetch("/${BUILD_ID_FILE}", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (id) { id = id.trim(); if (id && id !== mine) location.reload(); })
+      .catch(function () {});
+  }, 1500);
+})();
+`;
+
+const RELOAD_TAG = /<script\b[^>]*\bsrc="\/__reload\.js"[^>]*><\/script>/gi;
+
+/** Reload-Tag (mit Build-ID) vor </head> setzen; vorhandene ersetzen. */
+export function injectReload(html, buildId) {
+  const tag = `<script src="/${RELOAD_SCRIPT}" data-build="${buildId}" defer></script>`;
+  html = html.replace(RELOAD_TAG, "");
+  const end = /<\/head>/i.exec(html);
+  if (!end) return html + tag;
+  return html.slice(0, end.index) + tag + html.slice(end.index);
+}
+
+/** Vorschau-Ordner: Tag in jede .html, __reload.js schreiben. __build.txt schreibt markBuild am Ende. */
+export function injectReloadDir(dir, buildId, root = dir) {
+  if (!/^[A-Za-z0-9_-]+$/.test(buildId)) throw new Error(`Build-ID ungültig: ${buildId}`);
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) injectReloadDir(full, buildId, root);
+    else if (entry.endsWith(".html")) writeFileSync(full, injectReload(readFileSync(full, "utf8"), buildId));
+  }
+  if (dir === root) writeFileSync(join(dir, RELOAD_SCRIPT), RELOAD_JS);
+}
+
+/** Build-ID veröffentlichen (zuletzt, wenn die Vorschau fertig ist) → offene Seiten laden neu. */
+export function markBuild(dir, buildId) {
+  writeFileSync(join(dir, BUILD_ID_FILE), `${buildId}\n`);
+}

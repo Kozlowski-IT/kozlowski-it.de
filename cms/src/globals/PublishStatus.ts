@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { staleStatus } from '../hooks/triggerBuild'
 
 /**
  * Ergebnis des letzten Veröffentlichens/Zurückschaltens (geschrieben vom Server, s. hooks/triggerBuild.ts).
@@ -13,6 +14,9 @@ export const PublishStatus: GlobalConfig = {
     update: () => false, // nur serverseitig (Local API mit overrideAccess)
   },
   admin: { hideAPIURL: true },
+  // hängendes `running` (älter als die Publish-Wartezeit) wird als failed angezeigt (nicht gespeichert).
+  // context.raw = gespeicherter Wert (Neustart-Abgleich).
+  hooks: { afterRead: [({ doc, context }) => (context?.raw ? doc : staleStatus(doc))] },
   fields: [
     {
       name: 'state',

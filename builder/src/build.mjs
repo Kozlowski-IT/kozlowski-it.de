@@ -3,7 +3,7 @@
 // Arbeitsordner (workDir):
 //   content-preview/   Export mit Entwürfen (nur Vorschau)
 //   content-publish/   Export nur veröffentlichter Stände
-//   preview/           Vorschau-Site (jede Seite noindex); wird pro Lauf neu gebaut
+//   preview/           Vorschau-Site (jede Seite noindex + Auto-Reload über __build.txt); pro Lauf neu gebaut
 //   releases/.staging-<name>/   Build in Arbeit; erst nach grünen Checks → releases/<name>/
 //   releases/<name>/   veröffentlichte Stände (die 10 neuesten + der aktuelle bleiben)
 //   releases/current → <name>   Live-Zeiger (Symlink, relatives Ziel)
@@ -26,7 +26,8 @@
 // (produktiv: (dir, o) => exportContent(payload, { outDir: dir, drafts: o.drafts })).
 import { mkdirSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { injectNoindexDir, runChecks } from "./checks.mjs";
+import { injectNoindexDir, injectReloadDir, markBuild, runChecks } from "./checks.mjs";
+import { randomBytes } from "node:crypto";
 import { runNode } from "./proc.mjs";
 import { cleanStaging, createStagingDir, promoteRelease, prune, switchCurrent } from "./releases.mjs";
 
@@ -136,9 +137,14 @@ export async function runBuild({
     if (stopped()) return { ok: false, reason: stopped(), phase: "build" };
     if (fail) return { ok: false, reason: fail };
     injectNoindexDir(output);
+    // Auto-Reload der offenen Vorschau (nur hier, nie im Publish): Tag + Skript jetzt,
+    // __build.txt erst nach den Checks → Seiten laden erst neu, wenn die Vorschau fertig ist.
+    const buildId = `${Date.now().toString(36)}-${randomBytes(4).toString("hex")}`;
+    injectReloadDir(output, buildId);
     const warnings = await checksFn(output, exported, { siteRoot, timeoutMs: left(), signal });
     if (stopped()) return { ok: false, reason: stopped(), phase: "checks" };
-    return { ok: true, warnings };
+    markBuild(output, buildId);
+    return { ok: true, warnings, buildId };
   }
 
   // Publish: missing vor dem Build abfangen (spart den Build, Grund ist eindeutig).

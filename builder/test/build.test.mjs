@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import { existsSync, mkdirSync, readFileSync, readdirSync, readlinkSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { runBuild } from "../src/build.mjs";
+import { BUILD_ID_FILE, RELOAD_JS, RELOAD_SCRIPT, injectReload, injectReloadDir } from "../src/checks.mjs";
 import { listReleases, prune, rollback } from "../src/releases.mjs";
 import { SITE_ROOT, fakeExport, tempWorkDir } from "./helpers.mjs";
 
@@ -160,6 +161,37 @@ test("(g) Preview schreibt nur nach preview/, jede Seite hat noindex, Drafts-Exp
   assert.match(readFileSync(join(workDir, "preview/index.html"), "utf8"), /<meta name="robots" content="noindex">/);
 });
 
+test("Vorschau-Reload: jede Vorschau-Seite hat das Skript mit Build-ID, ID wechselt pro Lauf, Publish bleibt frei", async (t) => {
+  const workDir = tempWorkDir(t);
+  const exportFn = fakeExport();
+  const r1 = await runBuild({ mode: "preview", siteRoot: SITE_ROOT, workDir, exportFn });
+  assert.equal(r1.ok, true, r1.reason);
+  assert.deepEqual(r1.warnings, [], "Reload-Skript bricht keine Prüfung (check-links/parity)");
+  const id1 = readFileSync(join(workDir, "preview", BUILD_ID_FILE), "utf8").trim();
+  assert.equal(id1, r1.buildId);
+  assert.equal(readFileSync(join(workDir, "preview", RELOAD_SCRIPT), "utf8"), RELOAD_JS);
+  for (const f of walkHtml(join(workDir, "preview"))) {
+    const tags = readFileSync(f, "utf8").match(/<script[^>]*__reload\.js[^>]*><\/script>/g) ?? [];
+    assert.deepEqual(tags, [`<script src="/__reload.js" data-build="${id1}" defer></script>`], f);
+  }
+  const r2 = await runBuild({ mode: "preview", siteRoot: SITE_ROOT, workDir, exportFn });
+  const id2 = readFileSync(join(workDir, "preview", BUILD_ID_FILE), "utf8").trim();
+  assert.notEqual(id2, id1);
+  assert.match(readFileSync(join(workDir, "preview/index.html"), "utf8"), new RegExp(`data-build="${id2}"`));
+  const pub = await publish(workDir, exportFn);
+  assert.equal(pub.ok, true, pub.reason);
+  const rel = join(workDir, "releases", pub.release);
+  assert.ok(!existsSync(join(rel, RELOAD_SCRIPT)) && !existsSync(join(rel, BUILD_ID_FILE)));
+  for (const f of walkHtml(rel)) assert.doesNotMatch(readFileSync(f, "utf8"), /__reload|data-build/, f);
+});
+
+test("injectReload: vor </head>, idempotent, ungültige Build-ID abgelehnt", () => {
+  const once = injectReload("<html><head><title>x</title></head><body></body></html>", "abc-1");
+  assert.equal(once, '<html><head><title>x</title><script src="/__reload.js" data-build="abc-1" defer></script></head><body></body></html>');
+  assert.equal(injectReload(once, "abc-2").match(/__reload/g).length, 1);
+  assert.throws(() => injectReloadDir("/nicht-da", '"><script>'), /ungültig/);
+});
+
 test("Release-Namen im selben Sekundentakt bleiben eindeutig", async (t) => {
   const workDir = tempWorkDir(t);
   const fixed = () => new Date(Date.UTC(2026, 10, 7, 12, 0, 0));
@@ -299,4 +331,32 @@ test("Staging: Rest eines abgestürzten Laufs wird beim nächsten Publish entfer
   const r = await publish(workDir, fakeExport());
   assert.equal(r.ok, true, r.reason);
   assert.deepEqual(readdirSync(join(workDir, "releases")).sort(), ["current", r.release].sort());
+});
+
+test("__reload.js: lädt neu, sobald __build.txt eine andere ID liefert (no-store, 1,5 s)", async () => {
+  const { runInNewContext } = await import("node:vm");
+  let tick, reloads = 0;
+  const fetched = [];
+  let served = { ok: true, text: "abc-1\n" };
+  const ctx = {
+    document: { currentScript: { getAttribute: (n) => (n === "data-build" ? "abc-1" : null) } },
+    window: { fetch: true },
+    fetch: (url, opts) => {
+      fetched.push([url, opts.cache]);
+      return Promise.resolve({ ok: served.ok, text: () => Promise.resolve(served.text) });
+    },
+    setInterval: (fn, ms) => { tick = fn; assert.equal(ms, 1500); },
+    location: { reload: () => reloads++ },
+  };
+  runInNewContext(RELOAD_JS, ctx);
+  const step = async () => { tick(); await new Promise((r) => setTimeout(r, 5)); };
+  await step();
+  assert.equal(reloads, 0, "gleiche ID → kein Reload");
+  served = { ok: false, text: "" };
+  await step();
+  assert.equal(reloads, 0, "404 während des Builds → kein Reload");
+  served = { ok: true, text: "abc-2\n" };
+  await step();
+  assert.equal(reloads, 1);
+  assert.deepEqual(fetched[0], ["/__build.txt", "no-store"]);
 });

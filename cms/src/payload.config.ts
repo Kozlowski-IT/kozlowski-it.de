@@ -13,6 +13,7 @@ import { Chrome } from './globals/Chrome'
 import { PublishStatus } from './globals/PublishStatus'
 import { releasesEndpoint, rollbackEndpoint } from './endpoints/rollback'
 import { previewUrl } from './lib/previewUrl'
+import { initBuilder } from './hooks/triggerBuild'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -61,4 +62,6 @@ export default buildConfig({
   }),
   sharp,
   plugins: [],
+  // Builder-Hinweis + publishStatus nach Neustart abgleichen (blockiert den Start nicht)
+  onInit: (payload) => initBuilder(payload),
 })

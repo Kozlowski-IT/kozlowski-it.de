@@ -50,8 +50,32 @@ test("gitSnapshot: kopiert *.json nach content-snapshot/, Commit mit Release, Pu
   assert.ok(!existsSync(join(clone, SNAPSHOT_DIR, "media", "bild.png")), "keine Binärdateien");
   assert.equal(git(clone, "log", "-1", "--format=%s"), "content: Veröffentlichung 2026-11-07_120000");
   // im Remote angekommen
-  assert.equal(git(bare, "log", "-1", "--format=%s", "main"), "content: Veröffentlichung 2026-11-07_120000");
-  assert.equal(git(bare, "show", `main:${SNAPSHOT_DIR}/site.json`), '{"name":"A"}');
+  assert.equal(git(bare, "log", "-1", "--format=%s", "content-snapshot"), "content: Veröffentlichung 2026-11-07_120000");
+  assert.equal(git(bare, "show", `content-snapshot:${SNAPSHOT_DIR}/site.json`), '{"name":"A"}');
+  // eigener Branch: main bleibt unberührt, der Snapshot-Branch enthält nur content-snapshot/
+  assert.equal(git(bare, "log", "-1", "--format=%s", "main"), "init");
+  assert.equal(git(bare, "ls-tree", "--name-only", "content-snapshot"), SNAPSHOT_DIR);
+});
+
+test("gitSnapshot: neuer Commit auf main im Remote dazwischen → Snapshot-Push klappt weiter", T, async (t) => {
+  const { base, bare, clone } = repos(t);
+  assert.deepEqual(await gitSnapshot(clone, contentDir(t, "A"), "2026-11-07_120000"), { ok: true });
+  // jemand pusht Code auf main
+  const dev = join(base, "dev");
+  git(base, "clone", "-q", "-b", "main", bare, dev);
+  writeFileSync(join(dev, "code.txt"), "neu\n");
+  git(dev, "add", "code.txt");
+  git(dev, "-c", "user.name=Dev", "-c", "user.email=dev@example.invalid", "commit", "-q", "-m", "code");
+  git(dev, "push", "-q", "origin", "main");
+  assert.deepEqual(await gitSnapshot(clone, contentDir(t, "B"), "2026-11-07_120100"), { ok: true });
+  assert.equal(git(bare, "log", "-1", "--format=%s", "main"), "code");
+  assert.equal(git(bare, "rev-list", "--count", "content-snapshot"), "2");
+  assert.equal(git(bare, "show", `content-snapshot:${SNAPSHOT_DIR}/site.json`), '{"name":"B"}');
+  // frischer Klon (z. B. neuer Container) setzt auf dem vorhandenen Remote-Branch auf
+  const fresh = join(base, "fresh");
+  git(base, "clone", "-q", bare, fresh);
+  assert.deepEqual(await gitSnapshot(fresh, contentDir(t, "C"), "2026-11-07_120200"), { ok: true });
+  assert.equal(git(bare, "rev-list", "--count", "content-snapshot"), "3");
 });
 
 test("gitSnapshot: entfernte Datei verschwindet, unveränderter Stand → kein leerer Commit", T, async (t) => {

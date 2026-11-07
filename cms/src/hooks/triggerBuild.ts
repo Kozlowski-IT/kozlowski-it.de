@@ -56,6 +56,8 @@ export type PublishStatusData = {
 export class BuilderError extends Error {}
 
 const configured = () => !!process.env.BUILDER_URL && !!process.env.BUILDER_TOKEN
+/** Wartezeit für /publish und /rollback (beide laufen durch die Builder-Warteschlange) */
+export const publishTimeoutMs = () => Number(process.env.BUILDER_PUBLISH_TIMEOUT_MS) || PUBLISH_TIMEOUT_MS
 const clip = (s: string) => (s.length > MAX_REASON ? `${s.slice(0, MAX_REASON)} …` : s)
 
 /**
@@ -117,7 +119,7 @@ export async function writeStatus(payload: Payload, data: Partial<PublishStatusD
 /** Publish ausführen und das Ergebnis in publishStatus schreiben. Wirft nie. */
 export async function publishNow(payload: Payload): Promise<PublishStatusData> {
   await writeStatus(payload, { state: 'running', action: 'publish', at: new Date().toISOString() })
-  const timeoutMs = Number(process.env.BUILDER_PUBLISH_TIMEOUT_MS) || PUBLISH_TIMEOUT_MS
+  const timeoutMs = publishTimeoutMs()
   let result: PublishStatusData
   try {
     const { status, body } = await callBuilder('/publish', { timeoutMs })
@@ -180,7 +182,7 @@ export async function listReleases(): Promise<{ status: number; body: unknown }>
 export async function rollbackTo(payload: Payload, release: string): Promise<{ status: number; body: unknown }> {
   let out: { status: number; body: unknown }
   try {
-    const { status, body } = await callBuilder('/rollback', { body: { release }, timeoutMs: PUBLISH_TIMEOUT_MS })
+    const { status, body } = await callBuilder('/rollback', { body: { release }, timeoutMs: publishTimeoutMs() })
     if (status === 200 && body?.ok === true) {
       await writeStatus(payload, {
         state: 'live', action: 'rollback', at: new Date().toISOString(), release, reason: null, warning: null,
@@ -196,6 +198,63 @@ export async function rollbackTo(payload: Payload, release: string): Promise<{ s
   }
   payload.logger.error(`[builder] Zurückschalten auf ${release} fehlgeschlagen: ${(out.body as any).reason}`)
   return out
+}
+
+// ------------------------------------------------------------------ Start / Neustart
+
+export const RESTART_WARNING = 'Ergebnis nach Neustart übernommen'
+export const RESTART_REASON = 'Veröffentlichung durch Neustart unterbrochen — bitte erneut veröffentlichen'
+
+/**
+ * onInit: Hinweis, wenn der Builder nicht konfiguriert ist (einmal), und publishStatus
+ * aufräumen. Steht dort noch `running`, ist der Payload-Prozess während eines Publish
+ * neu gestartet: Die Antwort des Builders ist verloren (Aufträge leben nur im Speicher).
+ * Dann /releases fragen: anderer `current` als der gespeicherte Live-Release → der Publish
+ * ist durchgelaufen (live + Warnung); sonst failed mit Bitte um erneutes Veröffentlichen.
+ *
+ * Restfenster (bewusst nicht abgedeckt): Neustart zwischen Commit und writeStatus('running')
+ * bzw. ein Auftrag, der noch auf den Commit wartet — dann bleibt der Status beim vorigen
+ * Ergebnis stehen und der Auftrag ist weg (Inhalt gespeichert, aber nicht live), bis zum
+ * nächsten Veröffentlichen. Ebenso kann ein Publish, den der Builder nach dem Neustart noch
+ * zu Ende bringt, hier schon als failed gelten (der nächste Publish korrigiert das).
+ */
+export function initBuilder(payload: Payload): void {
+  if (!configured()) {
+    payload.logger.warn('[builder] BUILDER_URL/BUILDER_TOKEN fehlen — Vorschau und Veröffentlichen sind aus')
+    return
+  }
+  track(reconcilePublishStatus(payload)) // nicht blockierend; buildsSettled() wartet darauf
+}
+
+export async function reconcilePublishStatus(payload: Payload): Promise<void> {
+  try {
+    const st: any = await payload.findGlobal({ slug: 'publishStatus', context: { raw: true } })
+    if (st?.state !== 'running') return
+    const at = new Date().toISOString()
+    const { status, body } = await listReleases()
+    const current = status === 200 ? (body as any).current : null
+    if (status !== 200) {
+      await writeStatus(payload, {
+        state: 'failed', action: 'publish', at,
+        reason: `${RESTART_REASON} (Builder-Stand unbekannt: ${(body as any)?.reason ?? `HTTP ${status}`})`, warning: null,
+      })
+    } else if (current && current !== st.release) {
+      await writeStatus(payload, { state: 'live', action: 'publish', at, release: current, reason: null, warning: RESTART_WARNING })
+    } else {
+      await writeStatus(payload, { state: 'failed', action: 'publish', at, reason: RESTART_REASON, warning: null })
+    }
+    payload.logger.warn(`[builder] publishStatus nach Neustart: ${current && current !== st.release ? `live ${current}` : 'failed'}`)
+  } catch (err: any) {
+    payload.logger.error(`[builder] publishStatus-Abgleich fehlgeschlagen: ${err?.message ?? err}`)
+  }
+}
+
+/** Anzeige: `running` älter als die Publish-Wartezeit (+1 min) gilt als hängend. */
+export const STALE_REASON = 'Veröffentlichung hängt (keine Antwort mehr) — vermutlich unterbrochen, bitte erneut veröffentlichen'
+export function staleStatus(doc: any, now = Date.now()): any {
+  if (doc?.state !== 'running' || !doc.at) return doc
+  if (now - new Date(doc.at).getTime() <= publishTimeoutMs() + 60_000) return doc
+  return { ...doc, state: 'failed', reason: STALE_REASON }
 }
 
 // ------------------------------------------------------------------ nach dem Commit

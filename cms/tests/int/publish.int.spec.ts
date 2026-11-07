@@ -6,7 +6,7 @@ import { commitTransaction, createLocalReq, getPayload, initTransaction, killTra
 import config from '@/payload.config'
 import { describe, it, beforeAll, beforeEach, afterAll, expect, vi } from 'vitest'
 import { seedGlobals } from '@/seed/seedGlobals'
-import { buildsSettled } from '@/hooks/triggerBuild'
+import { buildsSettled, RESTART_REASON, RESTART_WARNING, STALE_REASON, writeStatus } from '@/hooks/triggerBuild'
 import { previewUrl } from '@/lib/previewUrl'
 
 type Call = { method: string; path: string; auth: string | undefined; body: any; seen?: any }
@@ -353,6 +353,77 @@ describe('Payload ↔ Builder', () => {
       expect(after.state).toBe(before.state)
       expect(after.release).toBe(before.release)
     })
+  })
+
+  describe('Neustart / hängendes running', () => {
+    const OLD = '2026-11-06_090000'
+    const running = (release: string, at = new Date().toISOString()) =>
+      writeStatus(payload, { state: 'running', action: 'publish', at, release, reason: null, warning: null })
+    const onInit = () => (payload.config.onInit as any)(payload)
+
+    it('running + Builder hat neuen current → live mit diesem Release + Warnung (über config.onInit)', async () => {
+      await running(OLD)
+      calls = []
+      await onInit()
+      await buildsSettled()
+      expect(paths()).toEqual(['GET /releases'])
+      expect(await status()).toMatchObject({ state: 'live', release: RELEASE, warning: RESTART_WARNING })
+    })
+
+    it('running + current unverändert → failed „durch Neustart unterbrochen“, release bleibt', async () => {
+      await running(RELEASE)
+      await onInit()
+      await buildsSettled()
+      expect(await status()).toMatchObject({ state: 'failed', release: RELEASE, reason: RESTART_REASON })
+    })
+
+    it('running + Builder nicht erreichbar → failed, Grund nennt Neustart', async () => {
+      await running(RELEASE)
+      process.env.BUILDER_URL = 'http://127.0.0.1:9'
+      await onInit()
+      await buildsSettled()
+      const s = await status()
+      expect(s.state).toBe('failed')
+      expect(s.reason).toContain(RESTART_REASON)
+    })
+
+    it('nicht running → kein Builder-Aufruf, nichts geändert', async () => {
+      await writeStatus(payload, { state: 'live', action: 'publish', at: new Date().toISOString(), release: RELEASE })
+      calls = []
+      await onInit()
+      await buildsSettled()
+      expect(calls).toEqual([])
+      expect((await status()).state).toBe('live')
+    })
+
+    it('ohne BUILDER_URL/TOKEN → Warnung im Log beim Start', async () => {
+      const warns: string[] = []
+      const spy = vi.spyOn(payload.logger, 'warn').mockImplementation(((m: unknown) => { warns.push(String(m)) }) as any)
+      process.env.BUILDER_TOKEN = ''
+      await onInit()
+      spy.mockRestore()
+      expect(warns.join('\n')).toMatch(/BUILDER_URL\/BUILDER_TOKEN fehlen/)
+    })
+
+    it('Anzeige: running älter als die Publish-Wartezeit → failed (gespeichert bleibt running)', async () => {
+      await running(RELEASE, new Date(Date.now() - 10 * 60_000).toISOString())
+      expect(await status()).toMatchObject({ state: 'failed', reason: STALE_REASON })
+      expect(await payload.findGlobal({ slug: 'publishStatus', context: { raw: true } })).toMatchObject({ state: 'running' })
+      await running(RELEASE)
+      expect((await status()).state).toBe('running')
+    })
+  })
+
+  it('Rollback beachtet BUILDER_PUBLISH_TIMEOUT_MS', async () => {
+    process.env.BUILDER_PUBLISH_TIMEOUT_MS = '300'
+    reply = (p) => (p === '/rollback' ? { status: 200, body: { ok: true, release: '2026-11-06_090000' }, delayMs: 1500 } : defaults(p))
+    const e = (payload.config.endpoints as any[]).find((x) => x.path === '/site/rollback')
+    const res: Response = await e.handler({
+      payload, user: { id: 1 }, headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({ release: '2026-11-06_090000' }),
+    })
+    expect(res.status).toBe(502)
+    expect((await res.json()).reason).toMatch(/antwortet nicht/)
   })
 
   it('publishStatus: per REST/Local-API ohne overrideAccess nicht änderbar', async () => {

@@ -3,7 +3,8 @@
 // gitSnapshot(repoDir, contentDir, release) kopiert die JSON-Dateien des Publish-Exports
 // (contentDir/*.json und contentDir/media/index.json, keine Binärdateien) in einen NICHT
 // ignorierten Ordner `content-snapshot/` eines Repo-Klons (content/ ist im Arbeitsrepo
-// gitignored), committet „content: Veröffentlichung <release>“ und pusht nach origin.
+// gitignored), committet „content: Veröffentlichung <release>“ auf dem eigenen Branch
+// `content-snapshot` (nur der Builder schreibt ihn) und pusht HEAD:refs/heads/content-snapshot.
 //
 //   → { ok: true }                    Commit (falls Änderung) + Push ok
 //   → { ok: true, warning }           Push fehlgeschlagen — Publish bleibt gültig
@@ -16,6 +17,9 @@ import { isReleaseName } from "./releases.mjs";
 
 export const SNAPSHOT_DIR = "content-snapshot";
 export const GIT_TIMEOUT_MS = 30_000;
+export const PUSH_TIMEOUT_MS = 15_000;
+/** eigener Branch, den nur der Builder schreibt (nie der Code-Branch → kein non-fast-forward) */
+export const SNAPSHOT_BRANCH = "content-snapshot";
 
 function git(cwd, args, { timeoutMs = GIT_TIMEOUT_MS, ident = {} } = {}) {
   return new Promise((resolve) => {
@@ -48,6 +52,29 @@ async function identity(repoDir) {
 
 const firstLine = (r) => (r.code === "timeout" ? "Zeitüberschreitung" : r.stderr.split("\n").filter(Boolean).pop() || `Exit ${r.code}`);
 
+const hasRef = async (repoDir, ref) => (await git(repoDir, ["rev-parse", "-q", "--verify", ref])).code === 0;
+
+/**
+ * Arbeitskopie auf den Branch content-snapshot stellen: vorhanden → auschecken; nur im Remote
+ * → davon abzweigen; sonst als verwaister Branch (enthält nur content-snapshot/) anlegen.
+ * Der Klon gehört allein dem Builder.
+ */
+async function useSnapshotBranch(repoDir) {
+  const head = await git(repoDir, ["symbolic-ref", "-q", "--short", "HEAD"]);
+  if (head.stdout.trim() === SNAPSHOT_BRANCH) return { ok: true };
+  // Stand des Remote-Branches holen (offline → egal, dann lokal weiter)
+  await git(repoDir, ["fetch", "-q", "origin", `+refs/heads/${SNAPSHOT_BRANCH}:refs/remotes/origin/${SNAPSHOT_BRANCH}`], { timeoutMs: PUSH_TIMEOUT_MS });
+  let r;
+  if (await hasRef(repoDir, `refs/heads/${SNAPSHOT_BRANCH}`)) r = await git(repoDir, ["checkout", "-q", SNAPSHOT_BRANCH]);
+  else if (await hasRef(repoDir, `refs/remotes/origin/${SNAPSHOT_BRANCH}`)) {
+    r = await git(repoDir, ["checkout", "-q", "-b", SNAPSHOT_BRANCH, `origin/${SNAPSHOT_BRANCH}`]);
+  } else {
+    r = await git(repoDir, ["checkout", "-q", "--orphan", SNAPSHOT_BRANCH]);
+    if (r.code === 0) r = await git(repoDir, ["rm", "-r", "-q", "--cached", "--ignore-unmatch", "."]);
+  }
+  return r.code === 0 ? { ok: true } : { ok: false, reason: `Git-Abbild: Branch ${SNAPSHOT_BRANCH} nicht nutzbar: ${firstLine(r)}` };
+}
+
 /**
  * @param {string} repoDir     Klon des Site-Repos (mit origin)
  * @param {string} contentDir  Publish-Export (workDir/content-publish)
@@ -62,6 +89,9 @@ export async function gitSnapshot(repoDir, contentDir, release) {
     if (top.code !== 0 || realpathSync(top.stdout.trim()) !== realpathSync(repoDir)) {
       return { ok: false, reason: `Git-Abbild: ${repoDir} ist nicht die Wurzel eines Git-Repos` };
     }
+
+    const branch = await useSnapshotBranch(repoDir);
+    if (!branch.ok) return branch;
 
     // Ordner neu befüllen, damit gelöschte Dateien auch im Abbild verschwinden
     const target = join(repoDir, SNAPSHOT_DIR);
@@ -86,7 +116,7 @@ export async function gitSnapshot(repoDir, contentDir, release) {
       if (commit.code !== 0) return { ok: false, reason: `Git-Abbild: Commit fehlgeschlagen: ${firstLine(commit)}` };
     }
     // Push auch ohne neuen Commit: holt einen früher gescheiterten Push nach
-    const push = await git(repoDir, ["push", "-q", "origin", "HEAD"]);
+    const push = await git(repoDir, ["push", "-q", "origin", `HEAD:refs/heads/${SNAPSHOT_BRANCH}`], { timeoutMs: PUSH_TIMEOUT_MS });
     if (push.code !== 0) return { ok: true, warning: `Git-Abbild: Push fehlgeschlagen (${firstLine(push)}) — Commit liegt lokal` };
     return { ok: true };
   } catch (err) {
