@@ -1,0 +1,22 @@
+# oauth2-proxy für cms.kozlowski-it.de + cms-vorschau.kozlowski-it.de (CMS Plan 2, Task 7)
+provider = "oidc"
+provider_display_name = "Kozlowski IT"
+oidc_issuer_url = "https://id.kozlowski-it.de"
+client_id = "<SECRET>"
+client_secret = "<SECRET>"
+scope = "openid email profile urn:zitadel:iam:org:project:id:398612613891640322:aud"
+oidc_groups_claim = "groups"
+allowed_groups = ["cms-editor"]
+email_domains = ["*"]
+http_address = "127.0.0.1:4180"
+reverse_proxy = true
+set_xauthrequest = true
+cookie_name = "_cms_auth"
+cookie_secret = "<SECRET>"
+cookie_secure = true
+cookie_samesite = "lax"
+cookie_expire = "12h"
+whitelist_domains = ["cms.kozlowski-it.de", "cms-vorschau.kozlowski-it.de"]
+skip_provider_button = true
+code_challenge_method = "S256"
+trusted_proxy_ips = ["127.0.0.1/32"]

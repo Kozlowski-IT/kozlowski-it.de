@@ -425,6 +425,151 @@ if (lconf !== null) {
   check(withoutInternal404 !== lconf && !hasInternal404(withoutInternal404), "landing nginx: Mutation-Probe — Regel erkennt fehlenden internal-404-Block nicht");
 }
 
+// ------------------------------------------------------------------ edge02 (TLS + oauth2-proxy)
+// Die Live-Config von edge02 liegt im Repo (deploy/edge02) und wird hier statisch geprüft.
+// Jede Regel sitzt in edgeErrors(); unten laufen Mutation-Proben, die je eine Regel brechen müssen.
+const EDGE = "deploy/edge02";
+const EDGE_FILES = {
+  cms: `${EDGE}/cms.kozlowski-it.de.conf`,
+  preview: `${EDGE}/cms-vorschau.kozlowski-it.de.conf`,
+  cfg: `${EDGE}/oauth2-proxy-cms.cfg.example`,
+  unit: `${EDGE}/oauth2-proxy-cms.service`,
+  readme: `${EDGE}/README.md`,
+};
+const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+
+/** Inhalt aller `location <match> { … }`-Blöcke (Klammern gezählt, Kommentare entfernt). */
+function locationBlocks(conf, match) {
+  const src = conf.replace(/#[^\n]*/g, "");
+  const out = [];
+  const re = new RegExp(`location\\s+${reEsc(match)}\\s*\\{`, "g");
+  for (let m; (m = re.exec(src)); ) {
+    let depth = 1;
+    let i = re.lastIndex;
+    for (; i < src.length && depth; i++) depth += src[i] === "{" ? 1 : src[i] === "}" ? -1 : 0;
+    out.push(src.slice(re.lastIndex, i - 1));
+  }
+  return out;
+}
+
+/** 32+ Hex-Zeichen oder 32+ Base64(url)-Zeichen mit Ziffer, Groß- und Kleinbuchstabe = sieht nach Secret aus. */
+const secretLike = (src) =>
+  [...src.matchAll(/[A-Za-z0-9+/_-]{32,}={0,2}/g)]
+    .map((m) => m[0])
+    .filter((t) => /^[0-9a-f]{32,}$/i.test(t.replace(/=+$/, "")) || (/\d/.test(t) && /[A-Z]/.test(t) && /[a-z]/.test(t)));
+
+function edgeVhostErrors(label, conf, { upstream, cms }) {
+  const errs = [];
+  const e = (cond, msg) => {
+    if (!cond) errs.push(`edge02 ${label}: ${msg}`);
+    return !!cond;
+  };
+  const noComments = conf.replace(/#[^\n]*/g, "");
+  const mains = locationBlocks(conf, "/").filter((b) => /\bproxy_pass\b/.test(b));
+  if (!e(mains.length === 1, `genau ein proxierender location /-Block erwartet (ist: ${mains.length})`)) return errs;
+  const main = mains[0];
+  e(/^\s*auth_request\s+\/oauth2\/auth\s*;/m.test(main), "location / ohne auth_request /oauth2/auth;");
+  e(locationBlocks(conf, "= /oauth2/auth").some((b) => /^\s*internal\s*;/m.test(b)), "location = /oauth2/auth { internal; … } fehlt");
+  for (const [hdr, up] of [["X-Auth-Request-Email", "email"], ["X-Auth-Request-Groups", "groups"]]) {
+    const set = new RegExp(`^\\s*auth_request_set\\s+\\$(\\w+)\\s+\\$upstream_http_x_auth_request_${up}\\s*;`, "m").exec(main);
+    if (e(set, `location / ohne auth_request_set $… $upstream_http_x_auth_request_${up};`)) {
+      e(new RegExp(`^\\s*proxy_set_header\\s+${hdr}\\s+\\$${set[1]}\\s*;`, "m").test(main), `location / setzt ${hdr} nicht aus $${set[1]} (Client-Wert würde durchgereicht)`);
+    }
+  }
+  e(new RegExp(`^\\s*proxy_pass\\s+http://${reEsc(upstream)}\\s*;`, "m").test(main), `location / muss nach http://${upstream} proxieren`);
+  e(/^\s*add_header\s+X-Robots-Tag\s+"noindex, nofollow"\s+always\s*;/m.test(noComments), 'add_header X-Robots-Tag "noindex, nofollow" always; fehlt');
+  if (cms) {
+    e(/^\s*include\s+\/etc\/nginx\/snippets\/cms-edge-secret\.conf\s*;/m.test(main), "location / ohne include /etc/nginx/snippets/cms-edge-secret.conf;");
+    // CSRF: schreibende Methode + fremde (nicht leere) Origin → 403
+    e(/if\s*\(\$request_method\s*!~\s*\^\(GET\|HEAD\|OPTIONS\)\$\)\s*\{\s*set\s+\$cms_csrf\s+"w"\s*;\s*\}/.test(noComments), "CSRF: Methoden-Prüfung (!~ ^(GET|HEAD|OPTIONS)$ → w) fehlt");
+    e(/if\s*\(\$http_origin\s*!~\s*\^\(https:\/\/cms\\\.kozlowski-it\\\.de\)\?\$\)\s*\{\s*set\s+\$cms_csrf\s+"\$\{cms_csrf\}x"\s*;\s*\}/.test(noComments), "CSRF: Origin-Prüfung (!~ ^(https://cms\\.kozlowski-it\\.de)?$ → x) fehlt");
+    e(/if\s*\(\$cms_csrf\s*=\s*"wx"\)\s*\{\s*return\s+403\s*;\s*\}/.test(noComments), 'CSRF: if ($cms_csrf = "wx") { return 403; } fehlt');
+    e(locationBlocks(conf, "~ ^/api/users/(login|forgot-password|reset-password|first-register|unlock)$").some((b) => /^\s*return\s+403\s*;/m.test(b)), "Passwort-Routen /api/users/(login|forgot-password|reset-password|first-register|unlock) nicht mit 403 gesperrt");
+    e(locationBlocks(conf, "~ ^/admin/(login|forgot|reset)").some((b) => /^\s*return\s+403\s*;/m.test(b)), "Admin-Passwortseiten ^/admin/(login|forgot|reset) nicht mit 403 gesperrt");
+    e(locationBlocks(conf, "= /admin/create-first-user").some((b) => /^\s*return\s+403\s*;/m.test(b)), "location = /admin/create-first-user { return 403; } fehlt");
+    e(locationBlocks(conf, "= /admin/logout").some((b) => /^\s*return\s+302\s+\/oauth2\/sign_out\b/m.test(b)), "location = /admin/logout → return 302 /oauth2/sign_out… fehlt");
+  }
+  return errs;
+}
+
+function edgeErrors(src) {
+  const errs = [];
+  const e = (cond, msg) => {
+    if (!cond) errs.push(`edge02 ${msg}`);
+    return !!cond;
+  };
+  if (src.cms != null) errs.push(...edgeVhostErrors("cms", src.cms, { upstream: `${IPS.payload}:3000`, cms: true }));
+  if (src.preview != null) errs.push(...edgeVhostErrors("vorschau", src.preview, { upstream: `${IPS.preview}:80`, cms: false }));
+  if (src.cfg != null) {
+    const cfg = src.cfg.replace(/#[^\n]*/g, "");
+    const has = (re, msg) => e(re.test(cfg), `oauth2-proxy-cms.cfg.example: ${msg}`);
+    has(/^\s*cookie_samesite\s*=\s*"lax"\s*$/m, 'cookie_samesite = "lax" fehlt');
+    has(/^\s*cookie_secure\s*=\s*true\s*$/m, "cookie_secure = true fehlt");
+    has(/^\s*allowed_groups\s*=\s*\[\s*"cms-editor"\s*\]\s*$/m, 'allowed_groups = ["cms-editor"] fehlt');
+    has(/^\s*code_challenge_method\s*=\s*"S256"\s*$/m, 'code_challenge_method = "S256" fehlt');
+    has(/^\s*trusted_proxy_ips\s*=/m, "trusted_proxy_ips fehlt");
+    e(!/^\s*cookie_domain\s*=/m.test(cfg), "oauth2-proxy-cms.cfg.example: kein cookie_domain (Cookie nur für den eigenen Host)");
+  }
+  if (src.unit != null) {
+    e(/^ExecStart=\/usr\/local\/bin\/oauth2-proxy --config=\/etc\/oauth2-proxy\/cms\.cfg\s*$/m.test(src.unit), "oauth2-proxy-cms.service: ExecStart … --config=/etc/oauth2-proxy/cms.cfg fehlt");
+    e(/^User=oauth2proxy\s*$/m.test(src.unit) && /^NoNewPrivileges=true\s*$/m.test(src.unit), "oauth2-proxy-cms.service: User=oauth2proxy + NoNewPrivileges=true fehlen");
+  }
+  // keine Secrets in deploy/edge02: Platzhalter für *_secret/client_id, nichts Secret-Ähnliches
+  for (const [k, text] of Object.entries(src)) {
+    if (text == null) continue;
+    for (const [, key, val] of text.matchAll(/^\s*(client_secret|cookie_secret|client_id)\s*=\s*(.*?)\s*$/gm)) {
+      e(/^"<[^<>]+>"$/.test(val), `${k}: ${key} muss Platzhalter "<…>" sein, kein echter Wert`);
+    }
+    const hits = secretLike(text);
+    e(hits.length === 0, `${k}: Secret-ähnliche Zeichenkette (${hits.map((h) => h.slice(0, 6) + "…").join(", ")})`);
+  }
+  return errs;
+}
+
+const edgeSrc = Object.fromEntries(Object.entries(EDGE_FILES).map(([k, f]) => [k, read(f)]));
+for (const msg of edgeErrors(edgeSrc)) fail(msg);
+
+// Mutation-Proben: jede bricht genau eine Regel; meldet edgeErrors() dann nichts, prüft die Regel nichts.
+if (Object.values(edgeSrc).every((v) => v !== null)) {
+  const M = (file, from, to) => ({ file, from, to });
+  const probes = {
+    "auth_request fehlt (cms)": M("cms", /^\s*auth_request \/oauth2\/auth;\n/m, ""),
+    "auth_request fehlt (vorschau)": M("preview", /^\s*auth_request \/oauth2\/auth;\n/m, ""),
+    "/oauth2/auth nicht internal": M("cms", /^\s*internal;\n/m, ""),
+    "Email-Header vom Client": M("cms", /X-Auth-Request-Email\s+\$cms_email/, "X-Auth-Request-Email $http_x_auth_request_email"),
+    "Groups-Header vom Client": M("preview", /X-Auth-Request-Groups\s+\$cms_groups/, "X-Auth-Request-Groups $http_x_auth_request_groups"),
+    "auth_request_set groups fehlt": M("cms", /^\s*auth_request_set \$cms_groups[^\n]*\n/m, ""),
+    "Edge-Secret-Include fehlt": M("cms", /^\s*include \/etc\/nginx\/snippets\/cms-edge-secret\.conf;\n/m, ""),
+    "Vorschau falsches Ziel": M("preview", /proxy_pass http:\/\/10\.30\.85\.3:80/, "proxy_pass http://10.30.85.2:3000"),
+    "CMS falsches Ziel": M("cms", /proxy_pass http:\/\/10\.30\.85\.2:3000/, "proxy_pass http://10.30.85.3:80"),
+    "CSRF-Origin-Prüfung fehlt": M("cms", /^\s*if \(\$http_origin[^\n]*\n/m, ""),
+    "CSRF-Methode fehlt": M("cms", /^\s*if \(\$request_method[^\n]*\n/m, ""),
+    "CSRF-403 fehlt": M("cms", /return 403; \}\n(\s*# Abmelden)/, "return 200; }\n$1"),
+    "Passwort-Routen offen": M("cms", /(location ~ \^\/api\/users\/[^{]*\{\s*)return 403;/, "$1return 200;"),
+    "Admin-Login offen": M("cms", /(location ~ \^\/admin\/\(login[^{]*\{\s*)return 403;/, "$1return 200;"),
+    "create-first-user offen": M("cms", /(location = \/admin\/create-first-user \{\s*)return 403;/, "$1return 200;"),
+    "logout ohne sign_out": M("cms", /\/oauth2\/sign_out/, "/oauth2/sign_in"),
+    "X-Robots-Tag fehlt (vorschau)": M("preview", /^\s*add_header X-Robots-Tag[^\n]*\n/m, ""),
+    "X-Robots-Tag fehlt (cms)": M("cms", /^\s*add_header X-Robots-Tag[^\n]*\n/m, ""),
+    "Secret inline (hex)": M("cms", /include \/etc\/nginx\/snippets\/cms-edge-secret\.conf;/, `proxy_set_header X-Edge-Secret "${"ab12".repeat(16)}";`),
+    "Secret in README (base64)": M("readme", /$/, "\nqZ3vT9xK2mL8pR4sW7yB1nC6dF0gH5jA\n"),
+    "client_secret echt": M("cfg", /client_secret = "<SECRET>"/, 'client_secret = "abc"'),
+    "cookie_secret echt": M("cfg", /cookie_secret = "<SECRET>"/, 'cookie_secret = "short"'),
+    "cookie_samesite none": M("cfg", /cookie_samesite = "lax"/, 'cookie_samesite = "none"'),
+    "cookie_secure false": M("cfg", /cookie_secure = true/, "cookie_secure = false"),
+    "allowed_groups weg": M("cfg", /^allowed_groups[^\n]*\n/m, ""),
+    "PKCE weg": M("cfg", /^code_challenge_method[^\n]*\n/m, ""),
+    "trusted_proxy_ips weg": M("cfg", /^trusted_proxy_ips[^\n]*\n/m, ""),
+    "cookie_domain gesetzt": M("cfg", /$/, '\ncookie_domain = ".kozlowski-it.de"\n'),
+    "Unit ohne Config": M("unit", /--config=\/etc\/oauth2-proxy\/cms\.cfg/, ""),
+  };
+  for (const [name, { file, from, to }] of Object.entries(probes)) {
+    const mutated = edgeSrc[file].replace(from, to);
+    if (!check(mutated !== edgeSrc[file], `edge02: Mutation-Probe „${name}“ greift nicht (Vorlage geändert?)`)) continue;
+    check(edgeErrors({ ...edgeSrc, [file]: mutated }).length > 0, `edge02: Mutation-Probe „${name}“ — Regel erkennt den Fehler nicht`);
+  }
+}
+
 // ------------------------------------------------------------------ docker compose config
 let dockerNote = "";
 let hasDocker = false;

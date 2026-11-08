@@ -1,0 +1,22 @@
+[Unit]
+Description=oauth2-proxy for cms.kozlowski-it.de (Zitadel OIDC, role cms-editor)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=oauth2proxy
+Group=oauth2proxy
+ExecStart=/usr/local/bin/oauth2-proxy --config=/etc/oauth2-proxy/cms.cfg
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target
