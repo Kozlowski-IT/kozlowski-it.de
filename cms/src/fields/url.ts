@@ -32,6 +32,27 @@ export function isSafeHrefWithPlaceholders(v: unknown): boolean {
   return isSafeHref(probe)
 }
 
+/**
+ * Payloads Link-Feld (richtext-lexical, beforeChange am Feld `url`) kodiert jeden Wert, den es nicht als
+ * URL erkennt, mit encodeURIComponent — und zwar bei JEDEM Speichern eines im Admin angelegten
+ * Link-Knotens erneut: `{{site.telHref}}` → `%7B%7B…` → `%257B%257B…` → … (Produktion 2026-11-08).
+ * Hier wird genau die Platzhalter-Form in jeder Kodierungstiefe auf `{{site.<schlüssel>}}` zurückgeführt;
+ * alle anderen Zeichen bleiben unverändert. Ob der Schlüssel existiert, prüft der Website-Build.
+ */
+const ENC = (hex: string) => `%(?:25)*${hex}`
+const ENCODED_PLACEHOLDER = new RegExp(
+  `(?:${ENC('7B')}){2}((?:${ENC('20')})*site\\.[A-Za-z][A-Za-z0-9_]*(?:${ENC('20')})*)(?:${ENC('7D')}){2}`,
+  'gi',
+)
+export function normalizeLinkPlaceholders(url: string): string {
+  return url.replace(ENCODED_PLACEHOLDER, (_m, inner: string) => `{{${inner.replace(/%(?:25)*20/gi, ' ')}}}`)
+}
+
+/** Enthält das (normalisierte) Link-Ziel einen syntaktisch gültigen Platzhalter und besteht die Vorprüfung? */
+export function isPlaceholderHref(v: unknown): v is string {
+  return typeof v === 'string' && /\{\{\s*site\.[A-Za-z][A-Za-z0-9_]*\s*\}\}/.test(v) && isSafeHrefWithPlaceholders(v)
+}
+
 export const HREF_MESSAGE = 'Nur /pfad, #anker, http(s)://…, mailto: oder tel: erlaubt'
 
 /** validate für alle Text-Felder mit Link-Ziel: Payload-Standardprüfung (required …) + Allow-List. */

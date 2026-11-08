@@ -79,4 +79,21 @@ describe('Rich-Text-Teilmenge im Editor', () => {
     const tags = new Set([...html.matchAll(/<([a-z0-9]+)[\s>/]/g)].map((m) => m[1]))
     expect([...tags].sort()).toEqual([...ALLOWED_TAGS].sort())
   })
+
+  it('Export repariert mehrfach kodierte Platzhalter-Links aus der DB (%7B, %257B, %25257B …), echte URLs bleiben', () => {
+    // Bestandsdaten: Payloads Link-Hook hat je Speichern einmal kodiert (Produktion 2026-11-08: %257B…)
+    const a = (url: string) =>
+      block('link', [text('x')], { version: 3, id: 'n1', fields: { linkType: 'custom', url } })
+    const doc = { root: block('root', [block('paragraph', [
+      a('%7B%7Bsite.telHref%7D%7D'),
+      a('%257B%257Bsite.telHref%257D%257D'),
+      a('%25257B%25257Bsite.booking%25257D%25257D'),
+      a('https://x.de/%7B%7Bfoo%7D%7D'),
+      a('https://x.de/a%2520b'),
+    ], { textFormat: 0, textStyle: '' })]) }
+    expect(lexicalToHtml(doc)).toBe(
+      '<p><a href="{{site.telHref}}">x</a><a href="{{site.telHref}}">x</a><a href="{{site.booking}}">x</a>' +
+        '<a href="https://x.de/%7B%7Bfoo%7D%7D">x</a><a href="https://x.de/a%2520b">x</a></p>',
+    )
+  })
 })

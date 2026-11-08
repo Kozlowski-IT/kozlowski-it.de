@@ -164,6 +164,51 @@ describe('exportContent', () => {
     )
   })
 
+  it('Platzhalter-Link überlebt mehrfaches Speichern im Admin (keine Doppel-Kodierung %257B…)', async () => {
+    // Produktionsfehler 2026-11-08: Impressum im Admin bearbeitet + Autosave → im Entwurf stand
+    // "%257B%257Bsite.telHref%257D%257D" (Payloads Link-Hook kodiert bei JEDEM Speichern erneut), der
+    // Website-Build brach ab. Nachgestellt wie der Admin: Dokument lesen, unverändert zurückschicken.
+    // Im Admin angelegte Link-Knoten tragen eine id (nur dann laufen Payloads Feld-Hooks des Links)
+    const body = rt(
+      text('Telefon '),
+      { ...link('{{site.telDisplay}}', { url: '{{site.telHref}}' }), id: '6aee8ff5aeda5d77dc098b95' },
+      text(' '),
+      { ...link('unbekannt', { url: '{{site.gibtsNicht}}' }), id: '6aee8ff5aeda5d77dc098b96' },
+      // Bestandsdaten (schon zweifach kodiert) werden beim nächsten Speichern repariert
+      { ...link('b', { url: '%257B%257Bsite.booking%257D%257D' }), id: '6aee8ff5aeda5d77dc098b97' },
+      { ...link('extern', { url: 'https://x.de/a?b=1' }), id: '6aee8ff5aeda5d77dc098b98' },
+    )
+    const de = await mkPage('k7', {
+      layout: [{ blockType: 'text', sectionKey: 'imp', variant: 'legal', body }],
+    })
+    const urls = (doc: any) => {
+      const found: string[] = []
+      const walk = (n: any) => (n?.fields?.url !== undefined && found.push(n.fields.url), (n?.children ?? []).forEach(walk))
+      walk(doc.layout[0].body.root)
+      return found
+    }
+    for (let i = 0; i < 3; i++) {
+      const cur = await payload.findByID({ collection: 'pages', id: de.id, locale: 'de', draft: true, depth: 0 })
+      const saved = await payload.update({
+        collection: 'pages', id: de.id, locale: 'de', draft: true, autosave: i > 0,
+        data: { layout: cur.layout } as any,
+      })
+      expect(urls(saved), `Speichern ${i + 1}`).toEqual(['{{site.telHref}}', '{{site.gibtsNicht}}', '{{site.booking}}', 'https://x.de/a?b=1'])
+    }
+    const { pages } = await run(true)
+    const html = pages[0].locales.de.blocks[0].body
+    expect(html).toContain('<a href="{{site.telHref}}">{{site.telDisplay}}</a>')
+    // Website-Build: Platzhalter auflösen + Teilmenge prüfen (lib/placeholders.js → lib/richtext.js)
+    const { resolveLocale } = await import('../../../lib/placeholders.js')
+    const site = json(path.join(out, 'site.json')).site
+    const known = { ...pages[0].locales.de, blocks: [{ ...pages[0].locales.de.blocks[0], body: html.replace('<a href="{{site.gibtsNicht}}">unbekannt</a>', '') }] }
+    expect(resolveLocale(known, site, 'k7/de').blocks[0].body).toBe(
+      `<p>Telefon <a href="${site.telHref}">${site.telDisplay}</a> <a href="${site.booking}">b</a><a href="https://x.de/a?b=1">extern</a></p>`,
+    )
+    // unbekannter Schlüssel bricht den Build weiterhin ab
+    expect(() => resolveLocale(pages[0].locales.de, site, 'k7/de')).toThrow(/unbekannter Platzhalter \{\{site\.gibtsNicht\}\}/)
+  })
+
   it('Blockform: ohne id/blockName, mit blockType/sectionKey/variant; Seitenfelder', async () => {
     await mkPage('k6', { frame: 'home', noindex: true, minimalHeader: true, structuredData: 'home', ogTitle: 'OG', description: 'D' })
     const { pages } = await run(false)
