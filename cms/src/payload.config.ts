@@ -40,6 +40,8 @@ export default buildConfig({
       url: ({ data, locale }) => previewUrl(data, locale?.code),
     },
   },
+  // GraphQL wird nirgends genutzt (Admin + Export laufen über REST/Local API) → aus; Routen gelöscht
+  graphQL: { disable: true },
   // Release-Liste/Zurückschalten im Admin (Builder wird nur serverseitig gerufen)
   endpoints: [releasesEndpoint, rollbackEndpoint],
   collections: [Users, Media, Pages],

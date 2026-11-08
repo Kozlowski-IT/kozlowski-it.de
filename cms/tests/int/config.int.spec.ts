@@ -2,6 +2,11 @@ import { getPayload, type Payload } from 'payload'
 import config from '@/payload.config'
 
 import { describe, it, beforeAll, expect, vi } from 'vitest'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 let payload: Payload
 
@@ -37,6 +42,13 @@ describe('Payload-Grundgerüst', () => {
     } finally {
       await payload.delete({ collection: 'users', id: created.id })
     }
+  })
+
+  it('GraphQL ist aus (Config + keine GraphQL-Routen)', () => {
+    expect(payload.config.graphQL.disable).toBe(true)
+    const api = path.resolve(dirname, '../../src/app/(payload)/api')
+    expect(fs.existsSync(path.join(api, 'graphql'))).toBe(false)
+    expect(fs.existsSync(path.join(api, 'graphql-playground'))).toBe(false)
   })
 
   it('ohne PAYLOAD_PUBLIC_SERVER_URL: serverURL/csrf auf Payload-Default, cors leer', () => {
