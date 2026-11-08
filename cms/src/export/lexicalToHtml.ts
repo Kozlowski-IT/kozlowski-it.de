@@ -9,9 +9,13 @@ const escapeHTML = (s: string) =>
 type LinkNode = { fields?: { url?: string; linkType?: string; newTab?: boolean; nofollow?: boolean } }
 
 /**
- * rel/target nach Site-Konvention. Platzhalter-Ziele, die Payload in der DB (ggf. mehrfach) kodiert hat
- * (Bestandsdaten vor dem url-Hook in lexical/features.ts), kommen als `{{site.<schlüssel>}}` heraus.
- * Rel/target: newTab → target=_blank + noopener, nofollow → "noopener nofollow". */
+ * Link als `<a>` nach Site-Konvention.
+ *
+ * - rel/target: newTab → `target="_blank"` + `rel="noopener"`, nofollow → `rel="nofollow"`
+ *   (beides zusammen: `rel="noopener nofollow"`).
+ * - href: Platzhalter-Ziele, die Payload in der DB (ggf. mehrfach) kodiert hat (Bestandsdaten vor dem
+ *   url-Hook in lexical/features.ts), kommen als `{{site.<schlüssel>}}` heraus; danach sanitizeUrl + Escaping.
+ */
 function anchor(node: LinkNode, href: string, children: string, style: string): string {
   const rel = [node.fields?.newTab ? 'noopener' : '', node.fields?.nofollow ? 'nofollow' : ''].filter(Boolean)
   const attrs =
