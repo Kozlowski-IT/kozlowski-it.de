@@ -7,7 +7,7 @@
 // env.example als Env-Datei; ohne Docker wird das ausdrücklich als ÜBERSPRUNGEN gemeldet
 // (kein stilles Grün — die echte Compose-Validierung passiert auf docker01).
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
@@ -371,26 +371,37 @@ if (bk !== null) {
 const readme = read(`${CMS}/README.md`);
 if (readme !== null) check(/\/etc\/cron\.d\/cms-backup/.test(readme) && /^15 3 \* \* \* root /m.test(readme), "README: Cron-Zeile (/etc/cron.d/cms-backup, 15 3 * * * root …) fehlt");
 
-// Host-Git auf builder-beschreibbaren Repos (snapshot.git, repo): nur gehärtet — der builder (uid 1000 = Host-
-// Nutzer) kann config/hooks schreiben; Pager/fsmonitor/Hooks/textconv würden sonst auf dem Host laufen.
-// Ausgenommen: die Erstanlage (init/remote add auf frischen, leeren Repos).
-const GIT_HARDEN = ["--no-pager", "-c core.fsmonitor=false", "-c core.hooksPath=/dev/null", "-c core.pager=cat"];
-const unhardenedGitLines = (src) =>
-  src
-    .split("\n")
-    .filter((l) => /\bgit\b[^\n]*\/opt\/docker-data\/cms\/(snapshot\.git|repo)\b/.test(l) && !/\binit -q\b/.test(l))
-    .filter((l) => !GIT_HARDEN.every((f) => l.includes(f)) || (/\blog\b/.test(l) && !/--no-textconv/.test(l)));
-if (readme !== null) {
-  const bad = unhardenedGitLines(readme);
-  check(bad.length === 0, `README: Host-Git auf snapshot.git/repo ohne ${GIT_HARDEN.join(" ")} (--no-textconv bei log): ${bad.map((l) => l.trim()).join(" | ")}`);
-  check(/snapshot-log\.sh/.test(readme), "README: Hinweis auf deploy/cms/snapshot-log.sh fehlt");
-  // Mutation-Probe: ein ungehärtetes git log muss anschlagen
-  check(unhardenedGitLines("git -C /opt/docker-data/cms/snapshot.git log --oneline").length === 1, "README: Mutation-Probe — Regel erkennt ungehärtetes Host-git nicht");
+// Kein Git auf dem HOST gegen builder-beschreibbare Repos (snapshot.git, repo): deren config/hooks/attributes
+// schreibt der Container (uid 1000 = Host-Nutzer); Host-Git würde daraus Programme starten (pager, fsmonitor,
+// gpg, textconv, Hooks, include.path …) — per Flag nicht vollständig abschaltbar. Git nur im builder-Container.
+const HOST_REPO = String.raw`/opt/docker-data/cms/(?:snapshot\.git|repo)\b`;
+const HOST_GIT_RES = [
+  new RegExp(String.raw`\bgit\b[^\n]*?(?:-C|--git-dir=?|--work-tree=?)\s*["']?` + HOST_REPO),
+  new RegExp(String.raw`\bcd\s+["']?` + HOST_REPO + String.raw`[^\n]*?(?:&&|;)\s*(?:sudo\b[^\n]*?)?\bgit\b`),
+  new RegExp(String.raw`\bGIT_DIR=["']?` + HOST_REPO),
+];
+const hostGitLines = (src) => src.split("\n").filter((l) => HOST_GIT_RES.some((re) => re.test(l)));
+const hostGitFiles = [`${CMS}/README.md`, ...readdirSync(join(ROOT, CMS)).filter((f) => f.endsWith(".sh")).map((f) => `${CMS}/${f}`)];
+for (const f of hostGitFiles) {
+  const src = f === `${CMS}/README.md` ? readme : read(f);
+  if (src === null) continue;
+  const bad = hostGitLines(src);
+  check(bad.length === 0, `${f}: Git auf dem Host gegen snapshot.git/repo (nur im builder-Container erlaubt): ${bad.map((l) => l.trim()).join(" | ")}`);
 }
+// Mutation-Proben: jede Form muss anschlagen, die Container-Form nicht
+for (const probe of [
+  "git -C /opt/docker-data/cms/snapshot.git log --oneline",
+  "sudo -u '#1000' git -C /opt/docker-data/cms/repo init -q",
+  "git --no-pager -c core.pager=cat -C /opt/docker-data/cms/snapshot.git log",
+  "git --git-dir=/opt/docker-data/cms/snapshot.git log",
+  "cd /opt/docker-data/cms/repo && git status",
+  "GIT_DIR=/opt/docker-data/cms/snapshot.git git log",
+]) check(hostGitLines(probe).length === 1, `Host-Git-Regel: Mutation-Probe erkennt „${probe}“ nicht`);
+check(hostGitLines("docker compose exec -T builder git -C /srv/snapshot.git log").length === 0, "Host-Git-Regel: Container-Form fälschlich als Host-Git erkannt");
+if (readme !== null) check(/snapshot-log\.sh/.test(readme), "README: Hinweis auf snapshot-log.sh fehlt");
 const slog = read(`${CMS}/snapshot-log.sh`);
 if (slog !== null) {
-  const execLine = slog.split("\n").find((l) => /^exec git\b/.test(l)) ?? "";
-  check(GIT_HARDEN.every((f) => execLine.includes(f)) && /--no-ext-diff/.test(execLine) && /--no-textconv/.test(execLine), `snapshot-log.sh: exec git braucht ${GIT_HARDEN.join(" ")} --no-ext-diff --no-textconv`);
+  check(/^exec docker compose\b[^\n]*\\\n\s*exec -T builder git -C \/srv\/snapshot\.git log\b/m.test(slog), "snapshot-log.sh: muss git im builder-Container ausführen (docker compose … exec -T builder git -C /srv/snapshot.git log)");
 }
 
 // ------------------------------------------------------------------ Landing

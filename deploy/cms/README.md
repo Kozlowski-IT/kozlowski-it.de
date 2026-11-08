@@ -37,20 +37,25 @@ install -m 600 deploy/cms/env.example /opt/docker/apps/cms/.env   # dann Werte s
 
 install -d -m 700 /opt/docker-data/cms/pgdata /opt/docker-data/cms/backup        # pgdata chownt der postgres-Entrypoint
 install -d -m 755 -o 1000 -g 1000 /opt/docker-data/cms/{media,work,repo}
-# Git-Abbild: lokales Bare-Repo als origin (GitHub-Org verbietet Deploy-Keys; liegt im PBS-Backup-Set)
-install -d -o 1000 -g 1000 /opt/docker-data/cms/snapshot.git && sudo -u '#1000' git init -q --bare -b content-snapshot /opt/docker-data/cms/snapshot.git
-sudo -u '#1000' git -C /opt/docker-data/cms/repo init -q && sudo -u '#1000' git -C /opt/docker-data/cms/repo remote add origin /srv/snapshot.git
+install -d -m 755 -o 1000 -g 1000 /opt/docker-data/cms/snapshot.git   # Git-Abbild-Remote, s. u.
 ```
 
-**Git auf dem Host nur gehärtet** (`snapshot.git/` und `repo/`): Der builder (uid 1000 = Host-Nutzer) kann dort
-`config` und `hooks/` schreiben; ein normales `git log` als uid 1000 würde ein untergeschobenes `core.pager`,
-`core.fsmonitor`, einen `diff.*.textconv`-Treiber oder Hook auf dem Host ausführen. Deshalb jedes Host-Git-Kommando für diese beiden Repos so:
+**Kein Git auf dem Host gegen `snapshot.git/` oder `repo/`.** Die Config dort (`config`, `hooks/`, `info/attributes`)
+ist vom builder-Container beschreibbar (uid 1000 = Host-Nutzer); Git auf dem Host würde daraus Programme starten
+(Pager, fsmonitor, gpg, textconv, Hooks, include.path …) — das lässt sich per Flag nicht vollständig abschalten.
+Git für diese Repos läuft deshalb nur **im builder-Container** (gleiche Vertrauenszone wie der Schreiber).
+
+Git-Abbild anlegen (einmalig, lokales Bare-Repo als origin — GitHub-Org verbietet Deploy-Keys; liegt im PBS-Backup-Set),
+nach dem Image-Bau und mit fertiger `.env`, **bevor** der builder läuft (`run` nutzt dessen feste IP):
 
 ```sh
-git --no-pager -c core.fsmonitor=false -c core.hooksPath=/dev/null -c core.pager=cat -C /opt/docker-data/cms/snapshot.git log --no-ext-diff --no-textconv --oneline content-snapshot
+cd /opt/docker/apps/cms
+docker compose run --rm --no-deps builder git init -q --bare -b content-snapshot /srv/snapshot.git
+docker compose run --rm --no-deps builder sh -c 'git init -q /srv/repo && git -C /srv/repo remote add origin /srv/snapshot.git'
 ```
 
-Kurzform: `deploy/cms/snapshot-log.sh [git-log-Argumente …]` (macht genau das, Standard `--oneline -20 content-snapshot`).
+Verlauf ansehen (builder läuft): `./snapshot-log.sh [git-log-Argumente …]` im Stack-Ordner, d. h.
+`docker compose exec -T builder git -C /srv/snapshot.git log --oneline -20 content-snapshot`.
 
 Payload und builder laufen als uid 1000 (`node`); `media/`, `work/`, `repo/`, `snapshot.git/` müssen ihm gehören.
 Die `.env` (mode 600) enthält `CMS_IMAGE_TAG`, `POSTGRES_PASSWORD`, `PAYLOAD_SECRET`, `EDGE_SHARED_SECRET`,

@@ -1,11 +1,11 @@
 #!/bin/sh
-# Verlauf des Git-Abbilds auf docker01 ansehen — gehärtet: der builder (uid 1000 = Host-Nutzer)
-# kann config/hooks in snapshot.git schreiben; Pager, fsmonitor und Hooks sind hier abgeschaltet,
-# damit ein Host-Aufruf keinen untergeschobenen Code ausführt.
-#   snapshot-log.sh                      → git log --oneline -20 content-snapshot
-#   snapshot-log.sh -p -1 content-snapshot
+# Verlauf des Git-Abbilds ansehen — läuft IM builder-Container, nie auf dem Host:
+# snapshot.git/repo sind vom Container beschreibbar (config, hooks, attributes); Git auf dem Host
+# würde daraus Programme starten. Im Container bleibt das in der Vertrauenszone des Schreibers.
+#   ./snapshot-log.sh                       → git log --oneline -20 content-snapshot
+#   ./snapshot-log.sh -p -1 content-snapshot
 set -eu
-REPO="${SNAPSHOT_REPO:-/opt/docker-data/cms/snapshot.git}"
+STACK_DIR="${STACK_DIR:-/opt/docker/apps/cms}"
 [ "$#" -gt 0 ] || set -- --oneline -20 content-snapshot
-# --no-ext-diff/--no-textconv: auch diff.<x>.textconv/diff.external aus der Repo-Config bleiben aus (bei -p)
-exec git --no-pager -c core.fsmonitor=false -c core.hooksPath=/dev/null -c core.pager=cat -C "$REPO" log --no-ext-diff --no-textconv "$@"
+exec docker compose --project-directory "$STACK_DIR" -f "$STACK_DIR/docker-compose.yml" \
+  exec -T builder git -C /srv/snapshot.git log "$@"
