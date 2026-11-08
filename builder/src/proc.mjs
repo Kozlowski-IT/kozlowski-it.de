@@ -4,8 +4,9 @@ import { spawn } from "node:child_process";
 
 // Nur diese Variablen erbt der Kindprozess (Eleventy braucht keine Secrets des Builders:
 // kein DATABASE_URL, PAYLOAD_SECRET, BUILDER_TOKEN …); alles Weitere nur über `env`.
+// Auch gitSnapshot.mjs nutzt childEnv für git.
 const ENV_ALLOWLIST = ["PATH", "HOME", "LANG", "TZ", "NODE_ENV"];
-const childEnv = (extra) => ({
+export const childEnv = (extra) => ({
   ...Object.fromEntries(ENV_ALLOWLIST.filter((k) => process.env[k] !== undefined).map((k) => [k, process.env[k]])),
   ...extra,
 });

@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { gitSnapshot, SNAPSHOT_DIR } from "../src/gitSnapshot.mjs";
 import { createBuilderServer } from "../src/server.mjs";
@@ -98,6 +98,35 @@ test("gitSnapshot: nicht erreichbares Remote → ok:true + warning, Commit lokal
   assert.equal(res.ok, true);
   assert.match(res.warning, /Push fehlgeschlagen/);
   assert.equal(git(clone, "log", "-1", "--format=%s"), "content: Veröffentlichung 2026-11-07_130000");
+});
+
+test("gitSnapshot: git bekommt keine Builder-Secrets (Env-Allowlist wie proc.mjs)", T, async (t) => {
+  const { clone } = repos(t);
+  // Sonde: ein „git“ vorn im PATH schreibt seine Umgebung mit und ruft dann das echte git
+  const realGit = execFileSync("sh", ["-c", "command -v git"], { encoding: "utf8" }).trim();
+  const bin = join(tempWorkDir(t), "bin");
+  const log = join(bin, "env.log");
+  mkdirSync(bin);
+  writeFileSync(join(bin, "git"), `#!/bin/sh\nenv >> "${log}"\necho ---- >> "${log}"\nexec "${realGit}" "$@"\n`);
+  chmodSync(join(bin, "git"), 0o755);
+  const saved = { PATH: process.env.PATH, PAYLOAD_SECRET: process.env.PAYLOAD_SECRET, DATABASE_URL: process.env.DATABASE_URL, BUILDER_TOKEN: process.env.BUILDER_TOKEN };
+  process.env.PATH = `${bin}:${saved.PATH}`;
+  process.env.PAYLOAD_SECRET = "sonde-payload-secret";
+  process.env.DATABASE_URL = "postgres://sonde:sonde-db@x/y";
+  process.env.BUILDER_TOKEN = "sonde-builder-token";
+  try {
+    const res = await gitSnapshot(clone, contentDir(t), "2026-11-08_010000");
+    assert.deepEqual(res, { ok: true });
+  } finally {
+    for (const [k, v] of Object.entries(saved)) v === undefined ? delete process.env[k] : (process.env[k] = v);
+  }
+  const seen = readFileSync(log, "utf8");
+  assert.ok(seen.split("----").length > 3, "Sonde wurde für mehrere git-Aufrufe genutzt");
+  for (const s of ["sonde-payload-secret", "sonde-db", "sonde-builder-token", "PAYLOAD_SECRET", "DATABASE_URL", "BUILDER_TOKEN"]) {
+    assert.ok(!seen.includes(s), `${s} darf git nicht erreichen`);
+  }
+  assert.match(seen, /^GIT_TERMINAL_PROMPT=0$/m);
+  assert.match(seen, /^GIT_AUTHOR_NAME=/m, "Ident-Variablen kommen weiter an");
 });
 
 test("gitSnapshot: kein Git-Repo bzw. ungültiger Release-Name → ok:false, wirft nicht", T, async (t) => {

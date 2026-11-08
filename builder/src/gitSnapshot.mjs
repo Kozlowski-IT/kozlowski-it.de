@@ -9,10 +9,12 @@
 //   → { ok: true }                    Commit (falls Änderung) + Push ok
 //   → { ok: true, warning }           Push fehlgeschlagen — Publish bleibt gültig
 //   → { ok: false, reason }           kein Repo, Kopie/Commit fehlgeschlagen
-// Wirft nie. Git läuft ohne Shell (execFile), ohne Terminal-Prompt und mit Timeout.
+// Wirft nie. Git läuft ohne Shell (execFile), ohne Terminal-Prompt, mit Timeout und nur mit
+// erlaubten Umgebungsvariablen (childEnv aus proc.mjs).
 import { execFile } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, readdirSync, realpathSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import { childEnv } from "./proc.mjs";
 import { isReleaseName } from "./releases.mjs";
 
 export const SNAPSHOT_DIR = "content-snapshot";
@@ -30,8 +32,9 @@ function git(cwd, args, { timeoutMs = GIT_TIMEOUT_MS, ident = {} } = {}) {
         cwd,
         timeout: timeoutMs,
         killSignal: "SIGKILL",
-        // nie interaktiv nach Zugangsdaten fragen
-        env: { ...process.env, GIT_TERMINAL_PROMPT: "0", GIT_ASKPASS: "true", ...ident },
+        // Allowlist wie bei Eleventy (proc.mjs): keine Builder-Secrets (DATABASE_URL, PAYLOAD_SECRET,
+        // BUILDER_TOKEN …) an git; nie interaktiv nach Zugangsdaten fragen
+        env: childEnv({ GIT_TERMINAL_PROMPT: "0", GIT_ASKPASS: "true", ...ident }),
       },
       (err, stdout, stderr) =>
         resolve({
