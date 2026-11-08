@@ -2,7 +2,7 @@
 # CMS-Backup auf docker01 (Cron: /etc/cron.d/cms-backup, täglich 03:15, s. README):
 #   pg_dump -Fc der DB  → backup/cms-db-<datum>.dump
 #   tar von media/      → backup/cms-media-<datum>.tar.gz
-# Behält je die 14 neuesten. Jeder Fehler → Exit ≠ 0, halbe Dateien werden entfernt
+# Behält je die 14 neuesten. Jeder Fehler → Exit ≠ 0 (Ausnahme: tar Exit 1 = Datei geändert → Warnung), halbe Dateien werden entfernt
 # (geschrieben wird erst in .part, dann umbenannt). backup/ liegt im PBS-Backup-Set.
 set -euo pipefail
 
@@ -25,7 +25,18 @@ docker compose --project-directory "$STACK_DIR" -f "$STACK_DIR/docker-compose.ym
 [ -s "$db.part" ] || { echo "cms-backup: pg_dump lieferte nichts" >&2; exit 1; }
 mv "$db.part" "$db"
 
-tar -C "$DATA_DIR" -czf "$media.part" media
+# Medien ändern sich evtl. während des Lesens (Upload im Admin): GNU tar meldet das mit Exit 1 —
+# das Archiv ist trotzdem brauchbar → nur Warnung. Exit ≥ 2 (fataler Fehler) bricht ab.
+media_warn=""
+tar_rc=0
+tar --warning=no-file-changed -C "$DATA_DIR" -czf "$media.part" media || tar_rc=$?
+if (( tar_rc == 1 )); then
+  media_warn=" (WARNUNG: tar Exit 1 — Datei während des Sicherns geändert)"
+  echo "cms-backup: WARNUNG tar Exit 1 (Datei während des Sicherns geändert), Archiv behalten" >&2
+elif (( tar_rc != 0 )); then
+  echo "cms-backup: tar fehlgeschlagen (Exit $tar_rc)" >&2
+  exit "$tar_rc"
+fi
 mv "$media.part" "$media"
 
 # Aufräumen: Namen enthalten das Datum → lexikografisch = chronologisch
@@ -41,4 +52,4 @@ prune() {
 prune 'cms-db-*.dump'
 prune 'cms-media-*.tar.gz'
 
-echo "cms-backup: ok $(basename "$db") $(basename "$media")"
+echo "cms-backup: ok $(basename "$db") $(basename "$media")$media_warn"

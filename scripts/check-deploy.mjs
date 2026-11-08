@@ -366,6 +366,7 @@ if (bk !== null) {
   check(/^set -euo pipefail/m.test(bk), "backup.sh: set -euo pipefail fehlt (Exit ≠ 0 bei Fehler)");
   check(/pg_dump\b[^\n]*-Fc/.test(bk), "backup.sh: pg_dump -Fc fehlt");
   check(/tar\b[^\n]*media/.test(bk), "backup.sh: tar von media/ fehlt");
+  check(/tar --warning=no-file-changed\b[^\n]*media/.test(bk) && /tar_rc == 1/.test(bk), "backup.sh: tar --warning=no-file-changed + Exit 1 als Warnung fehlt (geänderte Medien dürfen das Backup nicht abbrechen)");
   check(/KEEP=14\b/.test(bk), "backup.sh: KEEP=14 fehlt");
 }
 const readme = read(`${CMS}/README.md`);
