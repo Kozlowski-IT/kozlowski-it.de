@@ -14,7 +14,7 @@
     "clean": "rm -rf _site",
     "parity": "node scripts/check-parity.mjs",
     "baseline": "bash scripts/baseline.sh",
-    "equal": "node scripts/check-equal.mjs .baseline _site",
+    "equal": "node scripts/check-equal.mjs",
     "check": "npm run build && npm run parity",
     "test": "node --test \"test/**/*.test.mjs\"",
     "check:deploy": "node scripts/check-deploy.mjs"

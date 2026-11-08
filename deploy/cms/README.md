@@ -89,7 +89,18 @@ Edge-Secret ist nur Defense in depth. Später: Export über eine eigene Nur-Lese
 - preview-nginx lässt nur edge02 (`allow 10.99.98.2; deny all;`) zu und mountet den **ganzen** `work/` read-only (`preview` → `.previews/<id>` ist ein relativer
   Symlink), `root /srv/work/preview`, `X-Robots-Tag: noindex, nofollow`, `frame-ancestors https://cms.kozlowski-it.de`.
 - Landing (`deploy/landing/`) mountet `work/releases` read-only, `root /srv/releases/current` —
-  nie den Symlink `current` selbst mounten. Umschaltung erst nach grünem Gleichheitstest (eigener Task).
+  nie den Symlink `current` selbst mounten. Umgeschaltet am 2026-11-08 nach grünem Gleichheitstest (Task 9).
+
+## Gleichheitstest Release gegen Release
+
+Migrations-Gate gegen die Alt-Site `a0dacf4` ist **abgeschlossen (2026-11-08)**; `robots.txt`/`sitemap.xml`
+(dort steckte der Layout-Bug der Baseline) sichert jetzt `test/robots-sitemap.test.mjs`.
+Künftig vergleicht der Gleichheitstest zwei Releases, z. B. vor/nach einem Code-Update (Exit 0 = gleich,
+1 = Unterschied, 2 = Bedienfehler):
+
+```sh
+node scripts/check-equal.mjs <releases/alt> <releases/neu>      # = npm run equal -- <releases/alt> <releases/neu>
+```
 
 ## Backup
 
