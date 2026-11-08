@@ -368,6 +368,28 @@ if (bk !== null) {
 const readme = read(`${CMS}/README.md`);
 if (readme !== null) check(/\/etc\/cron\.d\/cms-backup/.test(readme) && /^15 3 \* \* \* root /m.test(readme), "README: Cron-Zeile (/etc/cron.d/cms-backup, 15 3 * * * root …) fehlt");
 
+// Host-Git auf builder-beschreibbaren Repos (snapshot.git, repo): nur gehärtet — der builder (uid 1000 = Host-
+// Nutzer) kann config/hooks schreiben; Pager/fsmonitor/Hooks/textconv würden sonst auf dem Host laufen.
+// Ausgenommen: die Erstanlage (init/remote add auf frischen, leeren Repos).
+const GIT_HARDEN = ["--no-pager", "-c core.fsmonitor=false", "-c core.hooksPath=/dev/null", "-c core.pager=cat"];
+const unhardenedGitLines = (src) =>
+  src
+    .split("\n")
+    .filter((l) => /\bgit\b[^\n]*\/opt\/docker-data\/cms\/(snapshot\.git|repo)\b/.test(l) && !/\binit -q\b/.test(l))
+    .filter((l) => !GIT_HARDEN.every((f) => l.includes(f)) || (/\blog\b/.test(l) && !/--no-textconv/.test(l)));
+if (readme !== null) {
+  const bad = unhardenedGitLines(readme);
+  check(bad.length === 0, `README: Host-Git auf snapshot.git/repo ohne ${GIT_HARDEN.join(" ")} (--no-textconv bei log): ${bad.map((l) => l.trim()).join(" | ")}`);
+  check(/snapshot-log\.sh/.test(readme), "README: Hinweis auf deploy/cms/snapshot-log.sh fehlt");
+  // Mutation-Probe: ein ungehärtetes git log muss anschlagen
+  check(unhardenedGitLines("git -C /opt/docker-data/cms/snapshot.git log --oneline").length === 1, "README: Mutation-Probe — Regel erkennt ungehärtetes Host-git nicht");
+}
+const slog = read(`${CMS}/snapshot-log.sh`);
+if (slog !== null) {
+  const execLine = slog.split("\n").find((l) => /^exec git\b/.test(l)) ?? "";
+  check(GIT_HARDEN.every((f) => execLine.includes(f)) && /--no-ext-diff/.test(execLine) && /--no-textconv/.test(execLine), `snapshot-log.sh: exec git braucht ${GIT_HARDEN.join(" ")} --no-ext-diff --no-textconv`);
+}
+
 // ------------------------------------------------------------------ Landing
 const lc = readYaml(`${LANDING}/docker-compose.yml`);
 if (lc) {

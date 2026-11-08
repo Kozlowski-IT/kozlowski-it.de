@@ -31,7 +31,7 @@ Tag + Digest im Dockerfile gemeinsam ändern. Postgres analog (`postgres:18.6@sh
 
 ```sh
 install -d -m 755 /opt/docker/apps/cms
-cp deploy/cms/{docker-compose.yml,preview-nginx.conf,resolv-clean.conf,hosts,backup.sh} /opt/docker/apps/cms/
+cp deploy/cms/{docker-compose.yml,preview-nginx.conf,resolv-clean.conf,hosts,backup.sh,snapshot-log.sh} /opt/docker/apps/cms/
 # hosts: eigene /etc/hosts, weil Dockers generierte Datei auf docker01 (Default-ACL auf data-root) für uid 1000 unlesbar ist
 install -m 600 deploy/cms/env.example /opt/docker/apps/cms/.env   # dann Werte setzen: openssl rand -hex 32
 
@@ -42,7 +42,15 @@ install -d -o 1000 -g 1000 /opt/docker-data/cms/snapshot.git && sudo -u '#1000' 
 sudo -u '#1000' git -C /opt/docker-data/cms/repo init -q && sudo -u '#1000' git -C /opt/docker-data/cms/repo remote add origin /srv/snapshot.git
 ```
 
-Verlauf des Abbilds auf dem Host ansehen: `git -C /opt/docker-data/cms/snapshot.git log --oneline content-snapshot`.
+**Git auf dem Host nur gehärtet** (`snapshot.git/` und `repo/`): Der builder (uid 1000 = Host-Nutzer) kann dort
+`config` und `hooks/` schreiben; ein normales `git log` als uid 1000 würde ein untergeschobenes `core.pager`,
+`core.fsmonitor`, einen `diff.*.textconv`-Treiber oder Hook auf dem Host ausführen. Deshalb jedes Host-Git-Kommando für diese beiden Repos so:
+
+```sh
+git --no-pager -c core.fsmonitor=false -c core.hooksPath=/dev/null -c core.pager=cat -C /opt/docker-data/cms/snapshot.git log --no-ext-diff --no-textconv --oneline content-snapshot
+```
+
+Kurzform: `deploy/cms/snapshot-log.sh [git-log-Argumente …]` (macht genau das, Standard `--oneline -20 content-snapshot`).
 
 Payload und builder laufen als uid 1000 (`node`); `media/`, `work/`, `repo/`, `snapshot.git/` müssen ihm gehören.
 Die `.env` (mode 600) enthält `CMS_IMAGE_TAG`, `POSTGRES_PASSWORD`, `PAYLOAD_SECRET`, `EDGE_SHARED_SECRET`,
