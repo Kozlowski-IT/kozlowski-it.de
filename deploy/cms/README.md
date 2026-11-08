@@ -73,6 +73,12 @@ ohne `DATABASE_URL` oder wenn `NODE_ENV` nicht `production` ist (sonst würde Pa
 das Export-Modul `cms/src/export/builderExport.ts` ist TypeScript mit `@/`-Pfaden, die tsx aus
 `cms/tsconfig.json` auflöst. `stop_grace_period: 30s`: ein laufender Publish darf zu Ende laufen.
 
+## Bekannte Grenze: builder ≈ CMS
+
+Der builder kennt `EDGE_SHARED_SECRET` nicht (check-deploy erzwingt das), hat aber `PAYLOAD_SECRET` und eine
+**schreibende** `DATABASE_URL` — ein kompromittierter builder ist ein kompromittiertes CMS. Das fehlende
+Edge-Secret ist nur Defense in depth. Später: Export über eine eigene Nur-Lese-DB-Rolle und ohne `PAYLOAD_SECRET`.
+
 ## Vorschau / Landing
 
 - preview-nginx lässt nur edge02 (`allow 10.99.98.2; deny all;`) zu und mountet den **ganzen** `work/` read-only (`preview` → `.previews/<id>` ist ein relativer

@@ -7,8 +7,14 @@ import type { AuthStrategy, AuthStrategyResult, Payload } from 'payload'
  * edge02-nginx prüft per oauth2-proxy `auth_request` Zitadel-Login + Rolle und
  * ÜBERSCHREIBT danach immer `X-Auth-Request-Email`, `X-Auth-Request-Groups` und
  * `X-Edge-Secret`. Payload ist nur von edge02 erreichbar (Firewall); andere
- * Container im selben DMZ-VLAN (Builder) könnten es aber direkt ansprechen —
- * deshalb zählen die Header nur zusammen mit dem gemeinsamen Edge-Secret.
+ * Container im selben DMZ-VLAN könnten es aber direkt ansprechen — deshalb
+ * zählen die Header nur zusammen mit dem gemeinsamen Edge-Secret.
+ *
+ * Grenze (ehrlich): Der Builder kennt das Edge-Secret nicht, hat aber
+ * PAYLOAD_SECRET und eine schreibende DATABASE_URL. Ein kompromittierter
+ * Builder ist damit ein kompromittiertes CMS; das fehlende Edge-Secret ist nur
+ * Defense in depth, keine Isolation. Echte Trennung erst mit einem Export über
+ * eine Nur-Lese-DB-Rolle (deploy/cms/README.md, „Bekannte Grenze“).
  *
  * Kein Auto-Anlegen: nur bereits vorhandene Users werden angemeldet.
  * Die lokale Passwort-Strategie bleibt aktiv (Break-Glass, nur intern erreichbar).

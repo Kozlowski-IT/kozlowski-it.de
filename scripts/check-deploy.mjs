@@ -227,7 +227,10 @@ if (compose) {
     check(env.BUILDER_GIT_REPO === "/srv/repo", "builder: BUILDER_GIT_REPO=/srv/repo fehlt");
     check(env.BUILDER_SITE_ROOT === "/app", "builder: BUILDER_SITE_ROOT=/app fehlt");
     check(env.BUILDER_EXPORT_MODULE, "builder: BUILDER_EXPORT_MODULE fehlt");
-    check(!("EDGE_SHARED_SECRET" in env), "builder: darf EDGE_SHARED_SECRET nicht kennen (könnte sonst Identität fälschen)");
+    // Defense in depth, KEINE echte Isolation: der builder hat PAYLOAD_SECRET und eine schreibende DATABASE_URL —
+    // ein kompromittierter builder ist ein kompromittiertes CMS, mit oder ohne Edge-Secret. Die Regel schadet nicht
+    // und hält den Header-Weg zu; echte Trennung erst mit Export über eine Nur-Lese-DB-Rolle (s. README).
+    check(!("EDGE_SHARED_SECRET" in env), "builder: soll EDGE_SHARED_SECRET nicht kennen (Defense in depth)");
     for (const k of ["DATABASE_URL", "PAYLOAD_SECRET", "BUILDER_TOKEN"]) check(env[k], `builder: ${k} fehlt`);
     check(String(bl.user) === "1000:1000", "builder: user: \"1000:1000\" fehlt (kein root)");
     check(cmdOf(bl).includes("../builder/src/server.mjs") || cmdOf(bl).includes("/app/builder/src/server.mjs"), "builder: command startet builder/src/server.mjs nicht");
