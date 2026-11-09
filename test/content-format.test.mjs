@@ -16,7 +16,7 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { HTML_FIELDS } from "../lib/placeholders.js";
 import { ALLOWED_TAGS } from "../lib/richtext.js";
-import { REQUIRED_FIELDS } from "../lib/renderSections.js";
+import { REQUIRED_FIELDS, VARIANTS } from "../lib/renderSections.js";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const FIXTURES = join(ROOT, "test/fixtures/content");
@@ -113,6 +113,12 @@ test("Renderer kennt jedes Pflichtfeld des Katalogs (Hinweis am Abschnitt im Ent
   const want = Object.fromEntries(Object.entries(cat).map(([slug, fs]) => [slug, fs.filter((f) => f.required).map((f) => f.path).sort()]));
   const have = Object.fromEntries(Object.entries(REQUIRED_FIELDS).map(([slug, ps]) => [slug, ps.slice().sort()]));
   assert.deepEqual(have, want, "lib/renderSections.js REQUIRED_FIELDS ≠ required-Felder im Katalog");
+});
+
+test("Renderer kennt die Varianten des Katalogs in derselben Reihenfolge (die erste gilt, wenn der Wert fehlt)", () => {
+  const cat = catalog();
+  const want = Object.fromEntries(Object.entries(cat).map(([slug, fs]) => [slug, fs.find((f) => f.path === "variant").options]));
+  assert.deepEqual(VARIANTS, want, "lib/renderSections.js VARIANTS ≠ variant-Optionen im Katalog");
 });
 
 test("Doku-Tabelle der Rich-Text-Teilmenge == Tags, die der Renderer erlaubt", () => {

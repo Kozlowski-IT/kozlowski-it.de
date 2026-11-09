@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import * as cheerio from "cheerio";
 import { BLOCK_TYPES, permalinkFor } from "../lib/content.js";
 import { registerFilters } from "../lib/filters.js";
-import { createRenderer, REQUIRED_FIELDS } from "../lib/renderSections.js";
+import { createRenderer, REQUIRED_FIELDS, VARIANTS } from "../lib/renderSections.js";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const TMP = process.env.TMPDIR || tmpdir();
@@ -140,11 +140,13 @@ test("Filter-Fehler bleiben beim Abschnitt: ungueltiges Link-Ziel und unbekannte
 });
 
 // Baut einen Abschnitt, in dem genau die Pflichtfelder gefüllt sind (Listen mit einer Zeile).
+// Jedes Feld bekommt einen eigenen Wert `w<n>w`, damit sich prüfen lässt, ob er in der Ausgabe ankommt.
 function filledBlock(blockType, paths = REQUIRED_FIELDS[blockType]) {
   const block = { blockType };
-  for (const path of paths) {
+  for (const [i, path] of paths.entries()) {
     const keys = path.split(".");
     const last = keys.pop();
+    const value = `w${i}w`;
     let node = block;
     for (const key of keys) {
       if (key.endsWith("[]")) {
@@ -155,7 +157,7 @@ function filledBlock(blockType, paths = REQUIRED_FIELDS[blockType]) {
         node = node[key] ??= {};
       }
     }
-    node[last] = last === "image" ? { publicPath: "/assets/x.png", alt: "" } : last === "href" ? "/a" : last === "answer" ? "<p>x</p>" : "x";
+    node[last] = last === "image" ? { publicPath: `/assets/${value}.png`, alt: "" } : last === "href" ? `/${value}` : last === "answer" ? `<p>${value}</p>` : value;
   }
   return block;
 }
@@ -184,11 +186,46 @@ test("Entwurf mit nur blockType: jeder Bausteintyp liefert error, nie einen Abbr
   }
 });
 
-test("alle Pflichtfelder gefuellt: jeder Bausteintyp liefert html ohne error", () => {
+// Die erste cards-Variante zeigt Chips und Buttons nicht, die Variante demos zeigt alle Pflichtfelder.
+const variantShowing = (blockType, path) => (blockType === "cards" && /^cards\[\]\.(chips|buttons)/.test(path) ? "demos" : undefined);
+
+test("alle Pflichtfelder gefuellt: jeder Bausteintyp liefert html ohne error, jeder Wert kommt an", () => {
   for (const blockType of BLOCK_TYPES) {
-    const [s] = render([filledBlock(blockType)]);
-    assert.equal(s.error, undefined, `${blockType}: ${s.error}`);
-    assert.match(s.html, /<section/, blockType);
+    REQUIRED_FIELDS[blockType].forEach((path, i) => {
+      const [s] = render([{ ...filledBlock(blockType), variant: variantShowing(blockType, path) }]);
+      assert.equal(s.error, undefined, `${blockType}: ${s.error}`);
+      assert.match(s.html, /<section/, blockType);
+      assert.ok(s.html.includes(`w${i}w`), `${blockType}.${path} fehlt in der Ausgabe`);
+    });
+  }
+});
+
+test("fehlt die Variante, gilt die erste der Liste", () => {
+  for (const blockType of BLOCK_TYPES) {
+    const block = filledBlock(blockType);
+    const [first] = render([{ ...block, variant: VARIANTS[blockType][0] }]);
+    assert.equal(first.error, undefined, `${blockType}: ${first.error}`);
+    for (const variant of [undefined, null, ""]) {
+      const [s] = render([{ ...block, variant }]);
+      assert.equal(s.html, first.html, `${blockType} mit variant ${JSON.stringify(variant)}`);
+    }
+  }
+  assert.match(render([hero({ variant: undefined })])[0].html, /<section class="hero"/);
+});
+
+test("unbekannte Variante gibt error nur an diesem Index, jede bekannte rendert", () => {
+  for (const blockType of BLOCK_TYPES) {
+    const block = filledBlock(blockType);
+    for (const variant of ["gibtsnicht", "constructor", 7]) {
+      const sections = render([hero(), { ...block, variant }, hero()]);
+      onlyBroken(sections, 1);
+      assert.match(sections[1].error, /Variante/, blockType);
+    }
+    // body für text/legal, link für cards/explore: Diese Varianten brauchen die sonst optionalen Felder.
+    if (blockType === "cards") block.cards[0].link = { href: "/a" };
+    for (const variant of VARIANTS[blockType]) {
+      assert.equal(render([{ ...block, body: "<p>x</p>", variant }])[0].error, undefined, `${blockType}/${variant}`);
+    }
   }
 });
 
@@ -197,6 +234,7 @@ test("optionale Listen und Gruppen duerfen im Entwurf fehlen oder leer sein", ()
     const top = REQUIRED_FIELDS[blockType].filter((p) => !p.includes("."));
     const [s] = render([filledBlock(blockType, top)]);
     assert.equal(s.error, undefined, `${blockType}: ${s.error}`);
+    assert.match(s.html, /<section[^>]* data-section-key="w0w"/, blockType);
   }
   assert.equal(render([hero({ buttons: [], trustPoints: [] })])[0].error, undefined);
 });
@@ -209,6 +247,8 @@ for (const [blockType, path] of ALL_REQUIRED) {
       const sections = render([hero(), block, hero()]);
       onlyBroken(sections, 1);
       const shown = path.replaceAll("[]", "[0]");
+      // Nur „Pflichtfeld leer“ zählt: Der Pfad steht sonst auch im Ortszusatz anderer Fehlermeldungen.
+      assert.ok(sections[1].error.startsWith("Pflichtfeld leer: "), `${JSON.stringify(empty)}: ${sections[1].error}`);
       assert.ok(sections[1].error.includes(shown), `${JSON.stringify(empty)}: Hinweis nennt ${shown}: ${sections[1].error}`);
     }
   });
@@ -236,6 +276,16 @@ test("Hinweis nennt alle leeren Pflichtfelder und die richtige Zeile", () => {
   assert.match(s.error, /sectionKey/);
   assert.match(s.error, /items\[1\]\.question/);
   assert.doesNotMatch(s.error, /items\[0\]/);
+});
+
+test("leeres Link-Ziel erscheint im Pflichtfeld-Hinweis zusammen mit den anderen leeren Feldern", () => {
+  const [s] = render([hero({ h1: "", buttons: [{ label: "x", href: "", style: "primary" }] })]);
+  assert.equal(s.error, "Pflichtfeld leer: h1, buttons[0].href");
+});
+
+test("Platzhalter, der nur Leerraum einsetzt, zaehlt als leeres Pflichtfeld", () => {
+  const [s] = render([hero({ h1: "{{site.blank}}" })], { site: { ...site, blank: " " } });
+  assert.equal(s.error, "Pflichtfeld leer: h1");
 });
 
 test("Abschnitt, dessen Vorlage nichts ausgibt, gibt error statt leerem html", () => {
@@ -295,7 +345,7 @@ test("Platzhalter werden je Kontext aufgeloest wie beim Laden der Seiten", () =>
 });
 
 test("frame kommt in der Vorlage an", () => {
-  const block = { ...hero(), blockType: "faq", heading: "H", items: [] };
+  const block = { ...hero(), blockType: "faq", variant: "default", heading: "H", items: [] };
   assert.match(render([block], { frame: "home" })[0].html, /class="wrap"/);
   assert.doesNotMatch(render([block], { frame: "subpage" })[0].html, /class="wrap"/);
 });
