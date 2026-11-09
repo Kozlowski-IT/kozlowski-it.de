@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import * as cheerio from "cheerio";
 import { BLOCK_TYPES, permalinkFor } from "../lib/content.js";
 import { registerFilters } from "../lib/filters.js";
-import { createRenderer } from "../lib/renderSections.js";
+import { createRenderer, REQUIRED_FIELDS } from "../lib/renderSections.js";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const TMP = process.env.TMPDIR || tmpdir();
@@ -139,12 +139,112 @@ test("Filter-Fehler bleiben beim Abschnitt: ungueltiges Link-Ziel und unbekannte
   onlyBroken(render([hero(), badStyle]), 1);
 });
 
-test("Entwurf mit leeren Pflichtfeldern: jeder Bausteintyp liefert html oder error, nie einen Abbruch", () => {
+// Baut einen Abschnitt, in dem genau die Pflichtfelder gefüllt sind (Listen mit einer Zeile).
+function filledBlock(blockType, paths = REQUIRED_FIELDS[blockType]) {
+  const block = { blockType };
+  for (const path of paths) {
+    const keys = path.split(".");
+    const last = keys.pop();
+    let node = block;
+    for (const key of keys) {
+      if (key.endsWith("[]")) {
+        const name = key.slice(0, -2);
+        node[name] ??= [{}];
+        node = node[name][0];
+      } else {
+        node = node[key] ??= {};
+      }
+    }
+    node[last] = last === "image" ? { publicPath: "/assets/x.png", alt: "" } : last === "href" ? "/a" : last === "answer" ? "<p>x</p>" : "x";
+  }
+  return block;
+}
+
+/** Pflichtfeld `path` in `block` (Pfad wie im Katalog, Listen: erste Zeile) auf `value` setzen. */
+function setPath(block, path, value) {
+  const keys = path.split(".");
+  const last = keys.pop();
+  const node = keys.reduce((n, key) => (key.endsWith("[]") ? n[key.slice(0, -2)][0] : n[key]), block);
+  node[last] = value;
+}
+
+const ALL_REQUIRED = BLOCK_TYPES.flatMap((blockType) => REQUIRED_FIELDS[blockType].map((path) => [blockType, path]));
+
+test("Pflichtfeld-Liste deckt alle Bausteintypen ab und ist nicht leer", () => {
+  assert.deepEqual(Object.keys(REQUIRED_FIELDS).sort(), BLOCK_TYPES.slice().sort());
+  assert.ok(ALL_REQUIRED.length >= BLOCK_TYPES.length);
+});
+
+test("Entwurf mit nur blockType: jeder Bausteintyp liefert error, nie einen Abbruch", () => {
   const sections = render(BLOCK_TYPES.map((blockType) => ({ blockType })));
   assert.equal(sections.length, BLOCK_TYPES.length);
   for (const s of sections) {
-    assert.ok(typeof s.html === "string" || typeof s.error === "string", `Abschnitt ${s.index}`);
+    assert.equal(s.html, undefined, `${BLOCK_TYPES[s.index]}: kein html`);
+    assert.match(s.error, /sectionKey/, `${BLOCK_TYPES[s.index]}: Hinweis nennt das Feld`);
   }
+});
+
+test("alle Pflichtfelder gefuellt: jeder Bausteintyp liefert html ohne error", () => {
+  for (const blockType of BLOCK_TYPES) {
+    const [s] = render([filledBlock(blockType)]);
+    assert.equal(s.error, undefined, `${blockType}: ${s.error}`);
+    assert.match(s.html, /<section/, blockType);
+  }
+});
+
+test("optionale Listen und Gruppen duerfen im Entwurf fehlen oder leer sein", () => {
+  for (const blockType of BLOCK_TYPES) {
+    const top = REQUIRED_FIELDS[blockType].filter((p) => !p.includes("."));
+    const [s] = render([filledBlock(blockType, top)]);
+    assert.equal(s.error, undefined, `${blockType}: ${s.error}`);
+  }
+  assert.equal(render([hero({ buttons: [], trustPoints: [] })])[0].error, undefined);
+});
+
+for (const [blockType, path] of ALL_REQUIRED) {
+  test(`leeres Pflichtfeld ${blockType}.${path} gibt error nur an diesem Index`, () => {
+    for (const empty of [undefined, null, "", "   "]) {
+      const block = filledBlock(blockType);
+      setPath(block, path, empty);
+      const sections = render([hero(), block, hero()]);
+      onlyBroken(sections, 1);
+      const shown = path.replaceAll("[]", "[0]");
+      assert.ok(sections[1].error.includes(shown), `${JSON.stringify(empty)}: Hinweis nennt ${shown}: ${sections[1].error}`);
+    }
+  });
+}
+
+test("leere Rich-Text-Pflichtfelder zaehlen als leer, Text mit Spitzklammern nicht", () => {
+  for (const answer of ["<p></p>", "<p> &nbsp; </p>", "<p><br /></p>"]) {
+    const sections = render([filledBlock("faq"), { ...filledBlock("faq"), items: [{ question: "q", answer }] }]);
+    onlyBroken(sections, 1);
+    assert.match(sections[1].error, /items\[0\]\.answer/);
+  }
+  assert.equal(render([hero({ h1: "<b>" })])[0].error, undefined, "h1 ist reiner Text");
+});
+
+test("kaputte Zeilen und Bilder ohne Pfad gelten als leer", () => {
+  onlyBroken(render([hero(), { ...filledBlock("faq"), items: [null] }]), 1);
+  for (const image of [{}, { alt: "A" }, { publicPath: "" }, 42]) {
+    onlyBroken(render([hero(), { ...filledBlock("figure"), image }]), 1);
+  }
+});
+
+test("Hinweis nennt alle leeren Pflichtfelder und die richtige Zeile", () => {
+  const block = { blockType: "faq", items: [{ question: "q", answer: "<p>a</p>" }, { question: "", answer: "<p>a</p>" }] };
+  const [s] = render([block]);
+  assert.match(s.error, /sectionKey/);
+  assert.match(s.error, /items\[1\]\.question/);
+  assert.doesNotMatch(s.error, /items\[0\]/);
+});
+
+test("Abschnitt, dessen Vorlage nichts ausgibt, gibt error statt leerem html", () => {
+  const legal = { blockType: "text", variant: "legal", sectionKey: "legal" };
+  onlyBroken(render([hero(), legal, hero()]), 1);
+  const filled = { ...legal, body: "<p>x</p>" };
+  const [s] = render([filled]);
+  assert.equal(s.error, undefined);
+  assert.match(s.html, /<p>x<\/p>/);
 });
 
 test("unbekannter Platzhalter gibt error nur an diesem Index, mit echtem Index im Text", () => {
@@ -153,10 +253,13 @@ test("unbekannter Platzhalter gibt error nur an diesem Index, mit echtem Index i
   assert.match(sections[2].error, /blocks\[2\]/);
 });
 
-test("Fehlertext verraet keine Serverpfade", () => {
-  const sections = render([hero({ buttons: [{ label: "x", href: "javascript:alert(1)" }] })]);
-  assert.ok(sections[0].error);
-  assert.doesNotMatch(sections[0].error, /\/home\/|_includes|\.njk/);
+// Der Fall muss in der Vorlage scheitern: Nur dann packt Nunjucks Pfad und Zeile in die Meldung.
+test("Fehlertext aus der Vorlage verraet keine Serverpfade", () => {
+  const [s] = render([hero({ buttons: [{ label: "x", href: "/a", style: "gibtsnicht" }] })]);
+  assert.ok(s.error, "error gesetzt");
+  assert.doesNotMatch(s.error, /\/home\/|_includes|\.njk|\[Line \d|Template render error/);
+  assert.doesNotMatch(s.error, /\n/);
+  assert.match(s.error, /gibtsnicht/, "der eigentliche Grund bleibt erhalten");
 });
 
 test("kaputter Rahmen der Anfrage wirft statt falsch zu rendern", () => {

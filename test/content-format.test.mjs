@@ -16,6 +16,7 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { HTML_FIELDS } from "../lib/placeholders.js";
 import { ALLOWED_TAGS } from "../lib/richtext.js";
+import { REQUIRED_FIELDS } from "../lib/renderSections.js";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const FIXTURES = join(ROOT, "test/fixtures/content");
@@ -105,6 +106,13 @@ test("Renderer kennt jedes Rich-Text-Feld des Katalogs (Platzhalter-Kontext html
   const want = Object.fromEntries(Object.entries(cat).map(([slug, fs]) => [slug, fs.filter((f) => f.type === "richText").map((f) => f.path).sort()]));
   const have = Object.fromEntries(Object.entries(HTML_FIELDS).map(([slug, ps]) => [slug, ps.slice().sort()]));
   assert.deepEqual(have, want, "lib/placeholders.js HTML_FIELDS ≠ richText-Felder im Katalog");
+});
+
+test("Renderer kennt jedes Pflichtfeld des Katalogs (Hinweis am Abschnitt im Entwurf)", () => {
+  const cat = catalog();
+  const want = Object.fromEntries(Object.entries(cat).map(([slug, fs]) => [slug, fs.filter((f) => f.required).map((f) => f.path).sort()]));
+  const have = Object.fromEntries(Object.entries(REQUIRED_FIELDS).map(([slug, ps]) => [slug, ps.slice().sort()]));
+  assert.deepEqual(have, want, "lib/renderSections.js REQUIRED_FIELDS ≠ required-Felder im Katalog");
 });
 
 test("Doku-Tabelle der Rich-Text-Teilmenge == Tags, die der Renderer erlaubt", () => {
