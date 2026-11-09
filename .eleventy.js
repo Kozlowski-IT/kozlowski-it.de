@@ -1,10 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
-import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { contentDir, loadMedia } from "./lib/content.js";
-import { buttonClass, rich, richA, richNote, richP, richUl } from "./lib/richtext.js";
-import { safeHref } from "./lib/url.js";
-import { sitemapOrder } from "./lib/sitemap.js";
+import { registerFilters } from "./lib/filters.js";
 
 // kozlowski-it.de — Eleventy v3 config (ESM).
 // dir.input = "src" is LOAD-BEARING: without it, 11ty would render docs/*.md
@@ -15,33 +12,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets");
   eleventyConfig.addPassthroughCopy("avv.pdf");
 
-  // Cache-Busting: haengt einen Content-Hash an eine Asset-URL an
-  // (/assets/js/x.js -> /assets/js/x.js?v=ab12cd34). Aendert sich die Datei,
-  // aendert sich der Hash -> Browser laedt die neue Version sofort.
-  // Bewusst NICHT fuer den Font-Preload (muss URL-gleich zur @font-face bleiben).
-  eleventyConfig.addFilter("bust", (url) => {
-    try {
-      const hash = createHash("sha1")
-        .update(readFileSync(url.replace(/^\//, "")))
-        .digest("hex")
-        .slice(0, 8);
-      return `${url}?v=${hash}`;
-    } catch {
-      return url;
-    }
-  });
-
-  // CMS-Rich-Text (content/pages.json): Klassen nach Task-3-Konvention, Ausgabe mit | safe.
-  eleventyConfig.addFilter("rich", rich);
-  eleventyConfig.addFilter("richP", richP);
-  eleventyConfig.addFilter("richUl", richUl);
-  eleventyConfig.addFilter("richA", richA);
-  eleventyConfig.addFilter("richNote", richNote);
-  eleventyConfig.addFilter("buttonClass", buttonClass);
-  // Link-Ziele aus Inhalten (CMS/Globals): nur /pfad, #anker, http(s)://, mailto:, tel: — sonst Build-Abbruch.
-  eleventyConfig.addFilter("safeHref", safeHref);
-  // Sitemap: feste Reihenfolge nach URL statt Datei-Zeitstempel (CMS-Seiten teilen eine Vorlage).
-  eleventyConfig.addFilter("sitemapOrder", sitemapOrder);
+  // Filter (bust, Rich-Text, safeHref, sitemapOrder): lib/filters.js, auch vom Abschnitts-Renderer genutzt.
+  registerFilters((name, fn) => eleventyConfig.addFilter(name, fn));
 
   // CMS-Medien: content/media/<file> landet in der Ausgabe unter seinem publicPath
   // (content/media/index.json). publicPath wird vor dem Build erneut geprüft
